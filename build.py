@@ -22,7 +22,10 @@ SKEL_CSS = ':root{color-scheme:light;box-sizing:border-box}body{margin:0;padding
 META = ('<meta name="description" content="オート化学工業（Auto Chemical）建築用防水、密封、接著產品的互動式產品指南：工法步驟、用量計算、文件產生、第一人稱施工模擬與「AUTO 台灣島」。繁體中文／English／日本語。">\n'
         '<meta name="theme-color" content="#f97b00">\n'
         '<meta property="og:type" content="website">\n'
-        '<meta property="og:title" content="Auto Chemical 互動產品指南 · Good Startup">\n'
+        '<meta property="og:title" content="Auto Chemical in Taiwan by Good Startup">\n'
+        '<meta property="og:site_name" content="Auto Chemical in Taiwan by Good Startup">\n'
+        '<meta name="application-name" content="Auto Chemical in Taiwan by Good Startup">\n'
+        '<meta name="apple-mobile-web-app-title" content="Auto Chemical in Taiwan by Good Startup">\n'
         '<meta property="og:description" content="工法步驟、用量計算、文件產生、第一人稱施工模擬與 AUTO 台灣島。">\n'
         '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2212%22 fill=%22%23f97b00%22/%3E%3Cpath d=%22M18 46 L32 16 L46 46 M24 36 H40%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%227%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">\n')
 
@@ -92,7 +95,7 @@ def skeleton(content, inline_three):
         m = re.match(r'\s*(<title>[^<]*</title>|<link [^>]*>)\n', body)
         if not m: break
         head_bits.append(m.group(1)); body = body[m.end():]
-    head_bits = [('<title>Auto Chemical 互動產品指南 · Auton UREAX-HG · PROTECT ONE · 密封材 · 接著劑 | Good Startup</title>' if h.startswith('<title>') else h) for h in head_bits] # the page sets its own title per guide and language once it runs
+    head_bits = [('<title>Auto Chemical in Taiwan by Good Startup</title>' if h.startswith('<title>') else h) for h in head_bits] # (v73) the same name the page keeps once it runs — what a bookmark is called
     if inline_three: body = body.replace(THREE_CDN, '<script>' + read(os.path.join(ROOT, 'vendor', 'three.min.js')) + '</script>')
     return ('<!doctype html>\n<html lang="zh-Hant-TW">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
             + '\n'.join(head_bits) + '\n' + META + '<style>' + SKEL_CSS + '</style>\n</head>\n<body>\n' + body + '\n</body>\n</html>\n')
