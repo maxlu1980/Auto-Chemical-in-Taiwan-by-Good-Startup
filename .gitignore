@@ -1,0 +1,9 @@
+# build outputs (docs/ is the deployed site and is committed)
+build/
+tests/out/
+# tooling
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
