@@ -325,6 +325,7 @@ var Menu = (function () {
   function setGroup(id) { if (id === openGroup || !group(id)) return; openGroup = id; var s = home(cat) && home(cat).group.id === id ? home(cat) : firstSub(group(id)); openSub = s ? s.id : ''; [].forEach.call(document.querySelectorAll('.pmenu__desk .pmenu__group[data-group]'), function (b) { var on = b.getAttribute('data-group') === id; b.classList.toggle('is-open', on); b.setAttribute('aria-expanded', on); }); $('pmenuSubs').innerHTML = subsCol(group(id)); productsCol(s); }
   function setSub(id) { var s = sub(id); if (!s || id === openSub) return; openSub = id; [].forEach.call(document.querySelectorAll('.pmenu__desk .pmenu__sub[data-sub]'), function (a) { a.setAttribute('aria-expanded', a.getAttribute('data-sub') === id); }); productsCol(s); }
   function open(b) { isOpen = b; $('pmenuPanel').hidden = !b; $('pmenuBtn').setAttribute('aria-expanded', b ? 'true' : 'false'); $('pmenu').classList.toggle('is-open', b); if (b) { var hm = home(cat); openGroup = hm.group.id; openSub = hm.id; renderPanel(); } }
+  var SITE_NAME = 'Auto Chemical in Taiwan by Good Startup';
   function renderChrome() {
     var N = NAVS[cat], s = home(cat);
     $('pmenuLabel').textContent = tr('menu.products');
@@ -334,7 +335,7 @@ var Menu = (function () {
     $('crumbs').innerHTML = '<div class="wrap"><ol class="crumbs__path"><li><button type="button" class="crumbs__btn" data-openmenu>' + tr('menu.products') + '</button></li><li>' + L(s.group.name) + '</li><li aria-current="page">' + L(s.name) + '</li></ol>' +
       '<div class="crumbs__switch" role="group" aria-label="' + esc(tr('menu.switch')) + '">' + guides().map(function (x) { return '<a href="' + x.hash + '" data-go="' + x.guide + '"' + (x.guide === cat ? ' aria-current="page"' : '') + '>' + L(x.name) + '</a>'; }).join('') + '</div></div>';
     var fp = $('footProduct'), ft = $('footTds'); fp.href = N.product; fp.textContent = tr('foot.product.' + cat); ft.textContent = tr('foot.tds.' + cat);
-    document.title = tr('title.' + cat);
+    document.title = SITE_NAME; /* (v73) one name for the tab and the bookmark, in every guide and language (the guide's own name stays in the heading, the crumbs and the documents) */
     if (isOpen) renderPanel(); buildSpy();
   }
   function buildSpy() {
