@@ -1,0 +1,51 @@
+/* (v67) the last word of the cascade: placed at the end of the page's own style sheet (after the design system), so equal-specificity rules here win */
+/* (v67) WCAG 2.2 AA contrast. The brand orange stays the colour of fills, bars, marks and graphics; text set on it is near-black (7:1);
+   orange text on light grounds is a deeper orange (5.3:1), its hover deeper still; the muted line under a choice one step darker */
+:root{--red-ink:#b84800;--red-ink-hover:#9e3f00;--on-red:#16110d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--red-ink:#f98a1f;--red-ink-hover:#ffa14a;--on-red:#16110d}:root:not([data-theme="light"]) .sb-btn--primary{color:#16110d}}
+:root[data-theme="dark"]{--red-ink:#f98a1f;--red-ink-hover:#ffa14a;--on-red:#16110d}
+:root[data-theme="dark"] .sb-btn--primary{color:#16110d}
+.sb-btn--primary,.sb-btn--primary:hover,.gate .sb-btn--primary{color:#16110d}
+:root:not([data-theme="dark"]) .spec-opt__d{color:#595959}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .spec-opt__d{color:var(--grey-70)}}
+/* (v67) on the black grounds (the imprint, the gate) the vivid orange is the readable one */
+.imprint,.gate{--red-ink:#f98a1f;--red-ink-hover:#ffa14a}
+/* (v67) targets of at least 24 px (WCAG 2.2 · 2.5.8): the imprint's and the top bar's links */
+.imprint .sb-list>li{min-height:32px}
+.imprint a{padding-block:6px}
+.util a{padding-block:8px}
+/* (v67) the island's launch button: a deeper orange under its white label (4.7–6.5:1) */
+.util__isle{background:linear-gradient(180deg,#c45000,#9e3f00);border-color:#9e3f00}
+/* (v67) the source lists: each link a target of at least 24 px */
+.vs-src__list a{display:inline-block;padding-block:3px}
+/* (v67) the island's primary buttons: the same deeper orange under white (4.7–6.5:1) */
+.isle__btn--go{background:linear-gradient(180deg,#c85500,#9e3f00)}
+
+/* (v68) the music let in by the first touch: the loading screen's button, the film's chip larger and pulsing gently */
+#acBoot .acb-snd.is-mus{background:linear-gradient(180deg,#fff7ec,#ffe6c8);font-weight:900;animation:acbMus 2.4s ease-in-out infinite}
+#acBoot .acb-snd.is-mus.is-ok{animation:none;background:#e9f6e9}
+@keyframes acbMus{0%,100%{box-shadow:0 4px 0 var(--ink),0 0 0 0 rgba(245,116,29,.45)}50%{box-shadow:0 4px 0 var(--ink),0 0 0 10px rgba(245,116,29,0)}}
+.isle__op-snd.is-big{min-height:48px;padding:0 20px 0 14px;font:700 15px/1 var(--font-sans);background:rgba(16,12,8,.55);border-color:rgba(255,255,255,.8);animation:isleSndIn .6s ease .6s both,isleSndP 2.2s ease-in-out 1.4s infinite}
+.isle__op-snd.is-big svg{width:22px;height:22px}
+@keyframes isleSndP{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.4)}50%{box-shadow:0 0 0 9px rgba(255,255,255,0)}}
+@media (prefers-reduced-motion:reduce){#acBoot .acb-snd.is-mus,.isle__op-snd.is-big{animation:none}}
+/* (v71) a quieter HUD on a phone: the coins and the stamps as one pill, the route's bar clear of the action column and folding into the pill, toasts over the bottom */
+.isle.is-narrow .isle__chip--coins{border-radius:999px 0 0 999px;padding-right:9px}
+.isle.is-narrow .isle__chip--st{border-radius:0 999px 999px 0;border-left-width:0;padding-left:9px;margin-left:-8px}
+.isle.is-narrow .isle__navbar{right:max(92px,calc(env(safe-area-inset-right,0px) + 92px));padding:5px 4px 5px 7px;gap:6px}
+.isle.is-narrow .isle__navgo{padding:6px 10px;font-size:12px;min-height:32px}
+.isle.is-narrow .isle__navx{width:30px;height:32px;font-size:20px}
+.isle.is-narrow .isle__navar{width:30px;height:30px}.isle.is-narrow .isle__navar svg{width:21px;height:21px}
+.isle.is-narrow .isle__navtx small{font-size:11px;line-height:14px}
+.isle__navbar.is-min{display:none}
+.isle__navpill.is-fold b{max-width:min(52vw,230px);overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.isle.is-narrow .isle__navpill.is-fold{padding-right:13px}
+.isle.is-narrow .isle__toast{top:auto;bottom:calc(max(12px,env(safe-area-inset-bottom,0px)) + 74px);transform:translate(-50%,10px);max-width:calc(100% - 140px);text-align:center}
+.isle.is-narrow .isle__toast.is-on{transform:translate(-50%,0)}
+/* (v71) the stage strip of the 3D build-up on a phone: its buttons wrap into rows instead of scrolling sideways (the last one was cut to a sliver under the next button) */
+@media (max-width:640px){
+.cr-stagebar{flex-wrap:wrap}
+.cr-stagebar .seg--scroll{flex:1 1 100%;order:2;display:flex;flex-wrap:wrap;overflow:visible;gap:1px;background:var(--ink);padding:0}
+.cr-stagebar .seg--scroll button{flex:1 1 auto;background:var(--surface,var(--white));border-left:0;min-height:40px}
+.cr-stagebar .seg--scroll button[aria-pressed="true"]{background:var(--ink);color:var(--white)}
+}
