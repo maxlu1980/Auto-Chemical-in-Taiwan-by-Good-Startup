@@ -347,7 +347,49 @@
   function arch(sb, beat) { var u = ((sb % 4) + beat / 4) / 4; return 0.84 + 0.16 * Math.sin(Math.PI * u); } function jit(s) { return (Math.random() - 0.5) * s; }
   /* the harp's broken chord through a bar: [beat, which note of the chord, an octave up?] */ var ARP = [[1, 0, 0], [1.5, 1, 0], [2.5, 2, 0], [3, 1, 0], [3.5, 2, 12]];
 
-  function score(ctx, dest, T, night, off, tT) { if (!ctx) return null; off = off || 0; var now = ctx.currentTime, k = T / 40, t0 = now - off, A = { dead: false };
+  /* ---------- (v74) the opening's music as a recording: the full orchestra played from recorded instruments (VSCO 2 Community Edition, CC0) —
+     five string sections with their legato, spiccato, pizzicato and tremolo, woodwinds, brass, timpani, harp, glockenspiel, bass drum and
+     cymbals, the bow and the breath swelling and falling, a concert hall around them — rendered to the film's own bars: the same length, the
+     same bars, the title on the same note. The title's music: 望春風 and 雨夜花 by turns, each turn a recording laid after the one before (their
+     tails overlapping as the hall's would). The files come with the page (audio/); the music synthesised in the browser stays as the fallback
+     (a page opened from a file, a network that fails, a ride between the stations, whose length varies). ---------- */
+  /* the recording's plan: the film of 40 s, its last note (where the bars put it) at 36.35 s — the same for every title moment from 36.6 s on */
+  var REC = { base: 'audio/', files: { film: 'opening.mp3', bch: 'title_bch.mp3', uih: 'title_uih.mp3' }, buf: {}, st: {}, cb: {}, plan: { T: 40, tF: 36.35 }, turn: [55.8, 31.0], log: [] };
+  function recLog(w) { if (REC.log.length < 40) REC.log.push([w, Math.round(performance.now())]); }
+  function recLoad(k) { if (REC.st[k]) return; REC.st[k] = 'loading'; recLog('load ' + k);
+    function done(b) { REC.buf[k] = b || null; REC.st[k] = b ? 'ok' : 'fail'; recLog(k + ' ' + REC.st[k]); if (k === 'film' && b) setTimeout(function () { recLoad('bch'); recLoad('uih'); }, 1500); /* the title's after the film's */ var L = REC.cb[k] || []; REC.cb[k] = []; L.forEach(function (f) { try { f(b || null); } catch (e) {} }); }
+    try { if (window.REC_OFF || location.protocol === 'file:' || typeof fetch === 'undefined') throw 0;
+      fetch(REC.base + REC.files[k]).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); }).then(function (ab) {
+        var C = window.OfflineAudioContext || window.webkitOfflineAudioContext, c = new C(2, 1, 44100);
+        return new Promise(function (res, rej) { var p = c.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej); }); }).then(done, function () { done(null); });
+    } catch (e) { done(null); } }
+  function recWhen(k, f) { if (REC.st[k] === 'ok') f(REC.buf[k]); else if (REC.st[k] === 'fail') f(null); else { (REC.cb[k] = REC.cb[k] || []).push(f); recLoad(k); } }
+  /* fetched as the island begins to load (and again, if not yet, when the film is prepared): the film's first, the title's after it */
+  function recPreload() { recLoad('film'); }
+  /* at night the hall a little darker */ function recTone(ctx, night) { var g = ctx.createGain(); g.gain.value = night ? 0.9 : 1; if (!night) return { i: g, o: g }; var f = ctx.createBiquadFilter(); f.type = 'highshelf'; f.frequency.value = 4500; f.gain.value = -2.5; f.connect(g); return { i: f, o: g }; }
+  function scoreRec(ctx, dest, T, night, off, tT) { var now = ctx.currentTime, t0 = now - off, A = { dead: false, rec: true, n: 0 }, LV = 1; recLog('film score at ' + off.toFixed(2) + ' (' + REC.st.film + ')');
+    var out = ctx.createGain(); out.gain.setValueAtTime(0.0001, now); out.gain.linearRampToValueAtTime(LV, now + (off > 0.5 ? 0.8 : 0.3)); var tT2 = Math.min(T - 1.2, tT + 1.6); out.gain.setValueAtTime(LV, Math.max(now + 0.9, t0 + tT2)); out.gain.exponentialRampToValueAtTime(0.0001, t0 + T + 1.6); out.connect(dest);
+    var tone = recTone(ctx, night); tone.o.connect(out);
+    recWhen('film', function (b) { if (A.dead) return; var ft = off + (ctx.currentTime - now) + 0.04; if (ft > T - 2) return;
+      if (!b) { try { A.sub = score(ctx, tone.i, T, night, ft, tT, true); A.n = A.sub ? A.sub.n : 0; } catch (e) {} return; } /* no recording to be had: the music made here, from where the film is */
+      var s = ctx.createBufferSource(); s.buffer = b; s.connect(tone.i); s.start(ctx.currentTime + 0.04, Math.max(0, ft)); A.src = s; A.n = 1; recLog('film plays from ' + ft.toFixed(2)); });
+    var iv = setInterval(function () { if (!A.dead) return; clearInterval(iv); if (A.sub) A.sub.dead = true; setTimeout(function () { try { if (A.src) A.src.stop(); } catch (e) {} }, 2500); }, 400);
+    /* the wind at height (kept from the film's own sound) */ var nb = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate), nd = nb.getChannelData(0); for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    var ws = ctx.createBufferSource(); ws.buffer = nb; ws.loop = true; var wf = ctx.createBiquadFilter(); wf.type = 'bandpass'; wf.frequency.value = 500; wf.Q.value = 0.6; var wg = ctx.createGain(); wg.gain.value = 0.0001; ws.connect(wf); wf.connect(wg); wg.connect(out); ws.start(now); ws.stop(t0 + T + 1);
+    A.out = out; A.wind = wg; A.wf = wf; A.t0 = now; A.plan = { tF: REC.plan.tF, bars: 13, unit: 3, rec: true }; return A; }
+  function loopRec(ctx, dest, night) { var now = ctx.currentTime, A = { dead: false, n: 0, turn: 0, rec: true }, srcs = [], tEnd = now + 0.5;
+    var out = ctx.createGain(); out.gain.setValueAtTime(0.0001, now); out.gain.linearRampToValueAtTime(1, now + 2.2); out.connect(dest); var tone = recTone(ctx, night); tone.o.connect(out);
+    recWhen('bch', function () {}); recWhen('uih', function () {}); /* (fetched now if not yet: a title reached before they came waits a moment for them) */
+    function tick() { if (A.dead) { clearInterval(A.iv); return; } var c = ctx.currentTime;
+      if (!REC.buf.bch || !REC.buf.uih) { if (!A.sub && (REC.st.bch === 'fail' || REC.st.uih === 'fail')) { A.sub = loopSynth(ctx, tone.i, night); } if (A.sub) A.n = A.sub.n; tEnd = c + 0.3; return; }
+      while (tEnd < c + 8) { var k = A.turn % 2, s = ctx.createBufferSource(), at = Math.max(tEnd, c + 0.03); s.buffer = k ? REC.buf.uih : REC.buf.bch; s.connect(tone.i); s.start(at); srcs.push(s); s.onended = (function (q) { return function () { srcs = srcs.filter(function (x) { return x !== q; }); }; })(s); tEnd = at + REC.turn[k]; A.turn++; A.n++; } }
+    tick(); A.iv = setInterval(tick, 500);
+    A.out = out; A.stop = function (tau) { if (A.dead) return; A.dead = true; clearInterval(A.iv); if (A.sub) try { A.sub.stop(tau); } catch (e) {} try { var c = ctx.currentTime; out.gain.cancelScheduledValues(c); out.gain.setValueAtTime(Math.max(0.0001, out.gain.value), c); out.gain.setTargetAtTime(0.0001, c, tau || 0.5); } catch (e) {} setTimeout(function () { srcs.forEach(function (x) { try { x.stop(); } catch (e) {} }); try { out.disconnect(); } catch (e) {} }, 1000 + (tau || 0.5) * 6000); };
+    return A; }
+
+  function score(ctx, dest, T, night, off, tT, synth) { if (!ctx) return null; off = off || 0;
+    /* (v74) the recording, when this is the opening as it was recorded (and not a test rendering it offline) */ if (!synth && !window.REC_OFF && tT != null && Math.abs(T - REC.plan.T) < 0.01 && Math.abs(Math.max(20.35, Math.min(36.35, tT - 0.25)) - REC.plan.tF) < 0.05 && REC.st.film !== 'fail' && !(typeof OfflineAudioContext !== 'undefined' && ctx instanceof OfflineAudioContext)) return scoreRec(ctx, dest, T, night, off, tT);
+    var now = ctx.currentTime, k = T / 40, t0 = now - off, A = { dead: false };
     /* (v72) the level: about −25 dBFS for the gentle part, −19 for the broad one (the mobile reference of −18 LUFS ± 2 met by the broad part; a film's range kept); it opens at once (a slow exponential rise left the first second silent) */ var LV = 1.2;
     var out = ctx.createGain(); out.gain.setValueAtTime(0.0001, now); out.gain.linearRampToValueAtTime(LV, now + (off > 0.5 ? 0.8 : 0.45)); var tT2 = tT ? Math.min(T - 1.2, tT + 1.6) : T - 2.2; out.gain.setValueAtTime(LV, Math.max(now + 0.9, t0 + tT2)); out.gain.exponentialRampToValueAtTime(0.0001, t0 + T + 1.6); out.connect(dest);
     /* (v72) the compressor only evens the whole, slowly (a fast one pumped the chords) */ var cmp = ctx.createDynamicsCompressor(); cmp.threshold.value = -24; cmp.knee.value = 20; cmp.ratio.value = 2.5; cmp.attack.value = 0.03; cmp.release.value = 0.45; cmp.connect(out);
@@ -413,7 +455,8 @@
      song — 望春風 (16 bars) on the dizi over the plucked bass, the harp's broken chords and the chords held in the strings, the erhu and the
      violins answering in its second half; 雨夜花 (8 bars) on the erhu with the violins and the cellos, the horns far under its climb; a celesta
      at each turn's close. It comes in over two seconds; stop(tau) lets it go. */
-  function scoreLoop(ctx, dest, night) { if (!ctx) return null; var now = ctx.currentTime, A = { dead: false, n: 0, turn: 0 };
+  function scoreLoop(ctx, dest, night) { if (!ctx) return null; if (!window.REC_OFF && location.protocol !== 'file:' && REC.st.bch !== 'fail' && REC.st.uih !== 'fail' && !(typeof OfflineAudioContext !== 'undefined' && ctx instanceof OfflineAudioContext)) return loopRec(ctx, dest, night); return loopSynth(ctx, dest, night); }
+  function loopSynth(ctx, dest, night) { if (!ctx) return null; var now = ctx.currentTime, A = { dead: false, n: 0, turn: 0 };
     var out = ctx.createGain(); out.gain.setValueAtTime(0.0001, now); out.gain.linearRampToValueAtTime(1.2, now + 2.2); out.connect(dest);
     var cmp = ctx.createDynamicsCompressor(); cmp.threshold.value = -24; cmp.knee.value = 20; cmp.ratio.value = 2.5; cmp.attack.value = 0.03; cmp.release.value = 0.45; cmp.connect(out);
     var O = orch(ctx, cmp, night, now, 0), B = O.B, str = O.str, dizi = O.dizi, erhu = O.erhu, harp = O.harp, pizz = O.pizz, horn = O.horn, timp = O.timp, cel = O.cel;
@@ -577,7 +620,7 @@
 
   /* ---------- the API ---------- */
   function ok(R) { try { return !!(R && R.capabilities.isWebGL2 && (R.extensions.has('EXT_color_buffer_float') || R.extensions.has('EXT_color_buffer_half_float'))); } catch (e) { return false; } }
-  function prepare(R, o) { return build(R, o); }
+  function prepare(R, o) { try { recPreload(); } catch (e) {} return build(R, o); }
   function start(o) { var R = S && S.R; if (!S) return null; F = { p: plan(o.from, o.to), t: 0, done: false, skip: false, onDone: o.onDone, date: o.date || new Date() }; light(R, F.date, o.cov == null ? 0.35 : o.cov);
     /* (v70) the ride's air as clear as Taiwan's on a good day: the haze near the ground was 0.012–0.032 per km (and its layer 1.6 km deep), so from the train's
        height the plains and the ranges beyond them washed into grey at 30–40 km; now 0.0055–0.015 per km in a layer 1.3 km deep (the visual range on a
@@ -614,5 +657,5 @@
   var STNP = null; function stnP() { if (STNP) return STNP; STNP = {}; Object.keys(STN).forEach(function (k) { STNP[k] = ll(STN[k][0], STN[k][1]); }); LBL.forEach(function (q) { if (!STNP[q[0]]) STNP[q[0]] = ll(q[1][0], q[1][1]); }); return STNP; }
   function info() { return { ready: !!S, G: G.ready, res: G.res, N: RT && RT.N, len: RT && RT.len, stn: RT && RT.stn, stnP: stnP(), portal: RT && RT.portal, expo: LT.expo, night: LT.night, key: LT.key, kc: LT.kc, fly: FLY ? FLY.n : 0 }; }
   function sun() { var sd = LT.sd || [0, 1, 0], kc = LT.kc || [1, 1, 1], kl = Math.max(kc[0], kc[1], kc[2]) || 1; return { dir: sd, col: [kc[0] / kl, kc[1] / kl, kc[2] / kl], up: clamp((sd[1] + 0.04) / 0.22, 0, 1), night: LT.night }; }
-  return { fp: function () { return FP; }, rescore: rescore, score: score, scoreLoop: scoreLoop, aud: function () { return AUD; }, lights: function () { return S ? { sun: S.sun, hemi: S.hemi } : null; }, ok: ok, prepare: prepare, sun: sun, start: start, startOpen: startOpen, update: update, render: render, stop: stop, skip: skip, labels: labels, info: info, heightJS: heightJS, ll: ll, EXV: EXV, at: function (s) { return RT ? at(s) : null; }, U: U, scene: function () { return S && S.scene; }, cam: function () { return S && S.cam; }, F: function () { return F; }, fly: function () { return FP; }, fpAt: function (s2) { return FP ? fpAt(s2) : null; }, fpS: function (u) { return FP ? fpS(u) : 0; }, rigAt: function (u) { return F && F.p && F.p.fly ? rigFly(u) : null; } };
+  return { fp: function () { return FP; }, rec: function () { return { st: REC.st, base: REC.base, log: REC.log }; }, recLoad: recLoad, rescore: rescore, score: score, scoreLoop: scoreLoop, aud: function () { return AUD; }, lights: function () { return S ? { sun: S.sun, hemi: S.hemi } : null; }, ok: ok, prepare: prepare, sun: sun, start: start, startOpen: startOpen, update: update, render: render, stop: stop, skip: skip, labels: labels, info: info, heightJS: heightJS, ll: ll, EXV: EXV, at: function (s) { return RT ? at(s) : null; }, U: U, scene: function () { return S && S.scene; }, cam: function () { return S && S.cam; }, F: function () { return F; }, fly: function () { return FP; }, fpAt: function (s2) { return FP ? fpAt(s2) : null; }, fpS: function (u) { return FP ? fpS(u) : 0; }, rigAt: function (u) { return F && F.p && F.p.fly ? rigFly(u) : null; } };
 })();
