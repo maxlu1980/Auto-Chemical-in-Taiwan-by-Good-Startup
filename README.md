@@ -23,6 +23,7 @@
 .
 ├── docs/                 GitHub Pages 站台（建置產物，請勿手動編輯）
 │   ├── index.html        整個網站
+│   ├── audio/            開場與標題音樂的管弦樂錄音（MP3）
 │   └── docgen/           文件產生器的程式庫與字型（docx、pdfmake、Noto Sans CJK 子集）
 ├── src/                  原始碼：_pre.html／_boot.html／_post.html 為頁面骨架，_order.txt 為模組順序，其餘為模組
 │   ├── css_extra_add.css, css_final.css   附加樣式表（依序接在頁面樣式之後）
@@ -35,6 +36,7 @@
 │   ├── luna.js, max*.js, dogs.js          角色
 │   └── bvh.js            three-mesh-bvh（MIT）
 ├── vendor/three.min.js   three.js r147（測試版頁面內嵌用；正式站由 jsDelivr 載入）
+├── music/                開場音樂的取樣分析、取樣器、音樂廳與編曲算繪腳本（見 music/README.md）
 ├── tests/                Playwright 自動測試與測試計畫
 ├── build.py              建置腳本
 ├── THIRD_PARTY_NOTICES.md
@@ -97,7 +99,7 @@ Copyright © 2026 Good Startup LTD. 本倉庫的原始碼、文字、圖像、3D
 ## 致謝
 
 - 聲音：**VOICEVOX:春日部つむぎ**
-- 音樂：鄧雨賢〈望春風〉（1933）、〈雨夜花〉（1934）旋律（公共領域），本專案自行編曲，由瀏覽器即時演奏；未使用歌詞
+- 音樂：鄧雨賢〈望春風〉（1933）、〈雨夜花〉（1934）旋律（公共領域），本專案自行編曲，以 VSCO 2 Community Edition（CC0）真實樂器取樣錄製為完整管弦樂團；未使用歌詞
 - 天氣：Open-Meteo、AccuWeather
 
 ---

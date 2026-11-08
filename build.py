@@ -113,6 +113,8 @@ def build(docs_dir, out_dir):
     open(os.path.join(docs_dir, 'index.html'), 'w', encoding='utf-8').write(skeleton(mini, False))
     open(os.path.join(out_dir, 'test_local.html'), 'w', encoding='utf-8').write(skeleton(full, True))
     open(os.path.join(out_dir, 'test_min.html'), 'w', encoding='utf-8').write(skeleton(mini, True))
+    au = os.path.join(DOCS, 'audio')
+    if os.path.isdir(au): shutil.copytree(au, os.path.join(out_dir, 'audio'), dirs_exist_ok=True)  # the recorded music beside the test pages (served over http, they play it)
     print('build: guide.html %.2f MB, guide.min.html %.2f MB, docs/index.html %.2f MB' % (len(full.encode('utf-8')) / 1e6, len(mini.encode('utf-8')) / 1e6, os.path.getsize(os.path.join(docs_dir, 'index.html')) / 1e6))
 
 
