@@ -105,12 +105,17 @@ async def main():
                 CLIP = 'clip' in PARTS
                 if CLIP: await pg.evaluate("""() => { const ids = JSON.parse(ISLE_x.ev('JSON.stringify(Object.keys(OKV_T).map(function (k) { return OKV_T[k][0]; }))')), sr = 8000, n = sr * 0.45, b = new ArrayBuffer(44 + n * 2), v = new DataView(b), W = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); }; W(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); W(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); W(36, 'data'); v.setUint32(40, n * 2, true); for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.sin(i * 0.5) * 6000 * Math.min(1, i / 200, (n - i) / 200), true); let bin = ''; new Uint8Array(b).forEach(c => bin += String.fromCharCode(c)); const uri = 'data:audio/wav;base64,' + btoa(bin); window.AC_OKV = {}; ids.forEach(id => window.AC_OKV[id] = uri); }""")
                 await arrive("(function(){ okachiArrive(); return 1; })()"); await pg.evaluate("() => { window.__tts.said.length = 0; }")
+                ok = await pg.evaluate("() => ISLE_x.okv()")
+                if ok['want'] or await pg.evaluate("() => !!window.AC_OKV"): CLIP = True   # the page carries its recordings
                 if CLIP:
-                    for _ in range(40):
+                    await pg.evaluate(EV, "(function(){ OKV.rate = 4.4; return 1; })()")   # the scene's clock is run about four times fast here: the recordings as well
+                    for _ in range(80):
                         ok = await pg.evaluate("() => ISLE_x.okv()")
                         if ok['st'] == 2: break
                         await pg.wait_for_timeout(250)
                     need(ok['st'] == 2 and ok['have'] == ok['lines'] == 45, lang + ' okachimachi the recordings are taken in (one for each of the 45 lines)', json.dumps(ok))
+                    du = json.loads(await pg.evaluate(EV, "JSON.stringify(Object.keys(OKV.buf).sort().map(function (k) { return +OKV.buf[k].duration.toFixed(2); }))"))
+                    need(len(du) == 45 and min(du) > 0.3 and max(du) < 9.5, lang + ' okachimachi each recording decodes to a line\'s length', json.dumps([min(du), max(du), round(sum(du), 1)]))
                 info = json.loads(await pg.evaluate(EV, "JSON.stringify({ id: TK.id, trk: TK.T.TRK, tr: TK.T.trains.map(function (t) { var q = AN_JR[anTrk(TK.T, t)]; return [t.x, t.dir, q && q.n, q && q.to.ja, t.st]; }), ear: anEarJR(TK.T, cam.position) })"))
                 log(DEV, lang, 'okachimachi', json.dumps(info, ensure_ascii=False))
                 m = {x[2]: (x[0], x[1], x[3]) for x in info['tr']}
