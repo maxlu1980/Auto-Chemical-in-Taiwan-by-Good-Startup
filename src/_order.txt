@@ -67,6 +67,7 @@ tw_boss.js
 tw_tokyo.js
 tw_tokyo_v.js
 tw_tokyo_b.js
+tw_tokyo_d.js
 tw_tokyo_c.js
 tw_tpe.js
 tw_tpe_b.js
