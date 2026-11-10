@@ -15,6 +15,9 @@ playwright install chromium
 | `stsweep.py` / `stwalk.py` / `stwell.py` / `stshot.py` | 高鐵站上下樓層的視線檢查：固定取樣、實際行走、樓梯井淨空、截圖 | `python3 tests/stsweep.py taichung,taipei,tainan,zuoying mob sw` |
 | `snd_flow.py` | 聲音解鎖流程（載入畫面按鈕、影片提示、點擊、標題音樂） | `TK_FILE=build/test_min.html DEV=mobile TAP=boot python3 tests/snd_flow.py` |
 | `rec_flow.py` | 同上，但以 http 開啟，確認播放的是管弦樂錄音（影片從第幾秒起播、標題每一輪的錄音）；先在倉庫根目錄執行 `python3 -m http.server 8766` | `BASEURL=http://127.0.0.1:8766/ TK_FILE=build/test_min.html DEV=desk TAP=boot python3 tests/rec_flow.py` |
+| `dev_chk.py` | 「系統由 好時新創 開發」標示：載入、標題、開場影片結尾、轉場、乘車影片、各面板、結算畫面、模擬現場的用字與位置；遊玩畫面不得出現（`SHOTS=1` 另存截圖） | `python3 tests/dev_chk.py tests/out/dev desk zh,en,ja` |
+| `ann_chk.py` | 車站廣播（以替身語音記錄會說出的內容）：高鐵四站與御徒町的進站、上車、發車、宣導廣播，語言與語音的選擇、月台與目的地、畫面字幕的語言與位置、靜音、裝置無語音時的退路 | `python3 tests/ann_chk.py tests/out/ann desk zh tpe,all4,tyo,mute,novoice` |
+| `ad_chk.py` | 接著劑指南（三種工法、六支產品）的功能檢查，以及四本指南與產品選單不再出現已移除的產品與用語、內文產品名稱不加粗 | `python3 tests/ad_chk.py desk zh,en,ja` |
 | `sc3.py` | 開場音樂與標題音樂離線渲染：每秒音量（dBFS）、峰值、WAV | `python3 tests/sc3.py` |
 
 `tests/plans/` 內是 `tk2.py` 用的計畫：`zy_fix.json`（高鐵流程與車站）、`hs8_plan.json`（模擬現場）、`film_plan.json`（開場影片）、`fl6.json`（飛行）、`vc2.json`（飛行中語音）、`hz3.json`（乘車影片的霧）、`hq_plan.json`（手機 HUD）、`op71_plan.json`（開場影片與標題）。
