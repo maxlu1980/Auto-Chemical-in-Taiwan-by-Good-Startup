@@ -68,6 +68,7 @@ tw_tokyo.js
 tw_tokyo_v.js
 tw_tokyo_b.js
 tw_tokyo_d.js
+tw_tokyo_e.js
 tw_tokyo_c.js
 tw_tpe.js
 tw_tpe_b.js
@@ -147,5 +148,7 @@ island_at.js
 island_au.js
 island_av.js
 island_aw.js
+okv_lines.js
+island_ax.js
 island_c.js
 page.js

@@ -128,11 +128,11 @@
   function okaFmt(m) { m = ((m % 1440) + 1440) % 1440; return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
   /* each frame: the doors follow the trains; twice a second the indicators and (each minute) the clocks are brought up to date */
   function okaTick(T, dt, o) { var O = T.oka, i; if (!O) return;
-    for (i = 0; i < O.doors.length; i++) { var D = O.doors[i], tr = D.tr || (D.tr = T.trains.filter(function (t) { return t.x === TRK[D.ti]; })[0]), want = tr && tr.st === 'dwell' && !tr.closing && tr.wait < 18.8 ? 1 : 0;
+    for (i = 0; i < O.doors.length; i++) { var D = O.doors[i], tr = D.tr || (D.tr = T.trains.filter(function (t) { return t.x === TRK[D.ti]; })[0]), want = tr && tr.st === 'dwell' && tr.wait > 2.4 && tr.wait < 18.8 ? 1 : 0; if (want !== D.want) { if (D.want != null) D.evt = want ? 'open' : 'shut'; D.want = want; }
       if (D.f !== want) { D.f = want > D.f ? Math.min(1, D.f + dt * 0.95) : Math.max(0, D.f - dt * 0.95); var e = D.f * D.f * (3 - 2 * D.f) * 0.735; D.A.forEach(function (m) { m.position.z = -e; }); D.B.forEach(function (m) { m.position.z = e; }); } }
     O.acc += dt; if (O.acc < 0.5) return; O.acc = 0; var hm = okaJst(o), now = hm[0] * 60 + hm[1]; if (O.min !== now) { O.min = now; O.clocks.forEach(function (C) { okaClockDraw(C, hm); }); }
     OKL.forEach(function (L, ti) { var B = O.led[L.n], tr = T.trains.filter(function (t) { return t.x === TRK[ti]; })[0]; if (!tr) return; if (tr.st === 'run' && B.st === 'dwell') B.count++; B.st = tr.st;
       var eta = 0, d; if (tr.st !== 'dwell') { d = (tr.stopZ - tr.z) * tr.dir; eta = d > 0 ? d / 11 + 4 : 50 + Math.max(0, tr.dir > 0 ? T.z1 + 60 - tr.z : tr.z - (T.z0 - 60)) / 13; } var mins = Math.max(1, Math.ceil(eta / 15)), key, data;
       if (L.led === 'kt') { /* rapid trains call here at weekends, late morning to mid afternoon */ var rapid = (hm[2] === 0 || hm[2] === 6) && now >= 630 && now <= 930, ty = rapid ? '快速' : '各駅停車', t1 = now + (tr.st === 'dwell' ? 0 : mins), n = L.dests.length; data = { rows: [[ty, okaFmt(t1), L.dests[B.count % n], rapid], [ty, okaFmt(t1 + 5), L.dests[(B.count + 1) % n], rapid]] }; key = data.rows.join('|'); }
       else { data = { stt: tr.st === 'dwell' ? '停車中' : eta < 9 ? 'まもなく' : '約' + mins + '分後', p: tr.st === 'dwell' ? 1 : Math.round(Math.max(0, Math.min(0.93, 1 - eta / 60)) * 14) / 14 }; key = data.stt + data.p; }
-      if (key !== B.key) { B.key = key; okaLed(B, data); } }); }
+      B.data = data; if (key !== B.key) { B.key = key; okaLed(B, data); } }); }
