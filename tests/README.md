@@ -13,7 +13,10 @@ playwright install chromium
 | `axe_run.py` | axe-core WCAG 2.1 AA 稽核（需 `npm i axe-core`，路徑由 `AXE` 環境變數指定） | `AXE=node_modules/axe-core/axe.min.js python3 tests/axe_run.py tests/out/axe desk,mobile zh,en,ja '#/ureax-hg'` |
 | `tk2.py` | 以 JSON 計畫驅動的流程測試（截圖、輪詢、JS、滑鼠／觸控），遊戲與模擬現場都用它 | `TK_FILE=build/test_min.html python3 tests/tk2.py tests/out/g zh desk "$(cat tests/plans/zy_fix.json)"` |
 | `stsweep.py` / `stwalk.py` / `stwell.py` / `stshot.py` | 高鐵站上下樓層的視線檢查：固定取樣、實際行走、樓梯井淨空、截圖 | `python3 tests/stsweep.py taichung,taipei,tainan,zuoying mob sw` |
-| `snd_flow.py` | 聲音解鎖流程（載入畫面按鈕、影片提示、點擊、標題音樂） | `TK_FILE=build/test_min.html DEV=mobile TAP=boot python3 tests/snd_flow.py` |
+| `open_chk.py` | 起始順序（v83）：載入後直接是御徒町標題、沒有先播影片；影片的島嶼已備妥；「開始」後的飛行在俯衝處轉白、接上飛越台灣的影片（飛行停在原處等候、標題不出現、飛行自己的讀數與略過鈕收起），片尾的片名與聲音標示，結束後降落臺北並開始遊玩；影片中按略過；同一階段第二次不再播放；載入畫面與標題畫面的「直接看技術資料」按鈕（位置、寬度、開啟指南並展開產品選單）。`SHOTS=1` 另存截圖 | `python3 tests/open_chk.py tests/out/open desk` ／ `python3 tests/open_chk.py tests/out/open mobile boot,tech,fly` |
+| `boot_prev.py` | 單獨的載入畫面（不含指南與遊戲）在各尺寸、三種語言的版面：卡片與按鈕都在畫面內、不溢出，並存截圖 | `python3 tests/boot_prev.py tests/out/boot src/_boot.html desk,lap,wide,tab,phone,small,land zh,en,ja` |
+| `title_prev.py` | 標題卡片在各尺寸、三種語言是否完整在畫面內、不需捲動，各按鈕的位置與大小（`SHOTS=0` 只列數字） | `python3 tests/title_prev.py tests/out/title 1280x760,390x780,780x360 zh,en,ja` |
+| `snd_flow.py` | 聲音解鎖流程（v83 起的順序）：載入畫面的聲音按鈕、標題在觸碰前無聲並有提示、觸碰後標題音樂與車站聲音、開始後標題音樂退出、飛行途中的影片有配樂且不再出現「輕觸開啟聲音」（`TAP=boot｜title｜none`） | `TK_FILE=build/test_min.html DEV=mobile TAP=boot python3 tests/snd_flow.py` |
 | `rec_flow.py` | 同上，但以 http 開啟，確認播放的是管弦樂錄音（影片從第幾秒起播、標題每一輪的錄音）；先在倉庫根目錄執行 `python3 -m http.server 8766` | `BASEURL=http://127.0.0.1:8766/ TK_FILE=build/test_min.html DEV=desk TAP=boot python3 tests/rec_flow.py` |
 | `dev_chk.py` | 「系統由 好時新創 開發」標示：載入、標題、開場影片結尾、轉場、乘車影片、各面板、結算畫面、模擬現場的用字與位置；遊玩畫面不得出現（`SHOTS=1` 另存截圖） | `python3 tests/dev_chk.py tests/out/dev desk zh,en,ja` |
 | `ann_chk.py` | 車站廣播（以替身語音記錄會說出的內容）：高鐵四站與御徒町的進站、上車、發車、宣導廣播，語言與語音的選擇、月台與目的地、畫面字幕的語言與位置、靜音、裝置無語音時的退路 | `python3 tests/ann_chk.py tests/out/ann desk zh tpe,all4,tyo,mute,novoice` |
@@ -27,6 +30,6 @@ playwright install chromium
 | `cred_chk.py` | 標題畫面與載入畫面的聲音標示：完整、不被裁切、在畫面內，標題卡片不超出視窗（手機與桌面、三種語言） | `python3 tests/cred_chk.py mobile zh,en,ja` |
 | `sc3.py` | 開場音樂與標題音樂離線渲染：每秒音量（dBFS）、峰值、WAV | `python3 tests/sc3.py` |
 
-`tests/plans/` 內是 `tk2.py` 用的計畫：`zy_fix.json`（高鐵流程與車站）、`hs8_plan.json`（模擬現場）、`film_plan.json`（開場影片）、`fl6.json`（飛行）、`vc2.json`（飛行中語音）、`hz3.json`（乘車影片的霧）、`hq_plan.json`（手機 HUD）、`op71_plan.json`（開場影片與標題）。
+`tests/plans/` 內是 `tk2.py` 用的計畫：`zy_fix.json`（高鐵流程與車站）、`hs8_plan.json`（模擬現場）、`film_plan.json`（開場影片）、`fl6.json`（飛行）、`vc2.json`（飛行中語音）、`hz3.json`（乘車影片的霧）、`hq_plan.json`（手機 HUD）、`op71_plan.json`（開場影片與標題）。其中 `film_plan.json`、`op71_plan.json` 是 v83 之前「載入後先播影片」的流程，留作影片本身（`ISLE_x.op.start()`）的檢查；新的順序由 `open_chk.py` 檢查。
 
-頁面在測試時以 `window.ISLE_TEST = 1` 啟動，會把被攔截的例外重新拋出；`window.FAST3D`、`window.NO_GOV` 降低 3D 負載並略過政府開放資料的讀取。測試用的鉤子都掛在 `window.ISLE_x`。
+頁面在測試時以 `window.ISLE_TEST = 1` 啟動，會把被攔截的例外重新拋出；`window.FAST3D`、`window.NO_GOV` 降低 3D 負載並略過政府開放資料的讀取。測試用的鉤子都掛在 `window.ISLE_x`。測試模式下飛行不會播放飛越台灣的影片（逐格推進的測試才不會停在途中），需要時加上 `window.ISLE_TOUR = 1`（依每階段一次的規則）或 `'always'`；`window.ISLE_NOTOUR = 1` 則一律不播。
