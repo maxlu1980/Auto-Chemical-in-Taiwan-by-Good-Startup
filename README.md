@@ -98,7 +98,7 @@ Copyright © 2026 Good Startup LTD. 本倉庫的原始碼、文字、圖像、3D
 
 ## 致謝
 
-- 聲音：**VOICEVOX:春日部つむぎ**；車站廣播由使用者裝置的內建語音朗讀（Web Speech API），未隨附任何語音檔
+- 聲音：**VOICEVOX:春日部つむぎ**；車站廣播由使用者裝置的內建語音朗讀（Web Speech API）；御徒町站的日語廣播可改用 `voice/` 的廣播稿以 VOICEVOX 預錄後內嵌（見 `voice/README.md`）
 - 音樂：鄧雨賢〈望春風〉（1933）、〈雨夜花〉（1934）旋律（公共領域），本專案自行編曲，以 VSCO 2 Community Edition（CC0）真實樂器取樣錄製為完整管弦樂團；未使用歌詞
 - 天氣：Open-Meteo、AccuWeather
 
