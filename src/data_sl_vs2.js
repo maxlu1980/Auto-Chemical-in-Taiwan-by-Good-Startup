@@ -13,7 +13,7 @@
   var A = {
     zh: {
       head: ['MC-FLEX PU 22', 'Sikaflex Construction'], barsT: '數據對照（指名產品與各類別代表產品的 TDS 印行值）', matrixSub: '20 個項目、8 欄（AUTON、MC-FLEX PU 22 Construct、Sikaflex® Construction 與五種技術類別），從化學到保證。左欄固定，表格可橫向捲動。',
-      sub: '密封材市場有六種化學：一液聚氨酯、矽利康、變性矽利康／MS（矽烷改質聚醚）、雙液聚硫、壓克力，以及 Auto Chemical 以 LS 聚合物、不含可塑劑重新定義的一液聚氨酯。下表以 Sika（Sikaflex® Construction 台灣版）、MC-Bauchemie（MC-FLEX PU 22 Construct）、Mapei、Fosroc、Dow 與日本 JIS 認證品的公開 TDS 為對照（2026 年 9–10 月查閱），逐項註明產品與出處。',
+      sub: '密封膠市場有六種化學：一液聚氨酯、矽利康、變性矽利康／MS（矽烷改質聚醚）、雙液聚硫、壓克力，以及 Auto Chemical 以 LS 聚合物、不含可塑劑重新定義的一液聚氨酯。下表以 Sika（Sikaflex® Construction 台灣版）、MC-Bauchemie（MC-FLEX PU 22 Construct）、Mapei、Fosroc、Dow 與日本 JIS 認證品的公開 TDS 為對照（2026 年 9–10 月查閱），逐項註明產品與出處。',
       kpi0: '一般一液 PU 500–800%（MC-FLEX PU 22 ≥ 500、Sikaflex Construction 約 800、Sika／Mapei 700）', kpi1: '一般 PU 28–40（MC-FLEX PU 22 約 40）、MS 24–43、矽利康 29',
       classes: {
         mcpu: { name: 'MC-FLEX PU 22 Construct（MC-Bauchemie）', chem: '一液濕氣硬化聚氨酯；ASTM C920 Type S・Grade NS・Class 35、Use T, NT, A, M；UV 穩定、色澤穩定（TDS 2026/10/1）', apply: '打膠槍（手動，或 3–4 bar 氣動）；600 ml 腸衣／280 ml 卡匣；多孔・吸水基材底漆 Mycoflex 251（乾燥 > 1 h，超過 6 h 重塗）；目地寬 10–35 mm；濕抹刀（中性肥皂水）抹平', cure: '表乾約 20 min；硬化約 2 mm／天（23 °C／50% RH）；施工 5–35 °C；硬化後耐 −30～+80 °C', catch: '硬度 Shore A 約 40（7 天）——偏硬；抗拉強度、模數未公布；不適用大理石與天然石；膠帶須在表乾前撕除；耐候「UV 穩定」但無時數' },

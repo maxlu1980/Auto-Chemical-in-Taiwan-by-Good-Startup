@@ -32,6 +32,8 @@
 .acb-tip{position:relative;margin:22px 0 0;width:100%;min-height:3.4em;padding:16px 16px 12px;border:3px solid var(--ink);border-radius:18px;background:#fff;font:600 14.5px/1.6 inherit;color:var(--ink);transition:opacity .45s}
 .acb-tip::before{content:"ルナ";position:absolute;left:14px;top:-15px;padding:3px 14px;border:3px solid var(--ink);border-radius:999px;background:var(--org);color:#fff;font:800 13px/18px "Noto Sans JP","Noto Sans TC",sans-serif;letter-spacing:.06em}
 .acb-foot{margin:14px 0 0;font:500 12.5px/1.6 inherit;color:#7a6a5e}
+/* (v75) who made the system: one quiet line along the bottom edge, under the buttons */
+.acb-dev{position:absolute;z-index:3;left:50%;bottom:calc(3px + env(safe-area-inset-bottom));transform:translateX(-50%);margin:0;max-width:calc(100% - 20px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 12px/16px "Noto Sans TC","Noto Sans JP",-apple-system,sans-serif;letter-spacing:.06em;color:#fff;text-shadow:0 1px 3px rgba(20,40,70,.7),0 0 2px rgba(20,40,70,.6);pointer-events:none;transition:opacity .5s}#acBoot.is-film .acb-dev{opacity:0}
 .acb-btn,.acb-snd{position:absolute;z-index:3;min-height:46px;padding:11px 22px;border:3px solid var(--ink);border-radius:999px;background:var(--cream);color:var(--ink);font:800 15px/1.2 "Noto Sans TC","Noto Sans JP",-apple-system,sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 4px 0 var(--ink);transition:transform .12s,box-shadow .12s}
 .acb-btn{right:max(18px,env(safe-area-inset-right));bottom:calc(22px + env(safe-area-inset-bottom))}.acb-snd{left:max(18px,env(safe-area-inset-left));bottom:calc(22px + env(safe-area-inset-bottom))}
 .acb-btn:hover,.acb-btn:focus-visible,.acb-snd:hover,.acb-snd:focus-visible{background:#ffe9d2;outline:none}.acb-btn:active,.acb-snd:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
@@ -91,12 +93,14 @@
 <button type="button" class="acb-snd" hidden></button>
 <button type="button" class="acb-go" hidden>▶ 開始</button>
 <button type="button" class="acb-btn">先看施工指南</button>
+<p class="acb-dev">系統由 好時新創 開發</p>
 </div>
 <script>/* (v55) the start: this loader is the first thing drawn. Its bar follows the page's own scripts as they arrive (each part of the code reports
    when it has run), then the stages of building the 3D world; while a stage holds the page, the spinner and the bar keep moving on the compositor. */
 window.__boot = (function () {
   var el = document.getElementById('acBoot'); if (!el) return null;
   var L = 'zh'; try { var l0 = localStorage.getItem('ac-guide-lang'); if (l0 === 'zh' || l0 === 'en' || l0 === 'ja') L = l0; } catch (e) {}
+  /* (v75) who made the system — the one line the loader, the game and the simulator all show */ var DEV = window.AC_DEV = { zh: '系統由 好時新創 開發', en: 'System developed by Good Startup', ja: 'システム開発：Good Startup' };
   var T = {
     zh: { title: 'AUTO 台灣島', sub: '施工指南的台灣城市遊戲', btn: '先看施工指南', snd: '開啟聲音', go: '▶ 開始', foot: '第一次載入約需 10–30 秒，之後通常會更快；進度會自動保存。', ready: '準備完成', readyTip: '準備好了！一起從空中看看台灣吧～', guide: '施工指南準備完成',
       st: ['開啟施工指南…', '載入版面與字型…', '載入施工指南與現場模擬…', '準備天空、大氣與海洋…', '載入東京與高鐵城市…', '載入四座高鐵站與航拍影片…', '載入墾丁與日月潭…', '載入角色、任務與介面…', '整理施工指南頁面…', '建立台灣島地形與御徒町街區…', '建立御徒町站與街道…', '安排角色、燈光與天氣…', '編譯光影與材質…', '準備開場空拍與即時天氣…'],
@@ -108,7 +112,7 @@ window.__boot = (function () {
       st: ['施工ガイドを開いています…', 'レイアウトとフォントを読み込み中…', '施工ガイドと現場シミュレーターを読み込み中…', '空・大気・海を準備中…', '東京と高鉄の街を読み込み中…', '高鉄4駅と空撮フィルムを読み込み中…', '墾丁と日月潭を読み込み中…', 'キャラクター・ミッション・操作画面を読み込み中…', '施工ガイドのページを整えています…', '島の地形と御徒町の街並みを構築中…', '御徒町駅と街並みを構築中…', 'キャラクター・照明・天気を配置中…', '光と質感をコンパイル中…', 'オープニングの空撮とリアルタイムの天気を準備中…'],
       tips: ['ヒント：ドラッグで見回し、ピンチまたはホイールでズーム。', 'ヒント：地面をタップするか「ナビ」を使うと、ルナが自分で歩いて行きます。', 'ヒント：空は実際の太陽と月の位置、リアルタイムの天気で描かれます。', 'ヒント：高鉄は台北・台中・台南・左営の4駅を結びます。', 'ヒント：化学ポケットのポータルで墾丁と日月潭へ。', 'ヒント：雨のあとは地面が濡れて、街並みと灯りを映します。'] } }[L];
   var bar = el.querySelector('.acb-bar i'), st = el.querySelector('.acb-st span'), pc = el.querySelector('.acb-st b'), tip = el.querySelector('.acb-tip'), btn = el.querySelector('.acb-btn'), goBtn = el.querySelector('.acb-go'), cur = 0.02, ti = Math.floor(Math.random() * T.tips.length), tt = null;
-  el.querySelector('.acb-title').textContent = T.title; el.querySelector('.acb-sub').textContent = T.sub; el.querySelector('.acb-foot').textContent = T.foot; btn.textContent = T.btn; goBtn.textContent = T.go; el.querySelector('.acb-snd').textContent = T.snd; tip.textContent = T.tips[ti]; st.textContent = T.st[0];
+  el.querySelector('.acb-title').textContent = T.title; el.querySelector('.acb-sub').textContent = T.sub; el.querySelector('.acb-foot').textContent = T.foot; el.querySelector('.acb-dev').textContent = DEV[L]; btn.textContent = T.btn; goBtn.textContent = T.go; el.querySelector('.acb-snd').textContent = T.snd; tip.textContent = T.tips[ti]; st.textContent = T.st[0];
   var RDY = false; function rot() { if (RDY) return; ti = (ti + 1) % T.tips.length; tip.style.opacity = '0'; setTimeout(function () { if (RDY) return; tip.textContent = T.tips[ti]; tip.style.opacity = '1'; }, 450); }
   tt = setInterval(rot, 5200);
   /* the bar: at() sets it, toward() lets it run on to a target over the expected time of the step that is about to hold the page */

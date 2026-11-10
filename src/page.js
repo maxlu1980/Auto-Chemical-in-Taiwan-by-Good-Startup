@@ -18,7 +18,6 @@ var PN = {
   PO: { zh: ['PROTECT', ' ONE'], en: ['PROTECT', ' ONE'], ja: ['プロテクト', 'ワン'] },
   POJ: { zh: ['オートンプロテクトワン', ''], en: ['AUTON PROTECT', ' ONE'], ja: ['オートンプロテクトワン', ''] },
   AGG: { zh: ['骨材', ''], en: ['Aggregate', ''], ja: ['骨材', ''] },
-  EG: { zh: ['ENAGUARD', ''], en: ['ENAGUARD', ''], ja: ['エナガード', ''] },
   EX: { zh: ['AUTON', ' EXCEED'], en: ['AUTON', ' EXCEED'], ja: ['オートン', 'イクシード'] },
   EXJ: { zh: ['オートンイクシード', ''], en: ['AUTON', ' EXCEED'], ja: ['オートンイクシード', ''] },
   OP2019: { zh: ['OP', '-2019'], en: ['OP', '-2019'], ja: ['OP', '-2019'] },
@@ -42,13 +41,9 @@ var PN = {
   FS600: { zh: ['オートンフロアスター', '600'], en: ['オートンフロアスター', '600'], ja: ['オートンフロアスター', '600'] },
   NEDA: { zh: ['オートンアドハー', 'ネダジャンボ'], en: ['オートンアドハー', 'ネダジャンボ'], ja: ['オートンアドハー', 'ネダジャンボ'] },
   AD8500: { zh: ['オートンアドハー', '8500'], en: ['オートンアドハー', '8500'], ja: ['オートンアドハー', '8500'] },
-  AD8800: { zh: ['オートンアドハー', '8800'], en: ['オートンアドハー', '8800'], ja: ['オートンアドハー', '8800'] },
   AD1000R: { zh: ['オートンアドハー', '1000R'], en: ['オートンアドハー', '1000R'], ja: ['オートンアドハー', '1000R'] },
   FGS: { zh: ['オートンフロアーグリップ', 'S'], en: ['オートンフロアーグリップ', 'S'], ja: ['オートンフロアーグリップ', 'S'] },
   RCQ: { zh: ['オートンリペアカラー', 'Qィック'], en: ['オートンリペアカラー', 'Qィック'], ja: ['オートンリペアカラー', 'Qィック'] },
-  EGE: { zh: ['ENAGUARD', ' E'], en: ['ENAGUARD', ' E'], ja: ['エナガード', 'E'] },
-  EGT: { zh: ['ENAGUARD', ' T'], en: ['ENAGUARD', ' T'], ja: ['エナガード', 'T'] },
-  EGV: { zh: ['ENAGUARD', ' V'], en: ['ENAGUARD', ' V'], ja: ['エナガード', 'V'] },
   PROPEEL: { zh: ['オートン', 'プロピールX'], en: ['オートン', 'プロピールX'], ja: ['オートン', 'プロピールX'] },
   SOKKAN: { zh: ['速乾帝王', 'M'], en: ['速乾帝王', 'M'], ja: ['速乾帝王', 'M'] },
   SEALDRYER: { zh: ['オートン', 'シールドライヤー'], en: ['オートン', 'シールドライヤー'], ja: ['オートン', 'シールドライヤー'] },
@@ -92,16 +87,16 @@ var AC = 'https://autochem.co.jp';
    sub-category (breadcrumbs, the switcher). Products with `url` instead of `anchor` link to their page on autochem.co.jp; `bundled` marks a
    primer that is only supplied with its sealant (no page of its own). */
 var CATALOG = [
-  { id: 'seal', tone: 'orange', url: AC + '/products/sealing/', name: { zh: '密封材', en: 'Sealants', ja: 'シーリング材' },
+  { id: 'seal', tone: 'orange', url: AC + '/products/sealing/', name: { zh: '密封膠', en: 'Sealants', ja: 'シーリング材' },
     subs: [
-      { id: 'arch', hash: '#/sealant', guide: 'sl', url: AC + '/products/sealing/architecture/', name: { zh: '建築用密封材', en: 'Architectural sealants', ja: '建築用シーリング材' },
+      { id: 'arch', hash: '#/sealant', guide: 'sl', url: AC + '/products/sealing/architecture/', name: { zh: '建築用密封膠', en: 'Architectural sealants', ja: '建築用シーリング材' },
         lead: { zh: '應用指南：一液 PU 密封系統、六種接縫情境、技術比較、施工步驟、3D 接縫剖面、硬化時程模擬、用量與報價', en: 'The guide: the 1K PU sealing system, six joint scenarios, Versus, procedure, 3D joint sections, cure-time simulator, quantities and quotation', ja: '施工ガイド：1成分ウレタンシーリングシステム、6つの目地シーン、技術比較、施工手順、3D目地断面、硬化シミュレーター、数量と見積' },
         products: [
           { key: 'EX', anchor: '#sl-top', d: { zh: '不滲出・高耐久・高耐候：期待耐用年數約 30 年，外裝翻新的熱門選擇', en: 'Non-bleed, high durability, high weathering: an expected service life of about 30 years, popular for exterior renovation', ja: 'ノンブリード・高耐久・高耐候：驚異の耐用年数約 30 年。外装リフォームでも人気。' } },
           { key: 'NB101', anchor: '#sl-products', d: { zh: '不滲出・高耐久：耐久性優異的通用型（Perfect Non-Bleed）', en: 'Non-bleed, high durability: the general-purpose type with excellent durability (Perfect Non-Bleed)', ja: 'ノンブリード・高耐久：耐久性に優れた汎用タイプ。' } },
           { key: 'OP2019', anchor: '#sl-products', bundled: true, d: { zh: 'EXCEED 專用底漆：金屬、塑膠與無機基材', en: 'Primer for EXCEED on metal, plastics and mineral substrates', ja: 'イクシード専用プライマー。金属・プラスチック・無機下地に。' } },
           { key: 'OP2020', anchor: '#sl-products', bundled: true, d: { zh: '101A-NB／CLIO NEO 用底漆：多孔與無機基材', en: 'Primer for 101A-NB and CLIO NEO on porous and mineral substrates', ja: '101A-NB／クリオNEO用プライマー。多孔質・無機下地に。' } },
-          { key: 'COKE', url: AC + '/15421/', d: { zh: '不滲出・高耐久・高耐候：建築用途廣泛適用的高品質密封材', en: 'Non-bleed, high durability, high weathering: a high-quality sealant for a wide range of building joints', ja: 'ノンブリード・高耐久・高耐候：建築用途で幅広く使える高品質シーリング材。' } },
+          { key: 'COKE', url: AC + '/15421/', d: { zh: '不滲出・高耐久・高耐候：建築用途廣泛適用的高品質密封膠', en: 'Non-bleed, high durability, high weathering: a high-quality sealant for a wide range of building joints', ja: 'ノンブリード・高耐久・高耐候：建築用途で幅広く使える高品質シーリング材。' } },
           { key: 'SIDING', url: AC + '/935/', d: { zh: '不滲出・高耐久・高耐候：窯業系外牆板用的標準品，庫存色豐富', en: 'Non-bleed, high durability, high weathering: the standard for fibre-cement siding, with many stock colours', ja: 'ノンブリード・高耐久・高耐候：窯業系サイディング用の定番。在庫色が豊富。' } },
           { key: 'SMART', url: AC + '/945/', d: { zh: '高耐久・高耐候：對應大樓等工作縫的一液型', en: 'High durability, high weathering: a one-component sealant for the working joints of buildings', ja: '高耐久・高耐候：ビルなどのワーキングジョイントに対応する一成分形。' } },
           { key: 'NB101S', url: AC + '/958/', d: { zh: '不滲出：塗裝基材用不滲出型的標準品', en: 'Non-bleed: the standard non-bleed sealant for painted substrates', ja: 'ノンブリード：塗装下地用ノンブリードの定番。' } }
@@ -111,26 +106,26 @@ var CATALOG = [
           { key: 'FLATP', anchor: '#sl-products', d: { zh: '軟管裝可撓性聚氨酯補土：外牆材裂縫・缺損補修、螺絲孔・釘頭填補；收縮少、不滲出、可塗裝。170 g 軟管附 20 ml 專用底漆', en: 'Flexible urethane putty in a tube: repairs cracks and chips in facade materials, fills screw holes and nail heads; little shrinkage, non-bleed, paintable. 170 g tube with 20 ml primer', ja: 'チューブ入りの可撓性ウレタンパテ：外壁材の割れ・欠けの補修、ビス穴・釘頭の補填。肉やせ少なく、ノンブリード、塗装可。170 g チューブ、20 ml 専用プライマー付属' } },
           { key: 'AD3500', anchor: '#sl-products', d: { zh: '320 ml 卡匣裝可撓性聚氨酯補土：與フラットパテ同性能，改以膠槍施工；每箱 10 支，隨附 100 ml 底漆 ×2 與刷', en: 'Flexible urethane putty in a 320 ml cartridge: the same putty applied with a gun; 10 per box with 100 ml primer ×2 and a brush', ja: '320 ml カートリッジの可撓性ウレタンパテ：フラットパテと同じ性能をガン施工で。10 本/箱、100 ml プライマー×2・刷毛付属' } }
         ] },
-      { id: 'civil', guide: 'sl', url: AC + '/products/sealing/civil-engineering/', name: { zh: '土木用密封材', en: 'Civil-engineering sealants', ja: '土木用シーリング材' },
+      { id: 'civil', guide: 'sl', url: AC + '/products/sealing/civil-engineering/', name: { zh: '土木用密封膠', en: 'Civil-engineering sealants', ja: '土木用シーリング材' },
         products: [
           { key: 'TF2000', anchor: '#sl-products', d: { zh: 'NETIS 登錄（KT-190076-VE）的一液型聚氨酯：超高耐候・高耐久、可施工寬接縫。農業用水路、橋梁、護欄、混凝土二次製品接縫與 U 形切割補修；6 L 桶／320 ml，底漆 OP-2019 另售', en: 'One-component polyurethane, NETIS-registered (KT-190076-VE): very high weathering, high durability, wide joints. Irrigation channels, bridges, parapets, precast-concrete joints and U-cut crack repair; 6 L pail / 320 ml, primer OP-2019 sold separately', ja: 'NETIS 登録（KT-190076-VE）の1成分形ポリウレタン：超高耐候・高耐久、幅広目地可。農業用水路・橋梁・壁高欄・コンクリート二次製品の目地、Uカット補修。6 L ペール／320 ml、プライマー OP-2019 別売' } },
           { key: 'OP2019', anchor: '#sl-products', d: { zh: 'TF2000 專用高性能底漆（另售）：100 ml／500 ml 罐，廣泛適用各種被著材', en: 'High-performance primer for TF2000 (sold separately): 100 ml / 500 ml cans, for a wide range of substrates', ja: '超耐シーラーTF2000 専用高性能プライマー（別売）：100 ml／500 ml 缶、各種被着材に幅広く適応' } },
           { key: 'NB101', anchor: '#sl-products', d: { zh: '不滲出・高耐久：耐久性優異的通用型', en: 'Non-bleed, high durability: the general-purpose type with excellent durability', ja: 'ノンブリード・高耐久：耐久性に優れた汎用タイプ。' } }
         ] },
-      { id: 'wpseal', url: AC + '/products/sealing/waterproof/', name: { zh: '防水基材處理用密封材', en: 'Sealants for waterproofing substrates', ja: '防水下地用シーリング材' },
+      { id: 'wpseal', url: AC + '/products/sealing/waterproof/', name: { zh: '防水基材處理用密封膠', en: 'Sealants for waterproofing substrates', ja: '防水下地用シーリング材' },
         products: [
-          { key: 'QS', url: AC + '/969/', d: { zh: '速乾型：防水基材處理用的速乾密封材', en: 'Quick-drying sealant for waterproofing substrate preparation', ja: '速乾性。防水下地処理用の速乾タイプ。' } },
+          { key: 'QS', url: AC + '/969/', d: { zh: '速乾型：防水基材處理用的速乾密封膠', en: 'Quick-drying sealant for waterproofing substrate preparation', ja: '速乾性。防水下地処理用の速乾タイプ。' } },
           { key: 'NBQ', url: AC + '/976/', d: { zh: '補修用速乾型：也可用於防水、塗裝基材', en: 'Quick-drying non-bleed sealant for repairs, waterproofing and paint substrates', ja: '補修用速乾性。防水、塗装下地にも使える速乾ノンブリード。' } },
           { key: 'NB101', anchor: '#sl-products', guide: 'sl', d: { zh: '不滲出・高耐久：耐久性優異的通用型', en: 'Non-bleed, high durability: the general-purpose type with excellent durability', ja: 'ノンブリード・高耐久：耐久性に優れた汎用タイプ。' } }
         ] },
-      { id: 'ind', guide: 'sl', url: AC + '/products/sealing/industry/', name: { zh: '工業用密封材', en: 'Industrial sealants', ja: '工業用シーリング材' },
+      { id: 'ind', guide: 'sl', url: AC + '/products/sealing/industry/', name: { zh: '工業用密封膠', en: 'Industrial sealants', ja: '工業用シーリング材' },
         products: [
           { key: 'R101', anchor: '#sl-products', d: { zh: '為產業用途開發的速乾型・高彈性聚氨酯：鋼板接縫、水密・氣密部位、電纜線槽、金屬與塑膠接合處。白・T 灰・黑，320 ml ×25', en: 'Quick-drying, high-elasticity polyurethane developed for industry: steel-sheet seams, watertight and airtight details, cable moulding, metal-to-plastic joints. White, T-grey, black; 320 ml ×25', ja: '産業用に開発した速乾タイプ・高弾性のポリウレタン：鋼板継ぎ目、水密・気密部、ケーブルモール、金属とプラスチックのジョイント。白・Tグレー・黒、320 ml ×25' } }
         ] },
-      { id: 'other', guide: 'sl', url: AC + '/products/sealing/other/', name: { zh: '其他密封材等', en: 'Other sealants', ja: 'その他シーリング材等' },
+      { id: 'other', guide: 'sl', url: AC + '/products/sealing/other/', name: { zh: '其他密封膠等', en: 'Other sealants', ja: 'その他シーリング材等' },
         products: [
           { key: 'CRH', url: AC + '/986/', d: { zh: 'VOC 對策，最適合無塵室', en: 'Low-VOC formulation, ideal for clean rooms', ja: 'VOC対策でクリーンルームに最適。' } },
-          { key: 'CLIO', anchor: '#sl-products', d: { zh: '速乾・高耐候・高耐久的透明密封材：透明、可塗裝、不污染', en: 'Quick-drying, high-weathering, high-durability clear sealant: transparent, paintable, non-staining', ja: '速乾性 高耐候、高耐久の透明なシーリング材。' } },
+          { key: 'CLIO', anchor: '#sl-products', d: { zh: '速乾・高耐候・高耐久的透明密封膠：透明、可塗裝、不污染', en: 'Quick-drying, high-weathering, high-durability clear sealant: transparent, paintable, non-staining', ja: '速乾性 高耐候、高耐久の透明なシーリング材。' } },
           { key: 'OP2020', anchor: '#sl-products', bundled: true, d: { zh: 'CLIO NEO／101A-NB 用底漆：多孔與無機基材', en: 'Primer for CLIO NEO and 101A-NB on porous and mineral substrates', ja: 'クリオNEO／101A-NB用プライマー。多孔質・無機下地に。' } }
         ] }
     ] },
@@ -142,7 +137,6 @@ var CATALOG = [
           { key: 'FS600', anchor: '#ad-top', d: { zh: '木質地板材／木質基材用聚氨酯接著劑：JIS A 5536 耐熱型認證、地暖對應、防止地板異音。600 ml 雙用包裝（每支約 21 m）', en: 'Urethane adhesive for wood flooring and wood sub-floors: JIS A 5536 heat-resistant certification, floor-heating compatible, stops floor squeak. 600 ml dual pack (about 21 m per pack)', ja: '木質床材／木質下地用ウレタン接着剤：JIS A 5536 耐熱型認証、床暖房対応、床鳴り防止。600 ml どっちもパック（1本約 21 m）' } },
           { key: 'NEDA', anchor: '#ad-products', d: { zh: '龍骨・合板・地板・鋼製支柱用一液型聚氨酯：大容量 850 ml、地暖對應、抑制地板異音，F☆☆☆☆・4VOC', en: 'One-component polyurethane for joists, plywood, flooring and steel floor posts: large 850 ml cartridge, floor-heating compatible, suppresses squeak, F☆☆☆☆ / 4VOC', ja: '根太・合板・フローリング・鋼製束用の1成分形ポリウレタン：大容量 850 ml、床暖房対応、床鳴り抑制、F☆☆☆☆・4VOC' } },
           { key: 'AD8500', anchor: '#ad-products', d: { zh: '以 TVOC 對策為優先的濕氣硬化型聚氨酯：無溶劑・無可塑劑，亦可接著砂漿・ALC，最適合地暖用途。600 ml 軟卡匣', en: 'Moisture-curing urethane with TVOC countermeasures as the priority: solvent- and plasticiser-free, bonds to mortar and ALC, ideal for floor heating. 600 ml soft cartridge', ja: 'TVOC 対策を最優先した湿気硬化型ウレタン：無溶剤・可塑剤なし、モルタル・ALC にも接着、床暖房用途に最適。600 ml ソフトカートリッジ' } },
-          { key: 'AD8800', anchor: '#ad-products', d: { zh: '直貼木質地板用：可直貼於混凝土・砂漿・ALC・溫水面板，JIS A 5536 認證、地暖對應。10 kg 罐', en: 'For direct-glued wood flooring: bonds to concrete, mortar, ALC and hot-water panels, JIS A 5536 certified, floor-heating compatible. 10 kg can', ja: '直貼り木質フローリング用：コンクリート・モルタル・ALC・温水パネルへ直貼り可、JIS A 5536 認証、床暖房対応。10 kg 缶' } },
           { key: 'AD1000R', anchor: '#ad-products', d: { zh: '速硬化高強度多用途接著劑：木材・混凝土・砂漿・磁磚・FRP・玻璃・硬質 PVC・石膏板。320 ml，JAI 12', en: 'Fast-curing, high-strength multi-purpose adhesive: wood, concrete, mortar, tile, FRP, glass, rigid PVC, plasterboard. 320 ml, JAI 12', ja: '速硬化の高強度多用途接着剤：木材・コンクリート・モルタル・タイル・FRP・ガラス・硬質塩ビ・石膏ボード。320 ml、JAI 12' } }
         ] },
       { id: 'adhResin', guide: 'ad', url: AC + '/products/adhesive/resin/', name: { zh: '樹脂地板材用接著劑', en: 'Adhesives for resin flooring', ja: '樹脂床材用接着剤' },
@@ -165,17 +159,9 @@ var CATALOG = [
           { key: 'OP30', anchor: '#ux-products', d: { zh: '防水材用通用底漆。砂漿基材等', en: 'General primer for waterproofing. Mortar substrates and the like', ja: '防水材用汎用プライマー。モルタル下地などに。' } },
           { key: 'ACC', anchor: '#ux-products', d: { zh: 'UREAX-HG 專用硬化促進劑', en: 'Curing accelerator for UREAX-HG', ja: 'ウレアックスHG専用硬化促進剤。' } }
         ] },
-      { id: 'eg', url: AC + '/products/waterproofing/enaguard/', name: { zh: 'ENAGUARD 系列', en: 'ENAGUARD range', ja: 'エナガード関連' },
+      { id: 'ps', url: AC + '/products/waterproofing/pre-sealing/', name: { zh: '防水基材處理用密封膠', en: 'Sealants for waterproofing substrates', ja: '防水下地用シーリング材' },
         products: [
-          { key: 'EGE', url: AC + '/1055/', disc: true, d: { zh: '一液聚氨酯塗膜防水材（平面用）：混凝土基材平面防水、既有 FRP 防水的平面翻新。18 kg 罐、2.6 kg 袋 ×5', en: 'One-component urethane liquid membrane (horizontal areas): concrete decks and refurbishment of existing FRP waterproofing. 18 kg can, 2.6 kg bags ×5', ja: '1液ウレタン塗膜防水材（平場用）：コンクリート下地の平場防水、既設 FRP 防水の平場改修。18 kg 缶・2.6 kg 袋×5' } },
-          { key: 'EGT', url: AC + '/1061/', disc: true, d: { zh: '速硬化・高強度的二液丙烯酸聚氨酯面漆：ENAGUARD 用面塗，灰／銀灰，1.4 kg／14 kg 套組', en: 'Fast-curing, high-strength two-component acrylic-urethane top coat for ENAGUARD: grey / silver grey, 1.4 kg and 14 kg sets', ja: '速硬化・高強度の2液アクリルウレタントップコート：エナガード用仕上げ塗料、グレー／シルバーグレー、1.4 kg／14 kg セット' } },
-          { key: 'EGV', url: AC + '/1058/', disc: true, d: { zh: '一液聚氨酯塗膜防水材（立面用）：混凝土基材立面防水。10 kg 罐', en: 'One-component urethane liquid membrane (upstands): concrete upstands. 10 kg can', ja: '1液ウレタン塗膜防水材（立上り用）：コンクリート下地の立上り防水。10 kg 缶' } },
-          { key: 'OP55', anchor: '#ux-products', guide: 'ux', d: { zh: 'FRP 基材免打磨即可施工的專用底漆', en: 'Primer for FRP substrates without sanding', ja: 'FRP下地のサンディング処理なしで施工が可能。' } },
-          { key: 'OP30', anchor: '#ux-products', guide: 'ux', d: { zh: '防水材用通用底漆。砂漿基材等', en: 'General primer for waterproofing. Mortar substrates and the like', ja: '防水材用汎用プライマー。モルタル下地などに。' } }
-        ] },
-      { id: 'ps', url: AC + '/products/waterproofing/pre-sealing/', name: { zh: '防水基材處理用密封材', en: 'Sealants for waterproofing substrates', ja: '防水下地用シーリング材' },
-        products: [
-          { key: 'QS', url: AC + '/969/', d: { zh: '速乾型：防水基材處理用的速乾密封材', en: 'Quick-drying sealant for waterproofing substrate preparation', ja: '速乾性。防水下地処理用の速乾タイプ。' } },
+          { key: 'QS', url: AC + '/969/', d: { zh: '速乾型：防水基材處理用的速乾密封膠', en: 'Quick-drying sealant for waterproofing substrate preparation', ja: '速乾性。防水下地処理用の速乾タイプ。' } },
           { key: 'NBQ', url: AC + '/976/', d: { zh: '補修用速乾型：也可用於防水、塗裝基材', en: 'Quick-drying non-bleed sealant for repairs, waterproofing and paint substrates', ja: '補修用速乾性。防水、塗装下地にも使える速乾ノンブリード。' } }
         ] }
     ] },
@@ -194,23 +180,16 @@ var CATALOG = [
         ] },
       { id: 'relSurf', url: AC + '/products/related-products/surface-effect-promotion/', name: { zh: '表面處理・硬化促進劑', en: 'Surface treatment and curing accelerators', ja: '表面処理・硬化促進剤' },
         products: [
-          { key: 'SOKKAN', url: AC + '/18746/', d: { zh: 'Auton 專用表面硬化噴劑：促進密封材表面硬化，使塗裝等後續工序更順暢。290 ml ×10', en: 'Surface-curing spray for Auton sealants: accelerates skinning so painting and the following trades can start sooner. 290 ml ×10', ja: 'オートン専用の表面硬化スプレー：シーリング材の表面硬化を促進し、塗装など次工程への移行をスムーズに。290 ml×10' } },
-          { key: 'SEALDRYER', url: AC + '/1082/', disc: true, d: { zh: '只需噴於密封材表面即可加速表面乾燥（硬化）。420 ml ×10', en: 'Sprayed on the sealant to speed up surface drying (skinning). 420 ml ×10', ja: 'シーリング材にスプレーするだけで表面の乾燥（硬化）がスピードアップ。420 ml×10' } }
+          { key: 'SOKKAN', url: AC + '/18746/', d: { zh: 'Auton 專用表面硬化噴劑：促進密封膠表面硬化，使塗裝等後續工序更順暢。290 ml ×10', en: 'Surface-curing spray for Auton sealants: accelerates skinning so painting and the following trades can start sooner. 290 ml ×10', ja: 'オートン専用の表面硬化スプレー：シーリング材の表面硬化を促進し、塗装など次工程への移行をスムーズに。290 ml×10' } },
+          { key: 'SEALDRYER', url: AC + '/1082/', disc: true, d: { zh: '只需噴於密封膠表面即可加速表面乾燥（硬化）。420 ml ×10', en: 'Sprayed on the sealant to speed up surface drying (skinning). 420 ml ×10', ja: 'シーリング材にスプレーするだけで表面の乾燥（硬化）がスピードアップ。420 ml×10' } }
         ] },
       { id: 'relOther', url: AC + '/products/related-products/other-related/', name: { zh: '其他副資材', en: 'Other accessories', ja: 'その他副資材' },
         products: [
           { key: 'HOLDERSC', url: AC + '/1098/', d: { zh: '軟卡匣製品的膠槍施工用固定筒：不易夾咬容器、施工順暢，對應市售 Jumbo 膠槍', en: 'Gun holder for soft-cartridge products: less pinching of the pack, smooth extrusion, fits commercial jumbo guns', ja: 'ソフトカート製品のガン打ち用ホルダー：容器の噛み込みが少なくスムーズ、市販のジャンボガン対応' } },
-          { key: 'HOLDERDP', url: AC + '/1095/', d: { zh: 'フロアスター・ENAGUARD V 用的膠槍施工固定筒：對應市售 Jumbo 膠槍', en: 'Gun holder for the フロアスター and ENAGUARD V packs: fits commercial jumbo guns', ja: 'フロアスター・エナガードV 用のガン打ち用ホルダー：市販のジャンボガン対応' } },
-          { key: 'PAILCAN', url: AC + '/1092/', d: { zh: '將桶裝密封材分裝至卡匣的容器：留存供貫通部、小補修使用。25 支一組', en: 'Cartridges for decanting pail sealant: keeps a reserve for penetrations and small repairs. Set of 25', ja: 'ペール缶のシーリング材をカートリッジへ詰め替える容器：貫通部や補修用の取り置きに。25 本セット' } }
+          { key: 'HOLDERDP', url: AC + '/1095/', d: { zh: 'フロアスター用的膠槍施工固定筒：對應市售 Jumbo 膠槍', en: 'Gun holder for the フロアスター packs: fits commercial jumbo guns', ja: 'フロアスター用のガン打ち用ホルダー：市販のジャンボガン対応' } },
+          { key: 'PAILCAN', url: AC + '/1092/', d: { zh: '將桶裝密封膠分裝至卡匣的容器：留存供貫通部、小補修使用。25 支一組', en: 'Cartridges for decanting pail sealant: keeps a reserve for penetrations and small repairs. Set of 25', ja: 'ペール缶のシーリング材をカートリッジへ詰め替える容器：貫通部や補修用の取り置きに。25 本セット' } }
         ] }
-    ] },
-  { id: 'db', tone: 'grey', url: AC + '/products/db-product/', name: { zh: 'DB 製品（工業用接著劑）', en: 'DB products (industrial adhesives)', ja: 'DB製品' },
-    subs: (typeof DB_CATS !== 'undefined' ? DB_CATS : []).map(function (c) {
-      return { id: 'db_' + c[0], url: c[1], name: c[2], intro: c[3], db: true, products: (typeof DB_PRODUCTS !== 'undefined' ? DB_PRODUCTS : []).filter(function (p) { return p[0] === c[0]; }).map(function (p) {
-        var sds = p[2] ? ([].concat(p[2])).map(function (x) { return typeof x === 'string' ? ['SDS', DB_SDS + x + '.pdf'] : [x[0], DB_SDS + x[1] + '.pdf']; }) : [];
-        return { code: p[1], sds: sds, url: c[1], d: { ja: p[3], zh: p[4], en: p[5] } };
-      }) };
-    }) }
+    ] }
 ];
 var MT = {
   en: { 'hs.eyebrow': 'Interactive · Hands-on simulation', 'hs.btn': 'Enter the simulator', 'hs.foot': 'First person on the 3D sample of this page: the stages, tools and figures of the guide; the waiting times run on the site clock. No site, no risk — repeat it as often as you like. Desktop, tablet and phone.', 'hs.m0': 'work steps', 'hs.m1': 'site decisions', 'hs.m2': 'h of curing', 'nav.hs': 'Hands-on', 'a11y.skip': 'Skip to content', 'util.dist': 'Authorized agent of Auto Chemical for Taiwan', 'util.tds': 'Catalogue / SDS', 'util.calc': 'Quantities and quotation',
@@ -220,9 +199,9 @@ var MT = {
     'nav.po.points': 'Four points', 'nav.po.subs': 'Substrates', 'nav.po.tests': 'Evidence', 'nav.po.tl': 'Procedure', 'nav.po.3d': '3D Model', 'nav.po.products': 'Product data', 'nav.po.calc': 'Take-off', 'nav.po.cta': 'Take-off',
     'nav.sl.system': 'System', 'nav.sl.adv': 'Advantages', 'nav.sl.vs': 'Versus', 'nav.sl.tl': 'Procedure', 'nav.sl.3d': '3D Joint', 'nav.sl.qa': 'Quality', 'nav.sl.sim': 'Cure time', 'nav.sl.products': 'Product data', 'nav.sl.calc': 'Quotation', 'nav.sl.cmp': 'Comparison', 'nav.sl.cta': 'Quotation',
     'nav.ad.system': 'System', 'nav.ad.adv': 'Advantages', 'nav.ad.tl': 'Procedure', 'nav.ad.3d': '3D Floor', 'nav.ad.qa': 'Quality', 'nav.ad.products': 'Product data', 'nav.ad.calc': 'Take-off', 'nav.ad.cmp': 'Comparison', 'nav.ad.cta': 'Take-off',
-    'menu.disc': 'Discontinued', 'menu.sds': 'Safety data sheet (PDF) on autochem.co.jp', 'menu.dbsrc': 'Codes and notes as printed on the manufacturer\'s list; the SDS (2026/03) open on autochem.co.jp.',
+    'menu.disc': 'Discontinued', 'menu.sds': 'Safety data sheet (PDF) on autochem.co.jp',
     'title.ux': 'Auton UREAX-HG Guide', 'title.po': 'Auton PROTECT ONE Guide', 'title.sl': 'Auton Sealants Guide — EXCEED · CLIO NEO · 101A-NB', 'title.ad': 'Auton Adhesives Guide — Wood flooring · Resin flooring',
-    'foot.boiler': 'AUTO CHEMICAL INDUSTRY CO., LTD. (オート化学工業株式会社), Tokyo — founded 1965 — manufacturer of sealants, adhesives, waterproofing materials and polyurethane resins for the building, civil-engineering, vehicle and industrial sectors. Product groups:', 'foot.areas': ['Sealants', 'Adhesives', 'Waterproofing materials', 'Transparent resin', 'Related products', 'DB products (industrial adhesives)'],
+    'foot.boiler': 'AUTO CHEMICAL INDUSTRY CO., LTD. (オート化学工業株式会社), Tokyo — founded 1965 — manufacturer of sealants, adhesives, waterproofing materials and polyurethane resins for the building, civil-engineering, vehicle and industrial sectors. Product groups:', 'foot.areas': ['Sealants', 'Adhesives', 'Waterproofing materials', 'Transparent resin', 'Related products'],
     'foot.maker': 'Manufacturer', 'foot.addr': 'AUTO CHEMICAL INDUSTRY CO., LTD.\nHead office / Tokyo branch: 5-8-5 Ueno, Taito-ku, Tokyo 110-0005, Japan · TEL +81-3-5812-7310\nOsaka branch: 2-18-23 Minamikaneda, Suita, Osaka 564-0044, Japan · TEL +81-6-6821-8011\nFactories: Tsuchiura and Kitaibaraki (ISO 9001 / ISO 14001)\nwww.autochem.co.jp',
     'foot.gs.reg': '好時新創有限公司 · GOOD STARTUP CO., LTD.', 'foot.gs': 'Authorized agent of AUTO CHEMICAL INDUSTRY CO., LTD. for Taiwan — certificate issued 1 September 2025, valid 1 September 2025 to 31 August 2026 and renewed before expiry — for the sale, marketing and customer support of AUTON XH-470, XE-680, XE-680T, ULTRACOAT (now PROTECT ONE), EXCEED, CLIO NEO, QuickSealant and NonBleed Quick in Taiwan. Quotations, samples, technical advice and site support in 繁體中文 / English / 日本語.', 'foot.links': 'Links',
     'foot.link.ux': 'UREAX range (manufacturer)', 'foot.link.hg': 'UREAX-HG product page', 'foot.link.po': 'PROTECT ONE product page', 'foot.link.sl': 'Sealants (manufacturer)', 'foot.link.ex': 'EXCEED product page', 'foot.link.cat': 'Catalogues', 'foot.link.sds': 'SDS, waterproofing materials',
@@ -230,18 +209,18 @@ var MT = {
     'modal.prev': 'Previous step', 'modal.next': 'Next step', 'copied': 'Copied to the clipboard.', 'copyFail': 'The clipboard is not available — select the text by hand.', 'saved': 'Handed to the browser to save.', 'declined': 'Saving cancelled.', 'unavail': 'This view cannot save files — use “Copy text” instead.' },
   zh: { 'hs.eyebrow': '互動・親手施作模擬', 'hs.btn': '進入模擬現場', 'hs.foot': '以第一人稱站在本頁的 3D 樣本上：指南的工序、工具與數據，等待時間在現場時鐘上流逝。沒有工地、沒有風險——想練幾次就幾次。桌機、平板、手機皆可。', 'hs.m0': '個施作工序', 'hs.m1': '項現場判斷', 'hs.m2': '小時養生', 'nav.hs': '模擬現場', 'a11y.skip': '跳至主要內容', 'util.dist': 'Auto Chemical 台灣認定代理商', 'util.tds': '型錄／SDS', 'util.calc': '用量與報價',
     'theme.group': '顯示主題', 'theme.day': '日間', 'theme.night': '夜間', 'theme.day.aria': '日間模式（淺色底）', 'theme.night.aria': '夜間模式（深色底）',
-    'menu.products': '產品', 'menu.cats': '分類', 'menu.guide': '本站指南', 'menu.bundled': '隨密封材附', 'menu.allof': '{g}全部產品 · 前往 autochem.co.jp', 'menu.inguide': '本站指南內', 'menu.back': '返回', 'menu.open': '開啟指南', 'menu.onsite': '本站內容', 'menu.external': '前往 autochem.co.jp', 'menu.allsubs': '全部產品', 'menu.close': '關閉選單', 'menu.switch': '產品類別', 'menu.ext': 'autochem.co.jp 產品頁',
+    'menu.products': '產品', 'menu.cats': '分類', 'menu.guide': '本站指南', 'menu.bundled': '隨密封膠附', 'menu.allof': '{g}全部產品 · 前往 autochem.co.jp', 'menu.inguide': '本站指南內', 'menu.back': '返回', 'menu.open': '開啟指南', 'menu.onsite': '本站內容', 'menu.external': '前往 autochem.co.jp', 'menu.allsubs': '全部產品', 'menu.close': '關閉選單', 'menu.switch': '產品類別', 'menu.ext': 'autochem.co.jp 產品頁',
     'nav.ux.system': '系統構成', 'nav.ux.adv': '產品優勢', 'nav.ux.vs': '技術比較', 'nav.ux.tl': '施工步驟', 'nav.ux.3d': '3D 模型', 'nav.ux.sim': '1Day 模擬', 'nav.ux.products': '產品資料', 'nav.ux.qa': '品質保證', 'nav.ux.calc': '估算報價', 'nav.ux.cmp': '產品比較', 'nav.ux.cta': '報價單',
     'nav.po.points': '四大性能', 'nav.po.subs': '適用基材', 'nav.po.tests': '實證', 'nav.po.tl': '施工概要', 'nav.po.3d': '3D 模型', 'nav.po.products': '產品資料', 'nav.po.calc': '用量估算', 'nav.po.cta': '用量估算',
     'nav.sl.system': '系統構成', 'nav.sl.adv': '產品優勢', 'nav.sl.vs': '技術比較', 'nav.sl.tl': '施工步驟', 'nav.sl.3d': '3D 接縫', 'nav.sl.qa': '品質保證', 'nav.sl.sim': '硬化時程', 'nav.sl.products': '產品資料', 'nav.sl.calc': '估算報價', 'nav.sl.cmp': '產品比較', 'nav.sl.cta': '報價單',
     'nav.ad.system': '系統構成', 'nav.ad.adv': '產品優勢', 'nav.ad.tl': '施工步驟', 'nav.ad.3d': '3D 地板', 'nav.ad.qa': '品質保證', 'nav.ad.products': '產品資料', 'nav.ad.calc': '用量估算', 'nav.ad.cmp': '產品比較', 'nav.ad.cta': '用量估算',
-    'menu.disc': '已停售', 'menu.sds': 'autochem.co.jp 的安全資料表（PDF）', 'menu.dbsrc': '品號與說明依製造商一覽表；SDS（2026/03）於 autochem.co.jp 開啟。',
-    'title.ux': 'Auton UREAX-HG 施工指南', 'title.po': 'Auton PROTECT ONE 施工指南', 'title.sl': 'Auton 密封材施工指南 — EXCEED · CLIO NEO · 101A-NB', 'title.ad': 'Auton 接著劑施工指南 — 木質地板 · 樹脂地板',
-    'foot.boiler': 'AUTO CHEMICAL INDUSTRY CO., LTD.（オート化学工業株式会社，東京）創立於 1965 年，為密封材、接著劑、防水材與聚氨酯樹脂的製造商，產品用於建築、土木、車輛與工業領域。產品類別：', 'foot.areas': ['密封材', '接著劑', '防水材', '透明樹脂', '關聯商品', 'DB 製品（工業用接著劑）'],
+    'menu.disc': '已停售', 'menu.sds': 'autochem.co.jp 的安全資料表（PDF）',
+    'title.ux': 'Auton UREAX-HG 施工指南', 'title.po': 'Auton PROTECT ONE 施工指南', 'title.sl': 'Auton 密封膠施工指南 — EXCEED · CLIO NEO · 101A-NB', 'title.ad': 'Auton 接著劑施工指南 — 木質地板 · 樹脂地板',
+    'foot.boiler': 'AUTO CHEMICAL INDUSTRY CO., LTD.（オート化学工業株式会社，東京）創立於 1965 年，為密封膠、接著劑、防水材與聚氨酯樹脂的製造商，產品用於建築、土木、車輛與工業領域。產品類別：', 'foot.areas': ['密封膠', '接著劑', '防水材', '透明樹脂', '關聯商品'],
     'foot.maker': '製造商', 'foot.addr': 'AUTO CHEMICAL INDUSTRY CO., LTD.\n本社・東京支店：〒110-0005 東京都台東区上野5-8-5 · TEL 03-5812-7310\n大阪支店：〒564-0044 大阪府吹田市南金田2-18-23 · TEL 06-6821-8011\n工廠：土浦、北茨城（ISO 9001／ISO 14001 認證）\nwww.autochem.co.jp',
     'foot.gs.reg': '好時新創有限公司 · GOOD STARTUP CO., LTD.', 'foot.gs': 'オート化学工業株式会社（AUTO CHEMICAL INDUSTRY CO., LTD.）認定代理店（台灣）：認定書 2025 年 9 月 1 日發行，有效期間 2025 年 9 月 1 日至 2026 年 8 月 31 日，期滿前辦理更新。認定範圍為下列製品在台灣的銷售、行銷與客戶支援：AUTON XH-470・XE-680・XE-680T・ULTRACOAT（現 PROTECT ONE）・EXCEED・CLIO NEO・QuickSealant・NonBleed Quick。報價、樣品、技術諮詢與現場支援，提供繁體中文／English／日本語服務。', 'foot.links': '連結',
-    'foot.link.ux': 'UREAX 系列（製造商）', 'foot.link.hg': 'UREAX-HG 產品頁', 'foot.link.po': 'PROTECT ONE 產品頁', 'foot.link.sl': '密封材（製造商）', 'foot.link.ex': 'EXCEED 產品頁', 'foot.link.cat': '各種商品型錄', 'foot.link.sds': 'SDS・防水材',
-    'foot.disclaimer': '產品資料轉載自代理商提供的 Auto Chemical 文件——UREAX-HG 繁體中文型錄（2023.11）、製造商 JIS A 6021 原廠試驗報告（2025.08）、OP-30B／OP-2019／OP-2020 技術資料（2025.08／2026.01）、EXCEED 型錄（2023.04）、F☆☆☆☆／4VOC 登錄證書與公司簡介（2019.07）——以及型錄（UREAX-HG 2024.02、PROTECT ONE 2026.04）、autochem.co.jp 產品頁與 SDS（2026.05）；製造商未公布的數值標示為 TBC。商品名稱為 AUTO CHEMICAL INDUSTRY CO., LTD. 所有。認定代理店認定書證明代理銷售製造商產品之權限；施工品質、結果或施工所致之任何損害，製造商不予保證亦不負責。內容可能變更，請以最新型錄與標準施工規範書為準。', 'foot.product.ux': 'UREAX-HG 產品頁', 'foot.tds.ux': '型錄 2024.02 · SDS 2026/05/27', 'foot.product.po': 'PROTECT ONE 產品頁', 'foot.tds.po': '型錄 2026.04', 'foot.product.sl': '密封材（製造商）', 'foot.tds.sl': 'EXCEED 型錄 2023.04 · TDS 2025.08／2026.01 · SGS 報告 2013', 'foot.product.ad': '接著劑（製造商）', 'foot.tds.ad': 'autochem.co.jp 產品頁 · SDS（接著劑）',
+    'foot.link.ux': 'UREAX 系列（製造商）', 'foot.link.hg': 'UREAX-HG 產品頁', 'foot.link.po': 'PROTECT ONE 產品頁', 'foot.link.sl': '密封膠（製造商）', 'foot.link.ex': 'EXCEED 產品頁', 'foot.link.cat': '各種商品型錄', 'foot.link.sds': 'SDS・防水材',
+    'foot.disclaimer': '產品資料轉載自代理商提供的 Auto Chemical 文件——UREAX-HG 繁體中文型錄（2023.11）、製造商 JIS A 6021 原廠試驗報告（2025.08）、OP-30B／OP-2019／OP-2020 技術資料（2025.08／2026.01）、EXCEED 型錄（2023.04）、F☆☆☆☆／4VOC 登錄證書與公司簡介（2019.07）——以及型錄（UREAX-HG 2024.02、PROTECT ONE 2026.04）、autochem.co.jp 產品頁與 SDS（2026.05）；製造商未公布的數值標示為 TBC。商品名稱為 AUTO CHEMICAL INDUSTRY CO., LTD. 所有。認定代理店認定書證明代理銷售製造商產品之權限；施工品質、結果或施工所致之任何損害，製造商不予保證亦不負責。內容可能變更，請以最新型錄與標準施工規範書為準。', 'foot.product.ux': 'UREAX-HG 產品頁', 'foot.tds.ux': '型錄 2024.02 · SDS 2026/05/27', 'foot.product.po': 'PROTECT ONE 產品頁', 'foot.tds.po': '型錄 2026.04', 'foot.product.sl': '密封膠（製造商）', 'foot.tds.sl': 'EXCEED 型錄 2023.04 · TDS 2025.08／2026.01 · SGS 報告 2013', 'foot.product.ad': '接著劑（製造商）', 'foot.tds.ad': 'autochem.co.jp 產品頁 · SDS（接著劑）',
     'modal.prev': '上一步', 'modal.next': '下一步', 'copied': '已複製到剪貼簿。', 'copyFail': '無法存取剪貼簿——請手動選取文字。', 'saved': '已交給瀏覽器儲存。', 'declined': '已取消儲存。', 'unavail': '此檢視無法儲存檔案；請改用「複製文字」。' },
   ja: { 'hs.eyebrow': 'インタラクティブ・実習シミュレーション', 'hs.btn': 'シミュレーターに入る', 'hs.foot': 'このページの 3D サンプル上に一人称で立つ：ガイドの工程・工具・数値そのまま、待ち時間は現場時計で進む。現場も危険もなく、何度でも練習できる。PC・タブレット・スマートフォン対応。', 'hs.m0': '作業工程', 'hs.m1': '現場判断', 'hs.m2': '時間の養生', 'nav.hs': '実習', 'a11y.skip': '本文へ移動', 'util.dist': 'オート化学工業株式会社 認定代理店（台湾）', 'util.tds': 'カタログ／SDS', 'util.calc': '数量と見積',
     'theme.group': '表示テーマ', 'theme.day': '昼', 'theme.night': '夜', 'theme.day.aria': '昼間モード（明るい背景）', 'theme.night.aria': '夜間モード（暗い背景）',
@@ -250,9 +229,9 @@ var MT = {
     'nav.po.points': '4つのポイント', 'nav.po.subs': '適用部材', 'nav.po.tests': '実証', 'nav.po.tl': '施工概要', 'nav.po.3d': '3Dモデル', 'nav.po.products': '商品データ', 'nav.po.calc': '数量', 'nav.po.cta': '数量',
     'nav.sl.system': 'システム', 'nav.sl.adv': '特長', 'nav.sl.vs': '技術比較', 'nav.sl.tl': '施工手順', 'nav.sl.3d': '3D目地', 'nav.sl.qa': '品質保証', 'nav.sl.sim': '硬化時間', 'nav.sl.products': '商品データ', 'nav.sl.calc': '見積', 'nav.sl.cmp': '比較', 'nav.sl.cta': '見積書',
     'nav.ad.system': 'システム', 'nav.ad.adv': '特長', 'nav.ad.tl': '施工手順', 'nav.ad.3d': '3D床', 'nav.ad.qa': '品質保証', 'nav.ad.products': '商品データ', 'nav.ad.calc': '数量', 'nav.ad.cmp': '比較', 'nav.ad.cta': '数量',
-    'menu.disc': '販売終了', 'menu.sds': 'autochem.co.jp の安全データシート（PDF）', 'menu.dbsrc': '品番と説明はメーカーの一覧表のまま。SDS（2026/03）は autochem.co.jp で開きます。',
+    'menu.disc': '販売終了', 'menu.sds': 'autochem.co.jp の安全データシート（PDF）',
     'title.ux': 'オートンウレアックスHG 施工ガイド', 'title.po': 'オートンプロテクトワン 施工ガイド', 'title.sl': 'オートン シーリング材 施工ガイド — イクシード・クリオNEO・101A-NB', 'title.ad': 'オートン 接着剤 施工ガイド — 木質床材・樹脂床材',
-    'foot.boiler': 'オート化学工業株式会社（AUTO CHEMICAL INDUSTRY CO., LTD.、東京）は 1965 年創業。シーリング材・接着剤・防水材・ウレタン樹脂の製造メーカーとして、建築・土木・車両・工業の各分野に製品を供給しています。商品分類：', 'foot.areas': ['シーリング材', '接着剤', '防水材', '透明樹脂', '関連商品', 'DB製品'],
+    'foot.boiler': 'オート化学工業株式会社（AUTO CHEMICAL INDUSTRY CO., LTD.、東京）は 1965 年創業。シーリング材・接着剤・防水材・ウレタン樹脂の製造メーカーとして、建築・土木・車両・工業の各分野に製品を供給しています。商品分類：', 'foot.areas': ['シーリング材', '接着剤', '防水材', '透明樹脂', '関連商品'],
     'foot.maker': '製造元', 'foot.addr': 'オート化学工業株式会社\n本社・東京支店：〒110-0005 東京都台東区上野5-8-5 · TEL 03-5812-7310\n大阪支店：〒564-0044 大阪府吹田市南金田2-18-23 · TEL 06-6821-8011\n工場：土浦、北茨城（ISO 9001／ISO 14001 認証）\nwww.autochem.co.jp',
     'foot.gs.reg': '好時新創有限公司（GOOD STARTUP CO., LTD.）', 'foot.gs': 'オート化学工業株式会社の認定代理店（台湾）。認定書は 2025 年 9 月 1 日発行、有効期間は 2025 年 9 月 1 日〜2026 年 8 月 31 日（期間満了前に更新）。対象製品 AUTON XH-470・XE-680・XE-680T・ULTRACOAT（現 プロテクトワン）・EXCEED・CLIO NEO・QuickSealant・NonBleed Quick の台湾における販売・マーケティング・顧客サポートを行います。見積・サンプル・技術相談・現場サポートは繁體中文／English／日本語で対応します。', 'foot.links': 'リンク',
     'foot.link.ux': 'ウレアックス関連（製造元）', 'foot.link.hg': 'オートンウレアックスHG 商品ページ', 'foot.link.po': 'オートンプロテクトワン 商品ページ', 'foot.link.sl': 'シーリング材（製造元）', 'foot.link.ex': 'オートンイクシード 商品ページ', 'foot.link.cat': '各種商品カタログ', 'foot.link.sds': 'SDS・防水材',
@@ -300,10 +279,7 @@ var Menu = (function () {
   function products(s) {
     var h = '', gd = s.hash ? s : (s.guide ? home(s.guide) : null);
     if (gd) h += '<a class="pmenu__lead" href="' + gd.hash + '" data-go="' + gd.guide + '"><b>' + tr('menu.open') + ': ' + L(gd.name) + '</b><span>' + L(gd.lead) + '</span></a>';
-    /* a DB製品 sub-category: the manufacturer's category page as the lead, then the grades as compact rows (code · SDS · note) */
-    if (s.db) h += '<a class="pmenu__lead pmenu__lead--ext" href="' + s.url + '" target="_blank" rel="noopener"><b>' + L(s.name) + ' ' + EXT + '</b><span>' + L(s.intro) + ' ' + tr('menu.dbsrc') + '</span></a>';
     (s.products || []).forEach(function (p) {
-      if (p.code) { h += '<div class="pmenu__product pmenu__product--db"><span class="pmenu__pname"><b class="pmenu__code">' + esc(p.code) + '</b>' + p.sds.map(function (x) { return '<a class="pmenu__sds" href="' + x[1] + '" target="_blank" rel="noopener" title="' + esc(tr('menu.sds')) + '">' + esc(x[0]) + '</a>'; }).join('') + '</span><b>' + esc(L(p.d)) + '</b></div>'; return; }
       var g2 = guideOf(s, p), disc = p.disc ? '<small class="pmenu__tag pmenu__tag--disc">' + tr('menu.disc') + '</small>' : '';
       if (p.anchor && g2) h += '<a class="pmenu__product" href="' + p.anchor + '" data-go="' + g2 + '" data-product="' + p.key + '"><span class="pmenu__pname">' + pn(p.key) + (p.bundled ? '<small class="pmenu__tag">' + tr('menu.bundled') + '</small>' : '<small class="pmenu__tag pmenu__tag--in">' + tr('menu.inguide') + '</small>') + '</span><b>' + L(p.d) + '</b></a>';
       else h += '<a class="pmenu__product pmenu__product--ext" href="' + p.url + '" target="_blank" rel="noopener" title="' + esc(tr('menu.ext')) + '"><span class="pmenu__pname">' + pn(p.key) + disc + EXT + '</span><b>' + L(p.d) + '</b></a>';

@@ -39,7 +39,6 @@ data_ad_en.js
 data_ad_ja.js
 m3d_ad.js
 mod_ad.js
-data_db.js
 doc_model.js
 doc_out.js
 doc_ui.js
@@ -144,5 +143,7 @@ island_aq.js
 island_ar.js
 island_as.js
 island_at.js
+island_au.js
+island_av.js
 island_c.js
 page.js

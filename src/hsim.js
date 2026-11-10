@@ -31,6 +31,7 @@ var HSIM = (function () {
       phaseDone: '完了：{n}', tip: 'ヒント', tapFull: 'タップで説明全文', helpT: '操作方法', loading: '現場を作成中…' }
   };
   function L() { return T[LANG] || T.en; }
+  /* (v75) who made the system: on the briefing and on the result (the words are the loader's, kept in one place) */ function devLine() { var d = window.AC_DEV || {}; return '<p class="hsim__dev">' + esc(d[LANG] || d.zh || '系統由 好時新創 開發') + '</p>'; }
   function f(s, o) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return o[k] != null ? o[k] : m; }); }
   /* ----- the tools: kind → icon, sound, name ----- */
   var TOOLS = {
@@ -328,7 +329,7 @@ var HSIM = (function () {
       '<p class="hsim__meta">' + esc(f(l.briefSub, { n: drives.length, t: ('0' + Math.floor(cfg.clock0 || 8)).slice(-2) + ':00' })) + '</p>' +
       '<div class="hsim__cols"><div><p class="hsim__h4">' + esc(l.tools) + '</p><ul class="hsim__toollist">' + ks.map(function (k, i) { return '<li><svg viewBox="0 0 24 24"><path d="' + (ICON[k] || ICON.look) + '"/></svg>' + esc(tname(k)) + '<i>' + (i + 1) + '</i></li>'; }).join('') + '</ul></div>' +
       '<div><p class="hsim__h4">' + esc(l.helpT) + '</p><ol class="hsim__ctrl">' + ctrl.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ol></div></div>' +
-      '<div class="hsim__cardact"><button class="sb-btn sb-btn--primary sb-btn--lg" type="button" id="hsStart">' + esc(l.start) + '</button><button class="sb-btn sb-btn--secondary" type="button" id="hsBack">' + esc(l.back) + '</button></div>';
+      '<div class="hsim__cardact"><button class="sb-btn sb-btn--primary sb-btn--lg" type="button" id="hsStart">' + esc(l.start) + '</button><button class="sb-btn sb-btn--secondary" type="button" id="hsBack">' + esc(l.back) + '</button></div>' + devLine();
     card(h); $('hsStart').addEventListener('click', function () { SimAudio.init(); ambient(); card(null); S.t0 = performance.now(); nextPhase(); }); $('hsBack').addEventListener('click', close);
   }
   function waitCard(p) {
@@ -362,7 +363,7 @@ var HSIM = (function () {
     var h = '<p class="hsim__kick">' + esc(l.rank) + ' — ' + esc(l.ranks[rank]) + '</p><h2>' + esc(l.res) + '</h2><div class="hsim__kpis"><div><b>' + sc + '</b><span>' + esc(l.resScore) + '</span></div><div><b>' + mins + ':' + ('0' + Math.floor(secs % 60)).slice(-2) + '</b><span>' + esc(l.resTime) + '</span></div><div><b>' + days + '</b><span>' + esc(l.resDays) + '</span></div></div>' +
       '<p class="hsim__h4">' + esc(l.notes) + '</p>' + (notes.length ? '<ul class="hsim__notes">' + notes.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '<p>' + esc(l.noNotes) + '</p>') +
       (cons ? '<p class="hsim__h4">' + esc(l.cons) + '</p><table class="hsim__cons">' + cons + '</table>' : '') +
-      '<div class="hsim__cardact"><button class="sb-btn sb-btn--primary sb-btn--lg" type="button" id="hsAgain">' + esc(l.again) + '</button><button class="sb-btn sb-btn--secondary" type="button" id="hsBack">' + esc(l.back) + '</button></div>';
+      '<div class="hsim__cardact"><button class="sb-btn sb-btn--primary sb-btn--lg" type="button" id="hsAgain">' + esc(l.again) + '</button><button class="sb-btn sb-btn--secondary" type="button" id="hsBack">' + esc(l.back) + '</button></div>' + devLine();
     card(h); SimAudio.fx('done'); SimAudio.tool(null); $('hsAgain').addEventListener('click', function () { var M = cfg.module; close(); open(cfg.cat, M); }); $('hsBack').addEventListener('click', close);
     try { if (window.ISLE) { ISLE.onSimDone(cfg.cat, rank, sc); if (ISLE.cameFrom() === cfg.cat) { var bi = document.createElement('button'); bi.type = 'button'; bi.className = 'sb-btn sb-btn--secondary'; bi.textContent = ISLE.t('backIsle'); bi.addEventListener('click', function () { close(); ISLE.open({ back: true }); }); $('hsCard').querySelector('.hsim__cardact').appendChild(bi); } } } catch (e) {}
   }

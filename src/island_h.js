@@ -63,7 +63,7 @@
 
   /* ---------- the title: JR Okachimachi on an autumn afternoon, a message from the section chief ---------- */
   /* camera framings in the district's local frame (metres / 1.2): the view across the side street to the north exit, the girder span over Kasuga-dori and the platforms above */
-  var TKCAM = { desk: { c: [26.2, 1.5, -1], t: [12, 6.0, 12], lu: [16.0, 7.0] }, narrow: { c: [23.6, 3.0, -2.2], t: [15.6, 1, 8.6], lu: [15.6, 8.6], fov: 58 } };
+  var TKCAM = { desk: { c: [26.2, 2.05, -1], t: [12, 6.2, 12], lu: [16.0, 7.0] }, /* (v76) the lens a little above the heads of the people who walk this sidewalk */ narrow: { c: [23.6, 3.0, -2.2], t: [15.6, 1, 8.6], lu: [15.6, 8.6], fov: 58 } };
   /* Tokyo is graded like a photograph rather than a diorama: no miniature blur, no lifted blacks, a little less exposure, a clearer far view */
   var tkPost = null; function tkLook(on) { if (!POST || !POST.final) return; var u = POST.final.uniforms; if (on) { if (!tkPost) tkPost = { tilt: u.uTilt.value, sat: u.uSat.value, lift: u.uLift.value, vig: u.uVig.value, near: W.fog ? W.fog.near : null, far: W.fog ? W.fog.far : null }; u.uTilt.value = 0.1; u.uSat.value = 1.1; u.uLift.value = 0.15; u.uVig.value = 0.42; u.uExpo.value = (W.P && W.P.expo || 1) * (0.9 + (W.night || 0) * 0.3); if (W.fog) { W.fog.near = 70; W.fog.far = 460; } }
     else if (tkPost) { u.uTilt.value = tkPost.tilt; u.uSat.value = tkPost.sat; u.uLift.value = tkPost.lift; u.uVig.value = tkPost.vig; u.uExpo.value = W.P && W.P.expo || 1; if (W.fog && tkPost.far != null) { W.fog.near = tkPost.near; W.fog.far = tkPost.far; } tkPost = null; } }

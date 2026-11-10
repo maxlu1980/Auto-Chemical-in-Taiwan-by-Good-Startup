@@ -49,3 +49,39 @@
 .cr-stagebar .seg--scroll button{flex:1 1 auto;background:var(--surface,var(--white));border-left:0;min-height:40px}
 .cr-stagebar .seg--scroll button[aria-pressed="true"]{background:var(--ink);color:var(--white)}
 }
+
+/* ---------- (v75) who made the system: 「系統由 好時新創 開發」, one quiet line on each screen — never on the picture while playing ---------- */
+/* at the foot of a panel (the map, the chemistry pocket, the phone's cards, the method notebook, the gear, the menu, the help, the picture quality) and of a card that sums something up */
+.isle__dev,.isle__cin p.isle__dev{margin:16px 0 0;padding-top:10px;border-top:2px dashed rgba(43,36,32,.18);font:600 12px/16px var(--font-sans);letter-spacing:.04em;color:#6b5a4e;text-align:center}
+/* on the title card: over the credits, a little stronger than them */
+.isle__dev--title{margin:12px 0 0;padding-top:0;border-top:0;text-align:left;color:#5a4a40}.isle__dev--title + .isle__credit{margin-top:4px}
+/* under the opening film's title, over its credits: in with the title (the picture goes to black some two seconds after it) */
+.isle__op-title .isle__op-dev{display:block;margin-top:22px;font:600 12.5px/1.4 var(--font-sans);letter-spacing:.14em;opacity:0;transition:opacity .9s ease .5s}.isle__op-title.is-in .isle__op-dev{opacity:.9}.isle__op-title .isle__op-dev + em{margin-top:6px}
+/* the simulator's briefing and result */
+.hsim__dev,.hsim__cardin p.hsim__dev{margin:16px 0 0;padding-top:10px;border-top:1px solid rgba(255,255,255,.14);font:500 12px/16px var(--font-sans);letter-spacing:.06em;color:rgba(255,255,255,.62);text-align:center}
+/* in the veil between two places: the last line of its card */
+.isle__dev--load{margin-top:12px;padding-top:9px}
+/* the phone she holds in the cities: a strip under its screen */
+.isle__phdev{flex:none;margin:0;padding:5px 10px 7px;border-top:1px solid rgba(17,17,17,.1);background:#e9edf2;font:600 12px/15px var(--font-sans);letter-spacing:.04em;color:#566070;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* the ride film between two stations: in its lower black bar */
+.isle__cine-dev{position:absolute;left:0;right:0;bottom:max(5px,env(safe-area-inset-bottom));margin:0;padding:0 12px;text-align:center;font:500 12px/16px var(--font-sans);letter-spacing:.1em;color:rgba(255,255,255,.72);text-shadow:0 1px 4px rgba(0,0,0,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:0;transition:opacity 1.2s .9s}.isle__cine.is-on .isle__cine-dev{opacity:1}
+
+/* ---------- (v75) the title card always inside the screen ----------
+   On a phone in English (its lines run longer), on a phone held sideways and on a low laptop window the card was taller than the screen and was cut
+   off at the top — the game's name out of sight. Now it is never taller than the screen (what does not fit scrolls inside it, from the top: the
+   name and Start first); on a phone its buttons close up (the two text links share a row); on a low screen the name and the text are set smaller. */
+.isle__tin{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.isle.is-narrow .isle__tact{gap:6px 10px}.isle.is-narrow .isle__tact .isle__btn--ghost{min-height:40px;padding:6px 6px}.isle.is-narrow .isle__sub{margin-bottom:10px}.isle.is-narrow .isle__tfoot{margin-top:10px;padding-top:10px}.isle.is-narrow .isle__logo{margin-bottom:8px}.isle.is-narrow .isle__h1{margin-bottom:8px}
+@media (max-height:480px){.isle__title{padding-top:8px;padding-bottom:8px}.isle__tin{max-width:min(640px,100%);padding:14px 20px 12px}.isle__logo{margin-bottom:6px;padding:4px 8px}.isle__logo img{height:22px;width:auto}.isle__h1,.isle__h1.is-long{font-size:clamp(26px,4.4vw,34px);margin-bottom:6px}.isle__sub{font-size:14px;line-height:20px;margin-bottom:10px}.isle__tfoot{margin-top:10px;padding-top:10px}}
+/* (v76) the station's announcement, on screen: a small dark strip under the dashboard, never over the controls */
+.isle__ann{position:absolute;left:50%;top:max(124px,calc(env(safe-area-inset-top,0px) + 124px));transform:translate(-50%,-8px);z-index:6;display:flex;flex-direction:column;align-items:center;gap:3px;box-sizing:border-box;width:max-content;max-width:min(calc(100% - 32px),660px);padding:8px 16px 9px;border-radius:14px;background:rgba(14,18,26,.78);color:#fff;text-align:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .3s,transform .3s,visibility 0s .3s}
+.isle__ann.is-on{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .3s,transform .3s}
+.isle__ann small{display:inline-flex;align-items:center;gap:6px;font:700 11px/14px var(--font-sans);letter-spacing:.06em;color:#ffd98a}
+.isle__ann small svg{width:14px;height:14px;flex:none}
+.isle__ann b{font:700 15px/21px var(--font-sans);text-wrap:balance}
+.isle__ann i{font:500 12px/17px var(--font-sans);font-style:normal;color:#d2dae4;text-wrap:balance}
+.isle.is-narrow .isle__ann{max-width:calc(100% - 20px);padding:6px 10px 7px;border-radius:12px}.isle.is-narrow .isle__ann b{font-size:13px;line-height:18px}.isle.is-narrow .isle__ann i{display:none}
+@media (max-height:480px){.isle__ann i{display:none}.isle__ann b{font-size:13px;line-height:18px}}
+@media (prefers-reduced-motion:reduce){.isle__ann,.isle__ann.is-on{transition:none;transform:translate(-50%,0)}}
+/* (v76) product names in running text carry the weight of the words around them: no bold of their own (a heading, a label keep theirs) */
+.sb-pname,.sb-pname__suffix,.sec-head__h .sb-pname,.sec-head__h .sb-pname__suffix,.cr-layer__main>b .sb-pname{font-weight:inherit}
