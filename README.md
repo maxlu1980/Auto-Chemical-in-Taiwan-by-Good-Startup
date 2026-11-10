@@ -14,7 +14,7 @@
 | 用量計算與報價 | 依面積、縫寬、層數估算用量，輸出 CSV／HTML 報價單 |
 | 文件產生 | 以貴公司名義產出材料送審文件、施工計畫書（施工說明）、報價單：內容取自頁面目前顯示的指南與數據，於瀏覽器內產生 Word（docx）與 PDF（pdfmake，內嵌 Noto Sans CJK 子集字型） |
 | 模擬現場（HSIM） | 第一人稱施工模擬：取景、跟隨、免瞄準施作，含真實工具音效 |
-| AUTO 台灣島 | three.js 3D 遊戲：從東京御徒町出發，乘高鐵往返台北、台中、台南、左營四站，前往各訓練中心完成教育訓練任務；另有墾丁、日月潭關卡 |
+| AUTO 台灣島 | three.js 3D 遊戲：載入後先到東京御徒町站（品牌的出發地），按「開始」乘滑翔板飛越雲海、繞行台灣後降落臺北車站；再乘高鐵往返台北、台中、台南、左營四站，前往各訓練中心完成教育訓練任務；另有墾丁、日月潭關卡。載入畫面與標題畫面都有「直接看技術資料」按鈕，不玩遊戲也能直接進入指南 |
 | 三種語言 | 繁體中文（預設）／English／日本語，全站即時切換 |
 
 ## 倉庫結構
@@ -87,6 +87,7 @@ pip install playwright && playwright install chromium
 python3 build.py
 python3 tests/qa2.py tests/out/q_desk desk zh,en,ja '#/ureax-hg,#/protect-one,#/sealant,#/adhesive' shots   # 版面、i18n、錯誤
 python3 tests/sc3.py                                                                                           # 開場音樂離線渲染
+python3 tests/open_chk.py tests/out/open desk                                                                   # 起始順序：載入 → 御徒町標題 → 飛行（途中飛越台灣）→ 臺北
 TK_FILE=build/test_min.html python3 tests/tk2.py tests/out/g zh desk "$(cat tests/plans/zy_fix.json)"         # 遊戲流程
 ```
 
