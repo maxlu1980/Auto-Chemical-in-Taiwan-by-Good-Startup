@@ -9,9 +9,10 @@
      · in the film, if the sound is still held back, a larger chip that pulses gently; the music comes in where the film is;
      · on the title, the music goes on, softer — 望春風 and 雨夜花 by turns (CINE.scoreLoop) — and fades when the title is left. ================= */
   var AUX = {
-    zh: { boot: '輕觸開啟音樂', on: '音樂已開啟', film: '輕觸畫面，播放音樂', hint: '輕觸畫面即可播放音樂' },
-    en: { boot: 'Tap to turn the music on', on: 'Music on', film: 'Tap for the music', hint: 'Tap anywhere for the music' },
-    ja: { boot: 'タップで音楽をオン', on: '音楽オン', film: 'タップで音楽を再生', hint: '画面をタップすると音楽が流れます' } };
+    /* (v83) the title at Okachimachi is the first thing after the loader: what the touch lets in is the station itself (its trains, its announcements) and the music */
+    zh: { boot: '輕觸開啟聲音', on: '聲音已開啟', film: '輕觸畫面，播放音樂', hint: '輕觸畫面，聽見御徒町站的聲音' },
+    en: { boot: 'Tap to turn the sound on', on: 'Sound on', film: 'Tap for the music', hint: 'Tap anywhere to hear Okachimachi Station' },
+    ja: { boot: 'タップで音をオン', on: '音オン', film: 'タップで音楽を再生', hint: '画面をタップすると御徒町駅の音が流れます' } };
   function aux(k) { var L = AUX[LANG] || AUX.zh; return L[k] != null ? L[k] : AUX.zh[k]; }
   var AUL = { armed: false, ok: false, cbs: [], ev: ['pointerup', 'touchend', 'mousedown', 'click', 'keydown', 'pointerdown'], seen: null };
   function aulCtx() { try { var a = AU.ctxOf ? AU.ctxOf() : null; return a && a.ctx ? a : null; } catch (e) { return null; } }

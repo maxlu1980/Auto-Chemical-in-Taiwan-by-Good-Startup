@@ -6,7 +6,9 @@
      scene is built (they run on the compositor, not on the busy main thread), a line saying the first visit takes a few seconds, and a tip
      about the island. While it shows, every new material of the place is compiled, so the first frames after it do not stutter either.
      Opening the game the first time in a session plays the opening film (intro.mp4, published beside the page) full screen while the world is
-     built behind it; it can be skipped, and when it ends (or if the film is missing) the title is already there. ================= */
+     built behind it; it can be skipped, and when it ends (or if the film is missing) the title is already there.
+     (v83) No film at the start: when the world is ready the loader gives way to the title at Okachimachi. The loader's wide button (“the
+     technical data”) and the title's open the guide instead, with its list of products out. ================= */
   var VEIL = { title: null, sub: null, tip: Math.floor(Math.random() * 9) };
   var VTX = { zh: { k: '載入中', first: '第一次前往需要幾秒鐘建立場景，請稍候。', gen: '正在準備場景', tipK: '小提示', hsr: '高鐵 · 前往 {s}',
       tips: ['點地面或使用「導航」，Luna 會自己走到目的地。', '天空依照真實的太陽、月亮位置與即時天氣計算。', '高鐵串連臺北、臺中、臺南與左營四站。', '化學口袋的傳送門通往墾丁小灣與日月潭向山。', '日月潭在傍晚 18:30 之後施放煙火。', '墾丁大街的夜市每天 18:00 到午夜營業。', '下雨後地面會變濕，倒映出街景與燈光。', '太陽低、雨剛停時，背對太陽也許看得到彩虹。', '較舊的裝置可在設定中把畫質調成「中」或「低」。'] },
@@ -45,27 +47,28 @@
     var v = B && B.el.querySelector('.acb-film'); if (v && v.getAttribute('src')) setTimeout(function () { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) {} }, 900); }
   function bootFilm(B) { var seen = false; try { seen = !!sessionStorage.getItem('isle-intro'); } catch (e) {} if (!BOOT.src || !B || seen) return; var v = B.el.querySelector('.acb-film'), sn = B.el.querySelector('.acb-snd'), btn = B.el.querySelector('.acb-btn'); if (!v) return;
     var SK = { zh: '略過影片 ›', en: 'Skip the film ›', ja: '映像をスキップ ›' }[B.L] || '›'; BOOT.film = true; v.hidden = false; v.preload = 'auto';
-    function off() { if (!BOOT.film) return; BOOT.film = false; B.el.classList.remove('is-film'); sn.hidden = true; btn.textContent = B.T.btn; try { v.pause(); } catch (e) {} v.hidden = true; if (BOOT.ready) bootEnd(); }
-    v.addEventListener('playing', function () { if (BOOT.film) { B.el.classList.add('is-film'); btn.textContent = SK; } }); v.addEventListener('ended', off); v.addEventListener('error', off); sn.addEventListener('click', function () { v.muted = false; sn.hidden = true; });
+    function off() { if (!BOOT.film) return; BOOT.film = false; B.el.classList.remove('is-film'); sn.hidden = true; if (B.btnSet) B.btnSet(); try { v.pause(); } catch (e) {} v.hidden = true; if (BOOT.ready) bootEnd(); }
+    v.addEventListener('playing', function () { if (BOOT.film) { B.el.classList.add('is-film'); if (B.btnSet) B.btnSet(SK); } }); v.addEventListener('ended', off); v.addEventListener('error', off); sn.addEventListener('click', function () { v.muted = false; sn.hidden = true; });
     try { v.src = BOOT.src; var pr = v.play(); if (pr && pr.catch) pr.catch(function () { v.muted = true; sn.hidden = false; var p2 = v.play(); if (p2 && p2.catch) p2.catch(off); }); } catch (e) { off(); } BOOT.filmOff = off; }
-  function bootStaged(o) { var B = window.__boot; BOOT.run = true; B.show(); B.game = true; BOOT.hold = true; BOOT.ready = false; BOOT.abort = false; var est = bootEst(), sync = !!window.ISLE_TEST && !window.ISLE_BOOTTEST;
-    B.onBtn = function () { if (BOOT.film && BOOT.filmOff) { BOOT.filmOff(); return true; } if (OP.want && BOOT.ready) { OP.want = false; guide(); return true; } BOOT.abort = true; return false; };
+  function bootStaged(o) { var B = window.__boot; BOOT.run = true; B.show(); B.game = true; BOOT.hold = true; BOOT.ready = false; BOOT.abort = false; BOOT.guided = false; var est = bootEst(), sync = !!window.ISLE_TEST && !window.ISLE_BOOTTEST;
+    B.onBtn = function () { if (BOOT.film && BOOT.filmOff) { BOOT.filmOff(); return true; } /* (v83) pressed in the moment between the last stage and the title: the technical data all the same */ if (BOOT.ready) { guide(); return true; } BOOT.abort = true; return false; };
     if (!sync) bootFilm(B);
     /* (v59) the live weather of the four stations and of Tokyo is asked for now, so the opening film and the title have it when they begin */
     if (!sync) { try { Object.keys(OPWEA).forEach(function (k) { if (OPWEA[k]) OPWEA[k].start(); }); if (typeof TKWEA !== 'undefined') TKWEA.start(); } catch (e) {} }
     /* the world (the island, its sky and sea, and Okachimachi's streets, built together), the title scene with its lights, then every shader compiled */
     var S = [[9, 0.8, function () { if (!root) buildDom(); labels(); build3d(); }], [11, 0.86, function () { _openAI(o); }], [12, 0.95, function () { try { portalMesh(); } catch (e) {} warm(); }],
-      /* (v59) the opening film's island, when the film will play: once a session, not in the tests' synchronous boot, not when a recorded film is set */ [13, 0.985, function () { var seen = false; try { seen = !!sessionStorage.getItem('isle-intro'); } catch (e) {} OP.want = !sync && !seen && !BOOT.src && !BOOT.abort && opOk(); if (OP.want) { try { opPrepare(); } catch (e) { if (window.console) console.error('opening prepare', e); OP.want = false; } } }]], i = 0;
+      /* (v59) the film's island; (v83) the film of Taiwan now plays inside the flight from Okachimachi (island_az), so its island is made ready here only when that flight will show it: once a session, not in the tests' synchronous boot, not when a recorded film is set */ [13, 0.985, function () { OP.want = false; OP.tour = !sync && !BOOT.src && !BOOT.abort && tourWant(); if (OP.tour) { try { opPrepare(); } catch (e) { if (window.console) console.error('opening prepare', e); OP.tour = false; } } }]], i = 0;
     function fin() { BOOT.ready = true; try { localStorage.setItem('isle-boot-ms', JSON.stringify(BOOT.took)); } catch (e) {} B.at(1, B.T.ready);
-      /* (v63) the world is ready: the opening film starts by itself (its sound comes in at the first touch if the browser held it back), then the title */
-      if (OP.want && B.go) { B.go(function () { if (!OP.want) return; /* (v63) the guide was chosen in the moment before the film */ try { AU.init(); } catch (e) {} opHook(); var ok = false; try { ok = opStart(); } catch (e) { if (window.console) console.error('opening', e); } OP.want = false; bootEnd(); }); return; }
-      if (!BOOT.film) setTimeout(bootEnd, sync ? 0 : 380); }
-    function guide() { BOOT.hold = false; BOOT.music = null; if (BOOT.filmOff) BOOT.filmOff(); try { if (isOpen) close('ux'); } catch (e) {} try { if (/^#\/island/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search); } catch (e) {} B.done(B.T.guide); }
+      /* (v83) the world is ready: the title at Okachimachi is the first thing seen and heard (the film of Taiwan waits inside the flight that leaves from it) */
+      if (!BOOT.film) setTimeout(function () { if (!BOOT.guided) bootEnd(); }, sync ? 0 : 380); }
+    function guide() { BOOT.guided = true; BOOT.hold = false; BOOT.music = null; if (BOOT.filmOff) BOOT.filmOff(); var was = false; try { was = !!isOpen; if (isOpen) close(null, { menu: true }); } catch (e) {} try { if (/^#\/island/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search); } catch (e) {} B.done(B.T.guide); if (!was) guideMenu(); }
     if (sync) { S.forEach(function (s, k) { var t0 = performance.now(); s[2](); BOOT.took[k] = performance.now() - t0; }); fin(); return; }
     function next() { if (BOOT.abort) return guide(); if (i >= S.length) return fin(); var s = S[i]; B.at(i ? S[i - 1][1] : 0.4, s[0]); B.toward(s[1] * 0.985, est[i]);
       raf2(function () { var t0 = performance.now(); try { s[2](); } catch (e) { if (window.console) console.error('boot', e); } BOOT.took[i] = performance.now() - t0; B.at(s[1]); i++; setTimeout(next, window.ISLE_BOOTPAUSE || 40); }); }
     next(); }
   var _openAI = open; open = function (o) { var B = window.__boot; if (built || BOOT.run) return _openAI(o);
     if (!B || window.ISLE_NOBOOT) { if (!root) buildDom(); return veilRun(null, function () { _openAI(o); try { portalMesh(); } catch (e2) {} warm(); }); }
-    if (B.guide) { try { if (/^#\/island/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search); } catch (e) {} B.done(B.T.guide); return; } bootStaged(o); };
+    if (B.guide) { try { if (/^#\/island/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search); } catch (e) {} B.done(B.T.guide); guideMenu(); return; } bootStaged(o); };
+  /* (v83) the technical data chosen on the loader: the guide opens with its list of products out, so the next step is one tap */
+  function guideMenu() { setTimeout(function () { try { if (!isOpen && typeof Menu !== 'undefined' && Menu.open) Menu.open(true); } catch (e) {} }, 520); }
   window.ISLE_x.intro = function () { var B = window.__boot; return { run: BOOT.run, ready: BOOT.ready, film: BOOT.film, gone: B ? B.gone : null, took: BOOT.took, pct: B ? B.el.getAttribute('aria-valuenow') : null }; };

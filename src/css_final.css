@@ -130,3 +130,32 @@
 }
 /* (v82) on a phone in a city the lens's three buttons run along the bottom beside the round map; the interaction button (take the train, talk) used to come up over the third of them ("behind her") — it now sits above that row */
 .isle.is-narrow.is-gs:not(.is-tkwalk) .isle__br{bottom:max(70px,calc(env(safe-area-inset-bottom,0px) + 70px))}
+/* ---------- (v83) the technical data, plain to see on the title: a wide dark button under Start, for a reader who has no wish to play (or has played already) ---------- */
+.isle .isle__btn--tech{flex:1 1 100%;flex-direction:row;align-items:center;gap:12px;min-height:58px;padding:9px 14px 10px;background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:0 4px 0 rgba(43,36,32,.36)}
+.isle .isle__btn--tech:hover,.isle .isle__btn--tech:focus-visible{background:#4a3b32;box-shadow:0 5px 0 rgba(43,36,32,.36)}
+.isle .isle__btn--tech:focus-visible{outline:3px solid var(--or);outline-offset:2px}
+.isle .isle__btn--tech:active{box-shadow:0 1px 0 rgba(43,36,32,.36)}
+.isle__btn--tech>svg{flex:none;width:28px;height:28px;fill:none;stroke:#ffb35a;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.isle__btn--tech>svg.isle__chev{width:22px;height:22px;stroke:#fff;stroke-width:2.4}
+.isle__btn--tech>span{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left}
+.isle .isle__btn--tech b{font:900 17px/1.25 var(--font-sans);letter-spacing:.04em;color:#fff}
+.isle .isle__btn--tech small{font:500 12.5px/1.4 var(--font-sans);color:#f6e3cf}
+.isle.is-narrow .isle__btn--tech{min-height:54px;gap:10px;padding:8px 12px 9px}.isle.is-narrow .isle__btn--tech b{font-size:16px}
+@media (max-height:480px){.isle .isle__btn--tech{min-height:46px;padding:5px 12px 6px}.isle .isle__btn--tech small{font-size:12px;line-height:1.3}}
+/* ---------- (v83) one opening: the film of Taiwan plays inside the flight from Okachimachi. It comes out of the white of the cloud she dived into and
+   goes back into it (the film's own veil is white there), and the flight's white stays up under it while the two change places ---------- */
+.isle__op.is-white .isle__op-veil{background:#fff}
+.isle.is-cine>#isFlyW:not(#isFade):not(#isBanner):not(#isToast){visibility:visible!important}
+/* (v83) the title card keeps its height with the wide button added: the quality link joins the languages' row; on a phone Start and the walk share
+   one row; on a window of middling height the name and the text are set a little smaller (what still does not fit scrolls inside the card, as before) */
+.isle__tfoot .isle__btn--qual{flex:none;min-height:36px;padding:6px 8px;margin:0 auto 0 0}
+.isle.is-narrow .isle__tfoot{gap:6px 8px}.isle.is-narrow .isle__tfoot .isle__btn--qual{min-height:34px;padding:5px 6px}
+.isle.is-narrow .isle__tact .isle__btn--go{flex:none}
+.isle.is-narrow .isle__tact .isle__btn--walk{flex:1 1 140px;min-width:140px;gap:8px;padding:8px 12px}
+@media (max-width:480px){.isle.is-narrow .isle__tact .isle__btn--walk small{display:none}}
+@media (max-height:480px){.isle__sub{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
+@media (max-height:640px){.isle.is-narrow .isle__sub{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}}
+@media (max-height:800px) and (min-width:700px){.isle__tin{padding-top:20px;padding-bottom:16px}.isle__h1{font-size:clamp(36px,5.2vw,56px)}.isle__h1.is-long{font-size:clamp(30px,4.2vw,44px)}.isle__sub{font-size:15px;line-height:23px;margin-bottom:14px}.isle__logo{margin-bottom:10px}.isle__credit{font-size:10.5px;line-height:14px}.isle__tfoot{margin-top:12px;padding-top:10px}}
+@media (max-height:680px) and (min-width:700px){.isle__tin{max-width:600px;padding:16px 24px 12px}.isle__h1{font-size:clamp(32px,4.6vw,46px);margin-bottom:8px}.isle__h1.is-long{font-size:clamp(28px,3.8vw,38px)}.isle__sub{font-size:14px;line-height:21px;margin-bottom:12px}.isle__logo{margin-bottom:8px;padding:5px 9px}.isle__logo img{height:24px}.isle .isle__btn--tech{min-height:52px;padding:6px 14px 7px}.isle__tact{gap:10px}}
+/* (v83) a phone held sideways: the message from the office has no room beside the card and lay over its buttons — it stays away there */
+@media (max-height:480px) and (max-width:1000px){.isle:not(.is-narrow) .isle__msg{display:none}}

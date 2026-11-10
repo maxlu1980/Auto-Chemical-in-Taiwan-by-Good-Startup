@@ -154,5 +154,6 @@ okv_data.js
 okv_data_en.js
 island_ax.js
 island_ay.js
+island_az.js
 island_c.js
 page.js

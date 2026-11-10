@@ -69,7 +69,7 @@
 
   /* ---------- the materials ---------- */
   var ENC = '\n#include <tonemapping_fragment>\n#include <encodings_fragment>\n';
-  var U = { uCam: { value: new V3() }, uKey: { value: new V3(0, 1, 0) }, uKeyCol: { value: new V3(1, 1, 1) }, uSunDir: { value: new V3(0, 1, 0) }, uSkyUp: { value: new V3(0.3, 0.4, 0.6) }, uSkyHz: { value: new V3(0.6, 0.65, 0.7) },
+  var U = { /* (v83) the sky's alpha: 0 for the post chain (its sun rays stream from where the sky is), 1 when the film is drawn straight to the screen — there an alpha of 0 let the page show through the sky (white at night, washed out by day) */ uSkyA: { value: 0 }, uCam: { value: new V3() }, uKey: { value: new V3(0, 1, 0) }, uKeyCol: { value: new V3(1, 1, 1) }, uSunDir: { value: new V3(0, 1, 0) }, uSkyUp: { value: new V3(0.3, 0.4, 0.6) }, uSkyHz: { value: new V3(0.6, 0.65, 0.7) },
     uExpo: { value: 1 }, uNight: { value: 0 }, uTime: { value: 0 }, uHaze: { value: 0.03 }, uHazeH: { value: 1.6 }, uCov: { value: 0.35 }, uCloudY: { value: 2.6 }, uMtnCov: { value: 0.42 }, uWind: { value: new THREE.Vector2() }, uExv: { value: EXV }, uMoonDir: { value: new V3(0, 1, 0) }, uMoonK: { value: 0 },
     uRoute: { value: 0 }, uFade: { value: 1 } };
   var GLSL_AIR = [
@@ -164,13 +164,13 @@
   function skyMat() {
     return new THREE.ShaderMaterial({ depthWrite: false, side: THREE.BackSide, uniforms: Object.assign({ tSky: { value: G.sky.texture }, uMoonPh: { value: new V3() } }, U),
       vertexShader: 'varying vec3 vD; void main(){ vD = position; vec4 p = projectionMatrix * modelViewMatrix * vec4(position, 1.0); gl_Position = p.xyww; }',
-      fragmentShader: ['precision highp float; varying vec3 vD; uniform sampler2D tSky; uniform vec3 uSunDir, uMoonDir, uKeyCol, uMoonPh; uniform float uExpo, uNight, uMoonK;', GLSL_SKYUV,
+      fragmentShader: ['precision highp float; varying vec3 vD; uniform sampler2D tSky; uniform vec3 uSunDir, uMoonDir, uKeyCol, uMoonPh; uniform float uExpo, uNight, uMoonK, uSkyA;', GLSL_SKYUV,
         'float hs(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }',
         'void main(){ vec3 d = normalize(vD); vec3 c = texture2D(tSky, skyUV(normalize(vec3(d.x, max(d.y, 0.04), d.z)))).rgb; float mu = dot(d, normalize(uSunDir));',
         '  c += uKeyCol * (smoothstep(0.99996, 0.99999, mu) * 60.0 + pow(max(mu, 0.0), 2000.0) * 2.0) * step(-0.02, uSunDir.y); c *= uExpo;',
         '  float mm = dot(d, normalize(uMoonDir)); if (mm > 0.99994) { vec3 md = normalize(uMoonDir); vec3 ax = normalize(cross(md, vec3(0.0, 1.0, 0.0))), ay = cross(ax, md); vec2 q = vec2(dot(d - md, ax), dot(d - md, ay)) / 0.0105; float r = length(q); float lit = smoothstep(0.0, 0.25, dot(normalize(vec3(q, sqrt(max(0.0, 1.0 - r * r)))), uMoonPh) + 0.05); c += vec3(0.9, 0.92, 0.95) * lit * (1.0 - smoothstep(0.95, 1.0, r)) * 0.9 * uNight; }',
         '  if (uNight > 0.0 && d.y > 0.0) { vec3 sp = d * 380.0; vec3 id = floor(sp); float r = hs(id); float st = step(0.9965, r) * smoothstep(0.42, 0.0, length(fract(sp) - 0.5)); c += vec3(0.8, 0.85, 1.0) * st * uNight * (0.4 + 2.2 * hs(id + 3.0)) * smoothstep(0.0, 0.25, d.y); }',
-        '  gl_FragColor = vec4(c, 0.0);' + ENC + '}'].join('\n') }); } /* (v61) the sky writes alpha 0: the post chain's sun rays stream from it */
+        '  gl_FragColor = vec4(c, uSkyA);' + ENC + '}'].join('\n') }); } /* (v61) the sky writes alpha 0: the post chain's sun rays stream from it */
 
   /* the sea of clouds: a deck at about 1.8 km that thickens over the ranges and thins over the sea and the plains; lit from above, grey below */
   function cloudMat() {

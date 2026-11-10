@@ -29,7 +29,7 @@
   var CN = { on: false, ok: null, tilt: null, curve: null, see: null, ov: null, lab: {}, patched: false, t0: 0, fails: 0 };
   function cineOk() { if (CN.ok === null) { CN.ok = !!(typeof CINE !== 'undefined' && R3 && CINE.ok(R3) && !window.ISLE_NOCINE); } return CN.ok; }
   /* the island's renderer and post chain draw the film's scene while it plays */
-  function cinePatch() { if (CN.patched) return; CN.patched = true; var r0 = R3.render.bind(R3); R3.render = function (sc, c) { if (CN.on && sc === scene) return r0(CINE.scene(), CINE.cam()); return r0(sc, c); };
+  function cinePatch() { /* (v83) no post chain (the lowest quality, a software renderer): the film's sky is opaque */ try { if (CINE.U && CINE.U.uSkyA) CINE.U.uSkyA.value = POST ? 0 : 1; } catch (e) {} if (CN.patched) return; CN.patched = true; var r0 = R3.render.bind(R3); R3.render = function (sc, c) { if (CN.on && sc === scene) return r0(CINE.scene(), CINE.cam()); return r0(sc, c); };
     if (POST) { var p0 = POST.render; POST.render = function (sc, c, ts) { if (CN.on && sc === scene) return p0.call(POST, CINE.scene(), CINE.cam(), ts); return p0.call(POST, sc, c, ts); }; } }
   function cineOverlay(on, from, to) { var O = CN.ov; if (!O) { O = document.createElement('div'); O.className = 'isle__cine'; O.innerHTML = '<i class="isle__cine-bar isle__cine-bar--t"></i><i class="isle__cine-bar isle__cine-bar--b"></i><div class="isle__cine-lbl" id="isCineL"></div><div class="isle__cine-tt" id="isCineT"><small></small><b></b><span></span></div><button type="button" class="isle__cine-skip" id="isCineSkip"></button>'; root.appendChild(O); CN.ov = O;
       $('isCineSkip').addEventListener('click', function (e) { e.stopPropagation(); cineSkip(); }); }
