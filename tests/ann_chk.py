@@ -116,6 +116,7 @@ async def main():
                     if a['cur'] and len(caps) < 40:
                         c = await pg.evaluate(CAP)
                         if c: caps.append((a['cur'], c))
+                await run(16, "!ANN.cur") # the one being spoken is heard to its end (its English follows the Japanese)
                 log(DEV, lang, 'okachimachi west island after', round(t), 's:', sorted(seen))
                 for k in ('jr.in.3', 'jr.in.4', 'jr.go.3', 'jr.go.4'): need(k in seen, lang + ' okachimachi announced ' + k, json.dumps(seen.get(k), ensure_ascii=False))
                 need(not any(k in seen for k in ('jr.in.1', 'jr.in.2', 'jr.go.1', 'jr.go.2')), lang + ' okachimachi west island hears only tracks 3 and 4', sorted(seen))
