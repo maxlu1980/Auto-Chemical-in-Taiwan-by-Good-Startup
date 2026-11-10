@@ -2,7 +2,7 @@
 
 **Auto Chemical 互動產品指南** · 線上版：<https://maxlu1980.github.io/Auto-Chemical-in-Taiwan-by-Good-Startup/>
 
-オート化学工業（Auto Chemical Industry Co., Ltd.）建築用防水、密封、接著產品的互動式產品指南，由台灣認定代理商 **Good Startup LTD.（好時新創有限公司）** 發行。
+オート化学工業（Auto Chemical Industry Co., Ltd.）建築用防水、密封、接著產品的互動式產品指南，由台灣認定代理商 **Good Startup LTD.（好時新創有限公司）** 發行，系統由好時新創開發。
 
 整個網站是一個單一的 HTML 檔案（`docs/index.html`），不需要後端，可直接放在 GitHub Pages 或任何靜態主機上。
 
@@ -10,7 +10,7 @@
 
 | 區塊 | 說明 |
 |---|---|
-| 四本產品指南 | UREAX 系列（FU08 工法、W 效果、1Day 工期模擬、3D 施工模型）、PROTECT ONE（四大性能、適用基材、型錄示範、施工概要）、建築用密封材（一液 PU 密封系統、六種接縫情境、3D 接縫剖面、硬化時程模擬）、建築用接著劑（木質地板接著系統、四種地板工法情境、3D 地板剖面、副資材）；各附技術比較與施工步驟 |
+| 四本產品指南 | UREAX 系列（FU08 工法、W 效果、1Day 工期模擬、3D 施工模型）、PROTECT ONE（四大性能、適用基材、型錄示範、施工概要）、建築用密封膠（一液 PU 密封系統、六種接縫情境、3D 接縫剖面、硬化時程模擬）、建築用接著劑（地板接著系統、三種地板工法情境、3D 地板剖面、副資材）；各附技術比較與施工步驟 |
 | 用量計算與報價 | 依面積、縫寬、層數估算用量，輸出 CSV／HTML 報價單 |
 | 文件產生 | 以貴公司名義產出材料送審文件、施工計畫書（施工說明）、報價單：內容取自頁面目前顯示的指南與數據，於瀏覽器內產生 Word（docx）與 PDF（pdfmake，內嵌 Noto Sans CJK 子集字型） |
 | 模擬現場（HSIM） | 第一人稱施工模擬：取景、跟隨、免瞄準施作，含真實工具音效 |
@@ -98,7 +98,7 @@ Copyright © 2026 Good Startup LTD. 本倉庫的原始碼、文字、圖像、3D
 
 ## 致謝
 
-- 聲音：**VOICEVOX:春日部つむぎ**
+- 聲音：**VOICEVOX:春日部つむぎ**；車站廣播由使用者裝置的內建語音朗讀（Web Speech API），未隨附任何語音檔
 - 音樂：鄧雨賢〈望春風〉（1933）、〈雨夜花〉（1934）旋律（公共領域），本專案自行編曲，以 VSCO 2 Community Edition（CC0）真實樂器取樣錄製為完整管弦樂團；未使用歌詞
 - 天氣：Open-Meteo、AccuWeather
 
@@ -106,4 +106,4 @@ Copyright © 2026 Good Startup LTD. 本倉庫的原始碼、文字、圖像、3D
 
 ### English
 
-**Auto Chemical in Taiwan by Good Startup** — an interactive product guide for Auto Chemical Industry's architectural waterproofing, sealing and adhesive products, published by Good Startup LTD. (authorised distributor, Taiwan). One static HTML file (`docs/index.html`): four product guides in Traditional Chinese, English and Japanese, take-off calculators, in-browser Word/PDF document generation, a first-person hands-on jobsite simulator and a three.js game set in Taiwan. Build with `python3 build.py`; deploy the `docs/` folder with GitHub Pages. All rights reserved; third-party components under their own licences (see `THIRD_PARTY_NOTICES.md`).
+**Auto Chemical in Taiwan by Good Startup** — an interactive product guide for Auto Chemical Industry's architectural waterproofing, sealing and adhesive products, published by Good Startup LTD. (authorised distributor, Taiwan), which also developed the system. One static HTML file (`docs/index.html`): four product guides in Traditional Chinese, English and Japanese, take-off calculators, in-browser Word/PDF document generation, a first-person hands-on jobsite simulator and a three.js game set in Taiwan. Build with `python3 build.py`; deploy the `docs/` folder with GitHub Pages. All rights reserved; third-party components under their own licences (see `THIRD_PARTY_NOTICES.md`).

@@ -27,6 +27,7 @@
 | VOICEVOX：春日部つむぎ | 依 VOICEVOX 與春日部つむぎ的使用規約，標示「VOICEVOX:春日部つむぎ」 | 角色語音（`src/luna_voice.js` 內嵌音檔）；標示保留於開場、標題與片尾 |
 | 鄧雨賢〈望春風〉（1933）、〈雨夜花〉（1934） | 旋律為公共領域（作曲者於 1944 年逝世）；歌詞仍受保護，本專案未使用 | 開場影片與標題音樂，本專案自行編曲：錄音版 `docs/audio/*.mp3`（由 `music/` 的腳本以下列取樣算繪），瀏覽器合成版（`src/tw_cine_c.js`）作為退路 |
 | [VS Chamber Orchestra: Community Edition（VSCO 2 CE）](https://github.com/sgossner/VSCO-2-CE) | CC0 1.0（公眾領域貢獻） — Versilian Studios，Sam Gossner、Simon Dalzell 錄製 | 開場與標題音樂的樂器取樣（弦樂五部、木管、銅管、定音鼓、豎琴、鐘琴、大鼓、鈸）；取樣本身未隨倉庫散布，僅散布算繪後的錄音 |
+| 車站廣播 | 廣播詞依一般車站廣播的形式由本專案撰寫，提示音與發車旋律為本專案原創；語音為使用者裝置的內建語音（Web Speech API），不隨附語音檔，亦未使用鐵路業者的錄音或發車音樂 | JR 御徒町站與高鐵四站的進站、上車、發車與宣導廣播（`src/island_av.js`） |
 | 其他音效與配樂 | 本專案自行合成（Web Audio） | 環境音、工具音、介面音 |
 
 ## 地名與品牌
