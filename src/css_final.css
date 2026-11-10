@@ -85,3 +85,46 @@
 @media (prefers-reduced-motion:reduce){.isle__ann,.isle__ann.is-on{transition:none;transform:translate(-50%,0)}}
 /* (v76) product names in running text carry the weight of the words around them: no bold of their own (a heading, a label keep theirs) */
 .sb-pname,.sb-pname__suffix,.sec-head__h .sb-pname,.sec-head__h .sb-pname__suffix,.cr-layer__main>b .sb-pname{font-weight:inherit}
+/* (v77) the lens's buttons beside the round map (turn, closer / farther, behind her, the next view), the moves for a mouse, and each button's key */
+.isle__rot{flex-wrap:wrap;max-width:300px}
+.isle__rot button{position:relative}
+.isle__rot svg circle{fill:none}
+.isle.is-gs:not(.is-touch) .isle__rot{display:flex}
+.isle:not(.is-touch) .isle__rot{gap:6px}
+.isle:not(.is-touch) .isle__rot button{width:42px;height:42px}
+.isle.is-touch .isle__rot [data-c="zo"],.isle.is-touch .isle__rot [data-c="zi"],.isle.is-touch .isle__rot [data-c="vw"]{display:none}
+.isle__keys{display:grid;grid-template-columns:repeat(3,42px) auto;grid-template-rows:42px 42px;gap:5px;align-items:stretch;pointer-events:auto}
+.isle.is-touch .isle__keys,.isle.is-photo .isle__keys,.isle.is-photo .isle__rot{display:none}
+.isle__key{appearance:none;border:3px solid var(--ink);border-radius:11px;background:var(--cream);font:800 15px/1 var(--font-sans);color:var(--ink);cursor:pointer;box-shadow:0 3px 0 rgba(43,36,32,.35);padding:0;touch-action:none;-webkit-user-select:none;user-select:none}
+.isle__key--w{grid-column:2;grid-row:1}.isle__key--a{grid-column:1;grid-row:2}.isle__key--s{grid-column:2;grid-row:2}.isle__key--d{grid-column:3;grid-row:2}
+.isle__key--run{grid-column:4;grid-row:2;padding:0 10px;display:flex;align-items:center;gap:6px;font-size:12px;margin-left:5px}
+.isle__key--run span{font-weight:600}
+.isle__key.is-down,.isle__key:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(43,36,32,.35);background:#ffd24a}
+.isle__key:focus-visible,.isle__rot button:focus-visible{outline:3px solid #1a6ad8;outline-offset:2px}
+/* a button's key, where a keyboard is in use */
+.isle [data-key]::after{content:none}
+.isle:not(.is-touch) .isle__rot [data-key]::after,.isle:not(.is-touch) .isle__gsact [data-key]::after,.isle:not(.is-touch) .isle__gsphb[data-key]::after,.isle:not(.is-touch) .isle__ico[data-key]::after,.isle:not(.is-touch) .isle__act[data-key]::after,.isle:not(.is-touch) .isle__board[data-key]::after,.isle:not(.is-touch) .isle__veh [data-key]::after{content:attr(data-key);position:absolute;right:-5px;bottom:-6px;min-width:17px;height:17px;box-sizing:border-box;padding:0 4px;border-radius:5px;background:var(--ink);color:#fff;font:700 10.5px/17px var(--font-sans);text-align:center;letter-spacing:0;pointer-events:none;white-space:nowrap}
+.isle:not(.is-touch) .isle__gsact button,.isle:not(.is-touch) .isle__gsphb,.isle:not(.is-touch) .isle__ico,.isle:not(.is-touch) .isle__act,.isle:not(.is-touch) .isle__board,.isle:not(.is-touch) .isle__veh button{position:relative}
+.isle:not(.is-touch) .isle__gsphb{position:absolute}
+.isle:not(.is-touch) .isle__ico[data-key]::after{right:-2px;bottom:auto;top:26px;min-width:15px;height:15px;font-size:9.5px;line-height:15px}
+/* with a mouse, the city's own buttons are on screen as well (they were a finger's only) */
+.isle:not(.is-touch) .isle__gsact{display:flex;gap:9px}
+.isle:not(.is-touch) .isle__gsact button{width:54px;height:54px}
+.isle:not(.is-touch) .isle__gsact button[data-a="punch"]{width:64px;height:64px}
+.isle:not(.is-touch) .isle__gsact button svg{width:22px;height:22px}
+.isle.is-phone .isle__gsact{display:none}
+/* the free walk's bar: the keys are on screen now, so with a mouse its line of text gives way to them */
+.isle.is-tkwalk:not(.is-touch) .isle__tkbar{width:auto;padding-left:12px}
+.isle.is-tkwalk:not(.is-touch) .isle__tkbar p{display:none}
+/* the cities' own buttons stand at the right edge with a word under their sign: their keys sit outside, to the left, so that the word stays readable */
+.isle:not(.is-touch) .isle__gsact [data-key]::after,.isle:not(.is-touch) .isle__gsphb[data-key]::after{right:calc(100% - 8px);left:auto;bottom:auto;top:50%;transform:translateY(-50%)}
+/* a low picture (a phone held sideways, a small window): the cities' buttons in two columns and smaller, clear of the row along the top */
+@media (max-height:520px){
+.isle .isle__gsact,.isle.is-narrow .isle__gsact{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;align-content:flex-end;max-width:124px;gap:6px;bottom:max(80px,calc(env(safe-area-inset-bottom,0px) + 80px))}
+.isle .isle__gsact button,.isle.is-narrow .isle__gsact button{width:50px;height:50px}
+.isle .isle__gsact button[data-a="punch"],.isle.is-narrow .isle__gsact button[data-a="punch"]{width:58px;height:58px}
+.isle .isle__gsact button svg{width:20px;height:20px}
+.isle .isle__gsact button[data-a="punch"] svg{width:26px;height:26px}
+.isle .isle__gsphb,.isle.is-narrow .isle__gsphb{bottom:max(20px,calc(env(safe-area-inset-bottom,0px) + 20px));width:50px;height:50px}
+.isle:not(.is-touch) .isle__gsact [data-key]::after{right:auto;left:-4px;top:-4px;transform:none}
+}

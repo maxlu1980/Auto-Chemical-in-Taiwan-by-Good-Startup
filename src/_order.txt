@@ -145,5 +145,6 @@ island_as.js
 island_at.js
 island_au.js
 island_av.js
+island_aw.js
 island_c.js
 page.js
