@@ -17,13 +17,31 @@ python3 voice/okv_gen.py voice src
 
 ## 英語廣播
 
-VOICEVOX 只能合成日語，不用於英語。英語句子（接近廣播與五則宣導的英語，共 23 句）由 `okv_gen_en.py` 產生對照表 `src/okv_lines_en.js` 與清單 `okachimachi_lines_en.csv`：
+VOICEVOX 只能合成日語，不用於英語。英語（接近廣播與五則宣導的英語，共 23 句）以開源的英語語音模型 **Kokoro-82M**（Apache-2.0）在本機產生：1・3 番線為聲音 `af_heart`，2・4 番線為 `am_michael`；站名（Ōfuna、Ōmiya、Ueno…）以音標指定為日語讀音，不讓模型照英文拼字去唸。
 
 ```bash
-python3 voice/okv_gen_en.py voice src
+python3 voice/okv_gen_en.py voice src                      # 句子清單 → src/okv_lines_en.js、okachimachi_lines_en.csv
+python3 voice/okv_en_jobs.py src jobs.json af_heart am_michael 0.95
+npm i kokoro-js@1.2.1 kokoro-q8-shards@1.0.0               # 模型權重（q8 ONNX，分成六段）
+mkdir -p models/onnx-community/Kokoro-82M-v1.0-ONNX/onnx
+cat node_modules/kokoro-q8-shards/kokoro-q8.part*.bin > models/onnx-community/Kokoro-82M-v1.0-ONNX/onnx/model_quantized.onnx
+sha256sum models/onnx-community/Kokoro-82M-v1.0-ONNX/onnx/model_quantized.onnx   # 應為 fbae9257…9028a1478（與 Hugging Face 官方檔案相同）
+echo '{"model_type":"style_text_to_speech_2"}' > models/onnx-community/Kokoro-82M-v1.0-ONNX/config.json
+node voice/okv_en_gen.mjs node_modules models jobs.json wav_en   # E01.wav … E23.wav
+python3 voice/okv_pack_en.py wav_en src 32 "Kokoro-82M, voices af_heart and am_michael"   # → src/okv_data_en.js（window.AC_OKV_EN）
 ```
 
-頁面若內嵌這些句子的預錄音檔（`window.AC_OKV_EN = { 'E01': 'data:audio/…', … }`），會在日語之後播放，同時有另一則同等重要的廣播在等時略過；目前沒有音檔，英語只顯示字幕。御徒町站的廣播一律不使用裝置的內建語音。
+頁面在日語之後播放對應的英語；同時有另一則同等重要的廣播在等（另一班車也要進站）時略過英語。御徒町站的廣播一律不使用裝置的內建語音。
+
+## 月台擴音
+
+所有廣播、提示音與發車旋律都經過同一條「月台擴音」音訊鏈播放（`src/island_ax.js` 的 `OKV_PA`、`okvIR`、`okvPa`）：號角喇叭的窄頻（300 Hz–4.3 kHz，2.5 kHz 略為突出）與輕微飽和；沿月台其他喇叭較晚到、較小聲、較悶的四次重複（43–197 ms）；雨棚、列車與對面建築的殘響（約 1.25 秒，另有 0.24 與 0.41 秒兩道較清楚的回聲）。依聽的位置切換三種設定：月台上、改札大廳（較悶、殘響多）、站外街道（遠而模糊）。
+
+`voice/okv_pa_render.py` 以 Chromium 的離線音訊圖執行同一段程式，把任一音檔算成「在遊戲裡聽到的樣子」，供試聽與調整：
+
+```bash
+python3 voice/okv_pa_render.py src/island_ax.js in.wav out.wav plat 0.85
+```
 
 ## 授權
 
