@@ -1,7 +1,7 @@
 # (v76) the stations' announcements: with a stand-in for the device's voice (what would be spoken is recorded), at the high-speed rail's stations
 # and at Okachimachi — that trains coming in, boarding, leaving are announced, in which languages and voices, the line on screen in the reader's
 # language and where it sits, that the mute switch stops it, and what happens where the device cannot speak
-#   python3 ann_chk.py <out dir> <desk|mobile> <zh,en,ja> [parts: tpe,tyo,all4,novoice,mute]
+#   python3 ann_chk.py <out dir> <desk|mobile> <zh,en,ja> [parts: tpe,tyo,all4,novoice,mute; with tyo also clip: stand-in recordings are given for every Japanese line]
 import asyncio, sys, json, time, os
 import os
 from playwright.async_api import async_playwright
@@ -102,17 +102,27 @@ async def main():
                     await run(12, "!ANN.cur"); S = await said(True); need(len(S) >= 1 and S[0]['lang'] == 'zh-TW', lang + ' ' + name + ' spoken', json.dumps(S[:2], ensure_ascii=False))
             # ---------- Okachimachi ----------
             if 'tyo' in PARTS:
+                CLIP = 'clip' in PARTS
+                if CLIP: await pg.evaluate("""() => { const ids = JSON.parse(ISLE_x.ev('JSON.stringify(Object.keys(OKV_T).map(function (k) { return OKV_T[k][0]; }))')), sr = 8000, n = sr * 0.45, b = new ArrayBuffer(44 + n * 2), v = new DataView(b), W = (o, t) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); }; W(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); W(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); W(36, 'data'); v.setUint32(40, n * 2, true); for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.sin(i * 0.5) * 6000 * Math.min(1, i / 200, (n - i) / 200), true); let bin = ''; new Uint8Array(b).forEach(c => bin += String.fromCharCode(c)); const uri = 'data:audio/wav;base64,' + btoa(bin); window.AC_OKV = {}; ids.forEach(id => window.AC_OKV[id] = uri); }""")
                 await arrive("(function(){ okachiArrive(); return 1; })()"); await pg.evaluate("() => { window.__tts.said.length = 0; }")
+                if CLIP:
+                    for _ in range(40):
+                        ok = await pg.evaluate("() => ISLE_x.okv()")
+                        if ok['st'] == 2: break
+                        await pg.wait_for_timeout(250)
+                    need(ok['st'] == 2 and ok['have'] == ok['lines'] == 45, lang + ' okachimachi the recordings are taken in (one for each of the 45 lines)', json.dumps(ok))
                 info = json.loads(await pg.evaluate(EV, "JSON.stringify({ id: TK.id, trk: TK.T.TRK, tr: TK.T.trains.map(function (t) { var q = AN_JR[anTrk(TK.T, t)]; return [t.x, t.dir, q && q.n, q && q.to.ja, t.st]; }), ear: anEarJR(TK.T, cam.position) })"))
                 log(DEV, lang, 'okachimachi', json.dumps(info, ensure_ascii=False))
                 m = {x[2]: (x[0], x[1], x[3]) for x in info['tr']}
                 need(m.get(1, [0, 0, ''])[2] == '東京・横浜方面' and m[1][1] < 0 and m.get(2, [0, 0, ''])[2] == '東京・品川方面' and m.get(3, [0, 0, ''])[2] == '上野・池袋方面' and m[3][1] > 0 and m.get(4, [0, 0, ''])[2] == '大宮方面' and m[1][0] < m[2][0] < m[3][0] < m[4][0], lang + ' okachimachi tracks numbered as the station is (1 Keihin-Tohoku south … 4 Keihin-Tohoku north)', json.dumps(m, ensure_ascii=False))
                 need(info['ear']['vol'] > 0.3, lang + ' okachimachi heard at the north exit', json.dumps(info['ear']))
                 # on the west island (3 and 4): only its own two tracks
-                await pg.evaluate("() => ISLE_x.annAt([6.5, -40, 7.5 + 1.6])"); seen = {}; caps = []; t = 0
+                await pg.evaluate("() => ISLE_x.annAt([6.5, -40, 7.5 + 1.6])"); seen = {}; caps = []; t = 0; board4 = None
                 while t < 240 and not all(k in seen for k in ('jr.in.3', 'jr.in.4', 'jr.go.3', 'jr.go.4')):
                     r = await run(3); assert not isinstance(r, str), r; t += r; a = await ann()
-                    for r in a['log']: seen.setdefault(r['key'], r)
+                    for r in a['log']:
+                        if r['key'] == 'jr.in.4' and 'jr.in.4' not in seen: board4 = json.loads(await pg.evaluate(EV, "JSON.stringify(TK.T.oka.led[4].data.rows[0])"))
+                        seen.setdefault(r['key'], r)
                     if a['cur'] and len(caps) < 40:
                         c = await pg.evaluate(CAP)
                         if c: caps.append((a['cur'], c))
@@ -122,7 +132,15 @@ async def main():
                 need(not any(k in seen for k in ('jr.in.1', 'jr.in.2', 'jr.go.1', 'jr.go.2')), lang + ' okachimachi west island hears only tracks 3 and 4', sorted(seen))
                 S = await said(True); ja = [s for s in S if s['lang'].startswith('ja')]; en = [s for s in S if s['lang'].startswith('en')]
                 t3 = [s for s in ja if s['t'].startswith('まもなく、3番線')]; t4 = [s for s in ja if s['t'].startswith('まもなく、4番線')]
-                need(bool(t3) and 'やまのて線、上野、池袋方面ゆき' in t3[0]['t'] and t3[0]['pitch'] == 1 and bool(t4) and '京浜東北線、大宮方面ゆき' in t4[0]['t'] and t4[0]['pitch'] < 1, lang + ' okachimachi words and the two voices', json.dumps((t3[:1], t4[:1]), ensure_ascii=False))
+                import re
+                more = sorted(k for k in seen if k.startswith('jr.nx') or k.startswith('jr.ar'))
+                need(any(k.startswith('jr.nx') for k in more) and any(k.startswith('jr.ar') for k in more) and not any(k[-1] in '12' for k in more), lang + ' okachimachi the next train is named and the station on arrival (this island\'s tracks only)', more)
+                need(bool(board4) and board4[0] in seen['jr.in.4']['src'] and (board4[2] + '行き') in seen['jr.in.4']['src'], lang + ' okachimachi track 4: the kind of train and where it goes are the indicator\'s', json.dumps((board4, seen['jr.in.4']['src']), ensure_ascii=False))
+                if CLIP:
+                    logs = (await ann())['log']; jsegs = [x for r in logs if r['key'].startswith('jr.') for x in r['segs'] if x[0] == 'ja']
+                    need(len(jsegs) >= 3 and all(x[1] == 1 and x[2] == 'clip' for x in jsegs) and not ja, lang + ' okachimachi with recordings: every Japanese line is played from its recording, none spoken by the device', json.dumps((jsegs[:4], ja[:1]), ensure_ascii=False))
+                else:
+                    need(bool(t3) and t3[0]['t'] == 'まもなく、3番線に、上野、池袋方面ゆきがまいります。' and t3[0]['pitch'] == 1 and bool(t4) and re.match(r'^まもなく、4番線に、(各駅停車|快速)、(大宮|南浦和|赤羽)ゆきがまいります。$', t4[0]['t']) and t4[0]['pitch'] < 1, lang + ' okachimachi words and the two voices', json.dumps((t3[:1], t4[:1]), ensure_ascii=False))
                 need(any(s['voice'] == 'Google UK English Male' for s in en) or any(s['voice'] == 'Google US English' for s in en), lang + ' okachimachi English after the Japanese', json.dumps(en[:2], ensure_ascii=False))
                 for s in ja[:4] + en[:2]: log('     said', json.dumps(s, ensure_ascii=False))
                 for key, c in caps[:1] + [x for x in caps if x[0].startswith('jr.go')][:1]:
