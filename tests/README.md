@@ -19,6 +19,7 @@ playwright install chromium
 | `ann_chk.py` | 車站廣播（以替身語音記錄會說出的內容）：高鐵四站與御徒町的進站、上車、發車、宣導廣播，語言與語音的選擇、月台與目的地、畫面字幕的語言與位置、靜音、裝置無語音時的退路 | `python3 tests/ann_chk.py tests/out/ann desk zh tpe,all4,tyo,mute,novoice` |
 | `ad_chk.py` | 接著劑指南（三種工法、六支產品）的功能檢查，以及四本指南與產品選單不再出現已移除的產品與用語、內文產品名稱不加粗 | `python3 tests/ad_chk.py desk zh,en,ja` |
 | `cam_chk.py` | 鏡頭與操作：滑鼠鍵盤時畫面上的按鈕（旋轉、拉遠拉近、回到背後、切換視角、W A S D、Shift、城市中的動作鍵）與其按鍵標示、互不重疊、都在畫面內；`,` `.` `-` `=` `C`、滑鼠拖曳與各按鈕的作用；點地面行走時鏡頭繞到背後、側向移動時不轉動；觸控時左半邊走路、右半邊轉視角、可同時進行、同側兩指縮放 | `python3 tests/cam_chk.py tests/out/cam desk zh isle,city,tkw` |
+| `oka_chk.py` / `tyo_shots.py` | 御徒町站：月台門只在列車停妥開門時開啟、發車前關閉；出發案內看板的內容（山手線「約 n 分後／まもなく／停車中」，京浜東北線的種別、時刻、行先）；時鐘；街道到月台的路徑仍可尋得。`tyo_shots.py` 以對照照片的固定視點截圖 | `python3 tests/oka_chk.py tests/out/oka high` ／ `TKTIER=high python3 tests/tyo_shots.py tests/out/tyo low p34n,p12s,gate,arch,corner` |
 | `sc3.py` | 開場音樂與標題音樂離線渲染：每秒音量（dBFS）、峰值、WAV | `python3 tests/sc3.py` |
 
 `tests/plans/` 內是 `tk2.py` 用的計畫：`zy_fix.json`（高鐵流程與車站）、`hs8_plan.json`（模擬現場）、`film_plan.json`（開場影片）、`fl6.json`（飛行）、`vc2.json`（飛行中語音）、`hz3.json`（乘車影片的霧）、`hq_plan.json`（手機 HUD）、`op71_plan.json`（開場影片與標題）。
