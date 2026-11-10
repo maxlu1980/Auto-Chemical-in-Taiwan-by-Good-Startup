@@ -128,7 +128,7 @@
   function okaFmt(m) { m = ((m % 1440) + 1440) % 1440; return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
   /* each frame: the doors follow the trains; twice a second the indicators and (each minute) the clocks are brought up to date */
   function okaTick(T, dt, o) { var O = T.oka, i; if (!O) return;
-    for (i = 0; i < O.doors.length; i++) { var D = O.doors[i], tr = D.tr || (D.tr = T.trains.filter(function (t) { return t.x === TRK[D.ti]; })[0]), want = tr && tr.st === 'dwell' && tr.wait > 2.4 && tr.wait < 18.8 ? 1 : 0; if (want !== D.want) { if (D.want != null) D.evt = want ? 'open' : 'shut'; D.want = want; }
+    for (i = 0; i < O.doors.length; i++) { var D = O.doors[i], tr = D.tr || (D.tr = T.trains.filter(function (t) { return t.x === TRK[D.ti]; })[0]), want = tr && tr.st === 'dwell' && tr.wait > 2.4 && tr.wait < 22.8 ? 1 : 0; if (want !== D.want) { if (D.want != null) D.evt = want ? 'open' : 'shut'; D.want = want; }
       if (D.f !== want) { D.f = want > D.f ? Math.min(1, D.f + dt * 0.95) : Math.max(0, D.f - dt * 0.95); var e = D.f * D.f * (3 - 2 * D.f) * 0.735; D.A.forEach(function (m) { m.position.z = -e; }); D.B.forEach(function (m) { m.position.z = e; }); } }
     O.acc += dt; if (O.acc < 0.5) return; O.acc = 0; var hm = okaJst(o), now = hm[0] * 60 + hm[1]; if (O.min !== now) { O.min = now; O.clocks.forEach(function (C) { okaClockDraw(C, hm); }); }
     OKL.forEach(function (L, ti) { var B = O.led[L.n], tr = T.trains.filter(function (t) { return t.x === TRK[ti]; })[0]; if (!tr) return; if (tr.st === 'run' && B.st === 'dwell') B.count++; B.st = tr.st;
