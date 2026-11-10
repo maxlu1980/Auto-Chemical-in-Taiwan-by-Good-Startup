@@ -69,6 +69,9 @@ async def main():
                 elif part == 'city':
                     await pg.evaluate("() => { ISLE_x.city('hsr'); }"); await pg.wait_for_timeout(1500)
                     await ev("(function(){ travel = null; fall = null; mode = 'walk'; var t = document.getElementById('isTitle'); if (t) t.hidden = true; document.getElementById('isHud').hidden = false; return 1; })()")
+                    for _ in range(60):   # the city's own play (its buttons, its bottom row) is on before anything is measured
+                        if await pg.evaluate("() => document.querySelector('.isle').classList.contains('is-gs')"): break
+                        await pg.wait_for_timeout(500)
                 elif part == 'tkw':
                     await ev("(function(){ tkWalkStart(); return 1; })()")
                 t0 = time.time(); s = None
@@ -179,7 +182,7 @@ async def main():
                     need(c6['gest'] and c7['d'] > c6['d'] * 1.3 and not c8['gest'] and not c8['orbit'] and not c8['stick'], 'two fingers on one side pinch to zoom', (c6['gest'], c6['d'], c7['d'], c8))
                     # a tap still walks there
                     got = None
-                    for (fx, fy) in ((0.3, 0.42), (0.7, 0.42), (0.5, 0.5), (0.3, 0.56)):
+                    for (fx, fy) in ((0.3, 0.42), (0.7, 0.42), (0.5, 0.5), (0.3, 0.56), (0.5, 0.6), (0.4, 0.64), (0.6, 0.64), (0.5, 0.68)):   # the last four: the ground just before her feet, whatever the lens has turned to
                         await pg.evaluate(PTR, ['pointerdown', 11, W * fx, H * fy]); await pg.evaluate(PTR, ['pointerup', 11, W * fx, H * fy]); await pg.wait_for_timeout(900); s2 = await st()
                         if s2['walkTo'] or s2['card']: got = (fx, fy, 'card' if s2['card'] else 'walk'); break
                     need(bool(got) or part == 'tkw', 'a tap (either half) still acts (she walks there, or what was tapped opens)', (got, s2))

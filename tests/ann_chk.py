@@ -113,9 +113,9 @@ async def main():
                         ok = await pg.evaluate("() => ISLE_x.okv()")
                         if ok['st'] == 2: break
                         await pg.wait_for_timeout(250)
-                    need(ok['st'] == 2 and ok['have'] == ok['lines'] == 45, lang + ' okachimachi the recordings are taken in (one for each of the 45 lines)', json.dumps(ok))
+                    need(ok['st'] == 2 and ok['have'] - ok.get('enHave', 0) == ok['lines'] == 45 and ok.get('enHave', 0) in (0, ok.get('enLines', 0)), lang + ' okachimachi the recordings are taken in (one for each of the 45 lines; the English ones all or none)', json.dumps(ok))
                     du = json.loads(await pg.evaluate(EV, "JSON.stringify(Object.keys(OKV.buf).sort().map(function (k) { return +OKV.buf[k].duration.toFixed(2); }))"))
-                    need(len(du) == 45 and min(du) > 0.3 and max(du) < 9.5, lang + ' okachimachi each recording decodes to a line\'s length', json.dumps([min(du), max(du), round(sum(du), 1)]))
+                    need(len(du) >= 45 and min(du) > 0.3 and max(du) < 14, lang + ' okachimachi each recording decodes to a line\'s length', json.dumps([len(du), min(du), max(du), round(sum(du), 1)]))
                 info = json.loads(await pg.evaluate(EV, "JSON.stringify({ id: TK.id, trk: TK.T.TRK, tr: TK.T.trains.map(function (t) { var q = AN_JR[anTrk(TK.T, t)]; return [t.x, t.dir, q && q.n, q && q.to.ja, t.st]; }), ear: anEarJR(TK.T, cam.position) })"))
                 log(DEV, lang, 'okachimachi', json.dumps(info, ensure_ascii=False))
                 m = {x[2]: (x[0], x[1], x[3]) for x in info['tr']}
@@ -144,9 +144,10 @@ async def main():
                 if CLIP:
                     logs = (await ann())['log']; jsegs = [x for r in logs if r['key'].startswith('jr.') for x in r['segs'] if x[0] == 'ja']
                     need(len(jsegs) >= 3 and all(x[1] == 1 and x[2] == 'clip' for x in jsegs) and not ja, lang + ' okachimachi with recordings: every Japanese line is played from its recording, none spoken by the device', json.dumps((jsegs[:4], ja[:1]), ensure_ascii=False))
-                else:
-                    need(bool(t3) and t3[0]['t'] == 'まもなく、3番線に、上野、池袋方面ゆきがまいります。' and t3[0]['pitch'] == 1 and bool(t4) and re.match(r'^まもなく、4番線に、(各駅停車|快速)、(大宮|南浦和|赤羽)ゆきがまいります。$', t4[0]['t']) and t4[0]['pitch'] < 1, lang + ' okachimachi words and the two voices', json.dumps((t3[:1], t4[:1]), ensure_ascii=False))
-                need(any(s['voice'] == 'Google UK English Male' for s in en) or any(s['voice'] == 'Google US English' for s in en), lang + ' okachimachi English after the Japanese', json.dumps(en[:2], ensure_ascii=False))
+                # (v81) nothing at this station is the device's own voice: Japanese and English are recordings, and a line without one is not spoken
+                need(not S, lang + ' okachimachi nothing is spoken by the device\'s own voice', json.dumps(S[:2], ensure_ascii=False))
+                logs = (await ann())['log']; esegs = [x for r in logs if r['key'].startswith('jr.') for x in r['segs'] if x[0] == 'en']; okE = await pg.evaluate("() => ISLE_x.okv()")
+                need(all(x[2] in ('clip', 'norec') for x in esegs) and (not okE.get('enHave') or any(x[2] == 'clip' for x in esegs)), lang + ' okachimachi the English is a recording too (left out until its recordings are there)', json.dumps((okE.get('enHave'), esegs[:4]), ensure_ascii=False))
                 for s in ja[:4] + en[:2]: log('     said', json.dumps(s, ensure_ascii=False))
                 for key, c in caps[:1] + [x for x in caps if x[0].startswith('jr.go')][:1]:
                     need(c['inView'] and not c['over'] and (lang == 'ja') == (c['orig'] == ''), lang + ' okachimachi line on screen ' + key, json.dumps(c, ensure_ascii=False))
@@ -155,7 +156,7 @@ async def main():
                 while t < 200 and len([k for k in seen2 if k.startswith('jr.in')]) < 4:
                     t += await run(3); a = await ann()
                     for r in a['log']: seen2.setdefault(r['key'], r)
-                need(len([k for k in seen2 if k.startswith('jr.in')]) == 4, lang + ' okachimachi concourse hears all four tracks', sorted(seen2))
+                need(all(any(k in seen2 for k in ('jr.in.%d' % n, 'jr.go.%d' % n)) for n in (1, 2, 3, 4)) and len([k for k in seen2 if k.startswith('jr.in')]) >= 3, lang + ' okachimachi concourse hears all four tracks (each track\'s approach or its doors; one approach may give way when two trains come in together)', sorted(seen2))
                 await pg.evaluate("() => { ISLE_x.annAt(null); }")
             # ---------- the mute switch ----------
             if 'mute' in PARTS:
