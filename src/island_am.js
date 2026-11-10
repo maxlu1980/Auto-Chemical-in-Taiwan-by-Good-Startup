@@ -165,8 +165,8 @@
     try { LUNA.update(RD.A, dt, RD.lo); } catch (e) {} }
 
   /* drawn into the film's frame right after the land and sky, before the grade: the depth cleared, the island's own lamps and wet kept off her */
-  function rdDraw(R, r0) { if (!RD.on || !RD.G || !RD.G.visible) return; var U = KIT.U, sv = [U.uLLn.value, U.uSpK.value, U.uWet.value, U.uSnowC.value], ac = R.autoClear; U.uLLn.value = 0; U.uSpK.value = 0; U.uWet.value = 0; U.uSnowC.value = 0;
-    try { R.autoClear = false; R.clearDepth(); r0(RD.scene, RD.cam); } finally { R.autoClear = ac; U.uLLn.value = sv[0]; U.uSpK.value = sv[1]; U.uWet.value = sv[2]; U.uSnowC.value = sv[3]; } }
+  function rdDraw(R, r0) { if (!RD.on || !RD.G || !RD.G.visible) return; var U = KIT.U, sv = [U.uLLn.value, U.uSpK.value, U.uWet.value, U.uSnowC.value, U.uZn.value], ac = R.autoClear; U.uLLn.value = 0; U.uSpK.value = 0; U.uWet.value = 0; U.uSnowC.value = 0; U.uZn.value = 0; /* (v81) nor the lit places, which are found through the main lens */
+    try { R.autoClear = false; R.clearDepth(); r0(RD.scene, RD.cam); } finally { R.autoClear = ac; U.uLLn.value = sv[0]; U.uSpK.value = sv[1]; U.uWet.value = sv[2]; U.uSnowC.value = sv[3]; U.uZn.value = sv[4]; } }
   function rdPatch() { if (RD.patched) return; RD.patched = true; var rPrev = R3.render; R3.render = function (sc, c) { var out = rPrev.apply(R3, arguments); if (RD.on && CN.on && (sc === scene || (typeof CINE !== 'undefined' && sc === CINE.scene()))) { try { rdDraw(R3, function (s2, c2) { rPrev.call(R3, s2, c2); }); } catch (e) { RD.on = false; if (window.console) console.error('opening rider', e); } } return out; }; }
 
   /* into the opening: built with the film's island (at the boot's last stage), started and stopped with it, advanced in its frame */

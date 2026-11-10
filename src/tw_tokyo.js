@@ -106,6 +106,7 @@ var TOKYO3D = (function () {
       mat: C(new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, metalness: 0.0, roughness: 0.85, envMapIntensity: 0.5 })),
       matS: S(new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, metalness: 0.0, roughness: 0.85, envMapIntensity: 0.5 })),
       glass: C(new THREE.MeshStandardMaterial({ color: 0x10171c, metalness: 0.25, roughness: 0.03, transparent: true, opacity: 0.72, envMapIntensity: 2.2 })),
+      /* (v82) the trains' own windows: the same dark glass, lit from within after dark (tw_tokyo_c.js) */ tglass: C(new THREE.MeshStandardMaterial({ color: 0x10171c, metalness: 0.25, roughness: 0.03, transparent: true, opacity: 0.72, envMapIntensity: 2.2, emissive: 0xfff1dc, emissiveIntensity: 0 })),
       vglass: C(new THREE.MeshStandardMaterial({ color: 0x141a20, metalness: 0.2, roughness: 0.05, envMapIntensity: 1.8 })),
       shop: S(new THREE.MeshStandardMaterial({ color: 0x6a8090, metalness: 0.1, roughness: 0.05, transparent: true, opacity: 0.45, envMapIntensity: 1.5, depthWrite: false })),
       glow: C(new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false })),
@@ -191,7 +192,7 @@ var TOKYO3D = (function () {
   /* a train of n cars: the cars share six batches (one draw per material for the whole train) */
   function train(o) { mats(); var n = o.n || 6, i, BS = { m: K.Batch(), p: K.Batch(), d: K.Batch(), mat: K.Batch(), g: K.Batch(), e: K.Batch(), k: K.Batch() }, root = new THREE.Group(), extra = [];
     for (i = 0; i < n; i++) { var cab = i === 0 || i === n - 1, F = new THREE.Matrix4().makeTranslation(0, 0, -i * CARP); if (i === n - 1) F.multiply(new THREE.Matrix4().makeRotationY(Math.PI)); extra = extra.concat(carParts({ col: o.col, cab: cab, panto: i === 1 || i === n - 2, dest: o.dest, seat: o.seat }, BS, F)); }
-    [[BS.m, M.metal], [BS.p, M.gloss], [BS.d, M.dark], [BS.mat, M.mat], [BS.k, M.gloss], [BS.g, M.glass], [BS.e, M.glow]].forEach(function (q) { if (q[0].count()) { var mm = batchMesh(q[0], q[1], q[1] !== M.glass && q[1] !== M.glow); if (q[1] === M.glass) mm.renderOrder = 2; root.add(mm); } });
+    [[BS.m, M.metal], [BS.p, M.gloss], [BS.d, M.dark], [BS.mat, M.mat], [BS.k, M.gloss], [BS.g, M.tglass], [BS.e, M.glow]].forEach(function (q) { if (q[0].count()) { var mm = batchMesh(q[0], q[1], q[1] !== M.tglass && q[1] !== M.glow); if (q[1] === M.tglass) mm.renderOrder = 2; root.add(mm); } });
     extra.forEach(function (m) { root.add(m); }); return { root: root, len: (n - 1) * CARP + CARL, n: n }; }
 
 

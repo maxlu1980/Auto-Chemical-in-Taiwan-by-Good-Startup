@@ -128,3 +128,5 @@
 .isle .isle__gsphb,.isle.is-narrow .isle__gsphb{bottom:max(20px,calc(env(safe-area-inset-bottom,0px) + 20px));width:50px;height:50px}
 .isle:not(.is-touch) .isle__gsact [data-key]::after{right:auto;left:-4px;top:-4px;transform:none}
 }
+/* (v82) on a phone in a city the lens's three buttons run along the bottom beside the round map; the interaction button (take the train, talk) used to come up over the third of them ("behind her") — it now sits above that row */
+.isle.is-narrow.is-gs:not(.is-tkwalk) .isle__br{bottom:max(70px,calc(env(safe-area-inset-bottom,0px) + 70px))}

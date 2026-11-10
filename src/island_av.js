@@ -106,7 +106,7 @@
     var pre = a.chime ? annChime(a.vol) : 0; if (rec.cap) annCap(a);
     function done() { if (me.dead) return; me.dead = true; ANN.cur = null; ANN.gap = ANN.list.length ? 0.7 : 2.4; /* another one waits: a breath, no more */ rec.done = 1; annCap(null); }
     function step() { if (me.dead) return; var s = a.segs[me.i++]; if (!s) { rec.spoke = me.spoke; if (me.spoke) return done(); /* no voice here: the call, and the line stays for the time it takes to read */ if (a.cue) annCue(a.vol); me.tm = setTimeout(done, Math.max(4200, Math.min(9000, a.src.t.length * 150))); return; }
-      if (s.opt && ANN.list.some(function (b) { return b.due <= ANN.t + 1.5 && b.pri >= a.pri; })) return step(); /* the second language is left out while another announcement of the same weight waits (another train coming in) */
+      if (s.opt && (ANN.list.some(function (b) { return b.due <= ANN.t + 1.5 && b.pri >= a.pri; }) || (s.skip && s.skip()))) return step(); /* the second language is left out while another announcement of the same weight waits (another train coming in) */
       spSay(s, a.vol, function (why, started) { rec.segs.push([s.l, started ? 1 : 0, why]); if (me.dead) return; if (started) me.spoke++; else if (/^(nostart|throw|off)/.test(why)) me.i = a.segs.length; /* speech is held back here: no use asking for the rest */ me.tm = setTimeout(step, started ? 320 : 0); }); }
     me.stop = function () { if (me.dead) return; me.dead = true; clearTimeout(me.tm); rec.cut = 1; };
     me.tm = setTimeout(step, pre * 1000); }
