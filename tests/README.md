@@ -22,6 +22,7 @@ playwright install chromium
 | `oka_chk.py` / `tyo_shots.py` | 御徒町站：月台門只在列車停妥開門時開啟、發車前關閉；出發案內看板的內容（山手線「約 n 分後／まもなく／停車中」，京浜東北線的種別、時刻、行先）；時鐘；街道到月台的路徑仍可尋得。`tyo_shots.py` 以對照照片的固定視點截圖 | `python3 tests/oka_chk.py tests/out/oka high` ／ `TKTIER=high python3 tests/tyo_shots.py tests/out/tyo low p34n,p12s,gate,arch,corner` |
 | `snd_chk.py` | 御徒町站的音效（以分析器監聽街道音效輸出，檢查各音效的音高是否出現）：月台門與列車車門的提示音、樓梯口鳥鳴、改札口導盲鈴與讀卡提示音、主角通過改札的提示音。只確認有發聲，不判斷聽感 | `python3 tests/snd_chk.py tests/out/snd` |
 | `ann_rt.py` | 御徒町站廣播的實際節奏（不加速）：站在月台上若干秒，列出每一句廣播何時播出、排隊等了多久、哪些因為過時而略過；用來確認同一班列車的預告、接近、到站、關門廣播依序而不擁擠 | `python3 tests/ann_rt.py 200` |
+| `night_chk.py` | 御徒町站的夜間照明：入夜後「亮區」啟用、白天關閉；她站在月台、改札、樓梯時在亮區內（頭燈調暗），在街上則不在；同一視點分別以燈亮與強制關燈各畫一張，亮的那張地面明顯較亮。截圖存於輸出資料夾 | `python3 tests/night_chk.py tests/out/night plat,hall,stair,street` |
 | `jit_chk.py` | 鏡頭靜止檢查：她站在御徒町站的月台、改札或街道上不動（各位置 × 八個方向），以不均勻的每格時間（模擬手機）逐格推進；鏡頭定下來之後，位置、角度、視野都不得再變動。列車進站掃過鏡頭所在位置時的單次切換會列出，需人工判讀 | `python3 tests/jit_chk.py mobile plat,hall,street 200` |
 | `cred_chk.py` | 標題畫面與載入畫面的聲音標示：完整、不被裁切、在畫面內，標題卡片不超出視窗（手機與桌面、三種語言） | `python3 tests/cred_chk.py mobile zh,en,ja` |
 | `sc3.py` | 開場音樂與標題音樂離線渲染：每秒音量（dBFS）、峰值、WAV | `python3 tests/sc3.py` |

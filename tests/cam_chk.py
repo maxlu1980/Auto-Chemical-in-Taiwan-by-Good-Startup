@@ -190,7 +190,9 @@ async def main():
                         if not await ev("(function(){ var a = !!talkQ, b = !!cardOn; if (a) talkEnd(); else if (b) cardClose(); return a || b; })()"): break
                         await pg.wait_for_timeout(300)
                     await ev("(function(){ target = null; path = null; return 1; })()"); h = await pg.evaluate(HUD); m = {x['n']: x for x in h['btn']}
-                    top = await pg.evaluate("([x, y]) => { const e = document.elementFromPoint(x, y), b = e && e.closest('button'); if (b) b.click(); return b ? b.id : null; }", [m['isCamBack']['x'] + m['isCamBack']['w'] / 2, m['isCamBack']['y'] + m['isCamBack']['h'] / 2]); need(top == 'isCamBack', 'the “behind her” button is the one under the finger', top); t0 = time.time(); s = await st()
+                    top = await pg.evaluate("([x, y]) => { const e = document.elementFromPoint(x, y), b = e && e.closest('button'); if (b) b.click(); return b ? b.id : null; }", [m['isCamBack']['x'] + m['isCamBack']['w'] / 2, m['isCamBack']['y'] + m['isCamBack']['h'] / 2]); need(top == 'isCamBack', 'the “behind her” button is the one under the finger', top)
+                    if top != 'isCamBack': log('   layout', await pg.evaluate("() => { const q = s => { const e = document.querySelector(s); if (!e) return null; const r = e.getBoundingClientRect(), cs = getComputedStyle(e); return [Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom), cs.display, e.hidden, (e.textContent || '').trim().slice(0, 16)]; }; return JSON.stringify({ cls: document.querySelector('.isle').className, act: q('#isAct'), br: q('.isle__br'), back: q('#isCamBack'), bl: q('#isBL'), gs: q('#isGsAct'), W: innerWidth, H: innerHeight }); }"))
+                    t0 = time.time(); s = await st()
                     while time.time() - t0 < 20 and abs(s['behind']) > 0.03: await pg.wait_for_timeout(200); s = await st()
                     need(abs(s['behind']) <= 0.03, 'the “behind her” button brings the lens round behind her', s['behind'])
                 need(not errs, 'no errors', errs[:4])

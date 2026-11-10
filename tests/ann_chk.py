@@ -147,7 +147,15 @@ async def main():
                 # (v81) nothing at this station is the device's own voice: Japanese and English are recordings, and a line without one is not spoken
                 need(not S, lang + ' okachimachi nothing is spoken by the device\'s own voice', json.dumps(S[:2], ensure_ascii=False))
                 logs = (await ann())['log']; esegs = [x for r in logs if r['key'].startswith('jr.') for x in r['segs'] if x[0] == 'en']; okE = await pg.evaluate("() => ISLE_x.okv()")
-                need(all(x[2] in ('clip', 'norec') for x in esegs) and (not okE.get('enHave') or any(x[2] == 'clip' for x in esegs)), lang + ' okachimachi the English is a recording too (left out until its recordings are there)', json.dumps((okE.get('enHave'), esegs[:4]), ensure_ascii=False))
+                need(all(x[2] in ('clip', 'norec') for x in esegs), lang + ' okachimachi the English, when it is said, is a recording', json.dumps((okE.get('enHave'), esegs[:4]), ensure_ascii=False))
+                if okE.get('enHave'):   # the English of an approach: two recordings (the train, the warning), there and playable — whether it was said just now depends on the other trains (it gives way to them)
+                    es = json.loads(await pg.evaluate(EV, "(function(){ var a = jrIn(AN_JR[3]), e = a.segs.filter(function (x) { return x.l === 'en'; })[0]; window.__enT = null; if (e) { annStop(); spSay(e, 0.4, function (why, st) { window.__enT = [why, st]; }); } return JSON.stringify(e ? { clip: e.clip, opt: e.opt, skip: typeof e.skip, have: okvHave(e.clip), t: e.t } : null); })()"))
+                    for _ in range(40):
+                        got = await pg.evaluate("() => window.__enT")
+                        if got: break
+                        await pg.wait_for_timeout(250)
+                    need(bool(es) and len(es['clip']) == 2 and es['have'] and es['opt'] == 1 and es['skip'] == 'function' and got == ['clip', True], lang + ' okachimachi the approach has its English (two recordings, played through the loudspeakers, giving way to another train)', json.dumps((es, got), ensure_ascii=False))
+                    pa = await pg.evaluate("() => ISLE_x.okv().pa"); need(pa in ('plat', 'hall', 'far'), lang + ' okachimachi the announcements go through the platform loudspeakers', pa)
                 for s in ja[:4] + en[:2]: log('     said', json.dumps(s, ensure_ascii=False))
                 for key, c in caps[:1] + [x for x in caps if x[0].startswith('jr.go')][:1]:
                     need(c['inView'] and not c['over'] and (lang == 'ja') == (c['orig'] == ''), lang + ' okachimachi line on screen ' + key, json.dumps(c, ensure_ascii=False))
