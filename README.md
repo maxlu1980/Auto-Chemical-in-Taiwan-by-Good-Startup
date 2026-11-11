@@ -52,6 +52,8 @@ python3 build.py            # 產生 docs/index.html 與 build/ 下的各版本
 python3 build.py --check    # 重新建置並與 docs/index.html 比對（CI 用）
 ```
 
+建置時會先確認組合後的程式可以解析，並檢查同一個範圍內沒有重複宣告的函式（`tests/dup_chk.js`；各模組共用同一個範圍，後宣告的函式會無聲地取代先宣告的）。有重複即建置失敗。
+
 建置產物：
 
 | 檔案 | 用途 |

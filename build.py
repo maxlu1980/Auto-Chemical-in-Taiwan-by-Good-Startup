@@ -108,6 +108,10 @@ def build(docs_dir, out_dir):
     open(os.path.join(out_dir, '_build_check.js'), 'w', encoding='utf-8').write(body)
     r = subprocess.run(['node', '--check', os.path.join(out_dir, '_build_check.js')], capture_output=True, text=True)
     if r.returncode != 0: raise SystemExit('the assembled code does not parse:\n' + r.stderr[:2000])
+    # (v88) no function declared twice in one scope: the modules of a part share one closure, and a later declaration silently replaces an earlier one
+    r = subprocess.run(['node', os.path.join(ROOT, 'tests', 'dup_chk.js'), os.path.join(out_dir, '_build_check.js')], capture_output=True, text=True)
+    if r.returncode == 1: raise SystemExit('the assembled code declares a function twice in one scope:\n' + r.stdout[:2000])
+    print((r.stdout.strip().split('\n') or [''])[-1] or 'dup_chk: no output')
     mini = minify(full)
     open(os.path.join(out_dir, 'guide.min.html'), 'w', encoding='utf-8').write(mini)
     open(os.path.join(docs_dir, 'index.html'), 'w', encoding='utf-8').write(skeleton(mini, False))
