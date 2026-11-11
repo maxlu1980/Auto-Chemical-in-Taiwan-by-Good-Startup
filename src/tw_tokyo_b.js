@@ -243,6 +243,7 @@
     addTrain(0x29a3e0, TRK[3], 1, ['京浜東北線', '大宮方面'], 0x2a4a8a, 62); addTrain(0x8cc63e, TRK[1], -1, ['山手線', '東京・品川方面'], 0x3a6a3a, 150); addTrain(0x29a3e0, TRK[0], -1, ['京浜東北線', '東京・横浜方面'], 0x2a4a8a, 320);
     /* fair-weather cumulus over the district (sprites, far out; their colours follow the island's sky) */ var cr2 = rnd(808), cls = []; for (var ci = 0; ci < (hi ? 46 : 26); ci++) { var ca = cr2() * 6.283, cd = 180 + cr2() * 300, cs = 36 + cr2() * 60; for (var cj = 0; cj < 3; cj++) cls.push({ p: [Math.cos(ca) * cd + (cj - 1) * cs * 0.45, 75 + cr2() * 55 + cj * 4, 20 + Math.sin(ca) * cd + cr2() * 10], s: [cs * (0.8 + cr2() * 0.4), cs * (0.7 + cr2() * 0.3), cs] }); }
     if (K.inst && K.cloudMat && K.blobTex) { var clm = K.inst(new THREE.PlaneGeometry(1, 0.625), K.cloudMat(K.blobTex()), cls, { cast: false, recv: false }); if (clm) { clm.frustumCulled = false; clm.renderOrder = 2; clm.material.uniforms.uNear.value = 60; root.add(clm); T.clouds = clm; } }
+    /* (v86) for the guide's long ways (island_h.js): Kasuga-dori's carriageway and the two zebras over it (the road runs east–west) */ T.navRd = [[-110, 110, ROAD[0], ROAD[1]]]; T.navX = [[14.6, 19.6, ROAD[0], ROAD[1], 'ew'], [-19.6, -14.6, ROAD[0], ROAD[1], 'ew']];
     T.z0 = z0; T.z1 = z1; T.portal = [VX + 1.2, pzc2]; T.crossing = [17.1, (ROAD[0] + ROAD[1]) / 2]; T.ROAD = ROAD; T.VX = VX; T.PLT = PLT; T.SCX = SCX; T.SW = SW; T.Y_PLAT = Y_PLAT; T.TRK = TRK;
     return T; }
 
