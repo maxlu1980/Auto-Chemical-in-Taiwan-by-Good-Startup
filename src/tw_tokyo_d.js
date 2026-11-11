@@ -128,6 +128,7 @@
     Z.push([S.CX0, 0, S.ZB, S.CX1, S.CY - 0.04, S.CZ1, 0.84, 0.9], [S.CX0, 0, S.CZ0, S.CX1, YT - 0.04, S.ZB + 0.1, 0.84, 0.9]);
     S.SCX.forEach(function (sx) { Z.push([sx - S.SW - 0.12, 0, S.ZS0 - 0.1, sx + S.SW + 0.12, Y_CAN + 0.02, S.ZB + 0.1, 0.92, 0.2]); });
     Z.push([S.CX1 - 0.1, 0, S.PZA - 0.3, VX + 0.5, 3.3, S.PZB + 0.3, 0.9, 2.4]);
+    /* (v85) no lamps of its own, but a roof: the ground under the viaduct (the road under the span, the lane's stalls, the bays) stays dry in the rain */ Z.push([-VX + 0.2, -0.5, -400, VX - 0.2, Y_DECK - 0.5, 400, 0, 0.3]);
     T.zlDyn = function (out, cl) { for (var i = 0; i < T.trains.length; i++) { var tr = T.trains[i], a = tr.z + tr.dir * CARL / 2, b = tr.z - tr.dir * (tr.len - CARL / 2), z0 = Math.min(a, b), z1 = Math.max(a, b); if (z1 < cl[1] - 130 || z0 > cl[1] + 130) continue; out.push([tr.x - 1.12, TR_Y + 0.93, z0 + 0.25, tr.x + 1.12, TR_Y + 2.72, z1 - 0.25, 1.0, 0.06]); } }; }
   /* called at the end of the station's building, before the batches are committed */
   function okaDetail(E) { var T = E.T, O = T.oka = { doors: [], led: {}, clocks: [], acc: 9, min: -1, Bcol: K.Batch({ uv: true }), Bstr: K.Batch({ uv: true }), Bceil: K.Batch() };

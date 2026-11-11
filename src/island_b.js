@@ -67,7 +67,7 @@
   function build3d() {
     if (built) return true; if (typeof THREE === 'undefined' || typeof LUNA === 'undefined' || typeof TWW === 'undefined') return false;
     try { R3 = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); } catch (e) { return false; }
-    TIER = tierOf(R3); if (window.FAST3D) TIER = 'low'; if (window.ISLE_TIER) TIER = window.ISLE_TIER;
+    TIER = tierOf(R3); if (window.FAST3D) TIER = 'low'; if (window.ISLE_TIER) TIER = window.ISLE_TIER; /* (v85) the vehicles' bodies: fewer stations along them, plainer wheels below the high tier */ if (typeof TOKYO3D !== 'undefined' && TOKYO3D.vehicle) TOKYO3D.vehicle.lo = TIER === 'high' ? 0 : TIER === 'low' ? 2 : 1;
     var ULTRA = !!window.ISLE_ULTRA && TIER === 'high' && !window.FAST3D; perf.ultra = ULTRA; perf.max = ULTRA ? Math.min(window.devicePixelRatio || 1, 2.5) : TIER === 'high' ? Math.min(window.devicePixelRatio || 1, 1.75) : TIER === 'mid' ? Math.min(window.devicePixelRatio || 1, 1.5) : Math.min(window.devicePixelRatio || 1, 1.25); perf.min = ULTRA ? Math.min(1, perf.max) : TIER === 'high' ? 0.8 : 0.7; perf.dpr = perf.max; if (window.FAST3D) perf.dpr = window.ISLE_DPR || 0.5;
     R3.setPixelRatio(perf.dpr); R3.outputEncoding = THREE.sRGBEncoding; R3.toneMapping = THREE.ACESFilmicToneMapping; R3.toneMappingExposure = 1.0; R3.shadowMap.enabled = true; R3.shadowMap.type = THREE.PCFSoftShadowMap;
     $('isView').appendChild(R3.domElement); R3.domElement.setAttribute('aria-label', 'AUTO ISLAND 3D');
@@ -75,7 +75,7 @@
     PROPS.init({ K: KIT, M: KIT.M() });
     var q = ULTRA ? { shadow: 4096, view: 190, grass: 1.25 } : TIER === 'high' ? {} : TIER === 'mid' ? { shadow: 1536, view: 120, grass: 0.8 } : { shadow: 1024, view: 100, grass: 0.55 };
     W = TWW.build(scene, { low: TIER === 'low' || COARSE, quality: q });
-    if (TIER !== 'low' && !window.NOPOST) { POST = KIT.Post(R3, { msaa: ULTRA ? 8 : TIER === 'high' ? 4 : 2, rays: ULTRA ? 56 : TIER === 'high' ? 40 : 22 }); W.post = POST; R3.toneMapping = THREE.NoToneMapping; W.Q.bloom = TIER === 'high' ? 1 : 0.8; if (TIER !== 'high') POST.final.uniforms.uTilt.value = 0.35; }
+    if (TIER !== 'low' && !window.NOPOST) { POST = KIT.Post(R3, { msaa: ULTRA ? 8 : TIER === 'high' ? 4 : 2, rays: ULTRA ? 56 : TIER === 'high' ? 40 : 22, /* (v85) the samples of the occlusion and the steps of a reflection's ray */ aoN: ULTRA ? 16 : TIER === 'high' ? 12 : 8, ssrN: ULTRA ? 32 : TIER === 'high' ? 24 : 16 }); W.post = POST; R3.toneMapping = THREE.NoToneMapping; W.Q.bloom = TIER === 'high' ? 1 : 0.8; if (TIER !== 'high') POST.final.uniforms.uTilt.value = 0.35; }
     if (LUNA.setQuality) LUNA.setQuality(ULTRA ? 3 : TIER === 'high' ? 2 : TIER === 'mid' ? 1 : 0); luna = LUNA.build('luna'); scene.add(luna.root); luna.root.traverse(function (o) { if (o.isMesh && !o.userData.ink) o.castShadow = true; });
     /* the people */
     var CATPAL = { lab: 0x2b3550, po: 0x4a3b5c, sl: 0x2b3550, gs: 0xe5600c, ad: 0x5a4030, ux: 0x2f4a3c };

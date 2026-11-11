@@ -18,11 +18,11 @@
     var ob = scene.onBeforeRender; scene.onBeforeRender = function (r, s, c) { if (ob) ob.apply(this, arguments); if (c && c.matrixWorld) KIT.U.uZi.value.copy(c.matrixWorld); };
     var ss = W.setSpot; W.setSpot = function (p, d, k, o) { return ss.call(W, p, d, k * (1 - 0.94 * ZL.inn), o); }; }
   function zlTick(dt) { var U = KIT.U; if (!U.uZn) return; var T = TK && TK.T, on = !!(T && T.zl && tkShown() && TK.g && TK.g.visible), k = on ? zlLevel() : 0, i; ZL.k = k;
-    if (k < 0.01) { U.uZn.value = 0; ZL.n = 0; ZL.inn += (0 - ZL.inn) * Math.min(1, dt * 4); return; }
+    /* (v85) in the rain the boxes are kept by day too, unlit: under them the ground stays dry (tw_kit.js) */ if (k < 0.01 && !(on && U.uWet && U.uWet.value > 0.02)) { U.uZn.value = 0; ZL.n = 0; ZL.inn += (0 - ZL.inn) * Math.min(1, dt * 4); return; }
     if (ZL.id !== TK.id || !ZL.W) { ZL.id = TK.id; ZL.W = T.zl.map(function (z) { return zlWorld(T, z); }); }
     var list = ZL.W, dyn = ZL.dyn; dyn.length = 0; if (T.zlDyn) { T.zlDyn(dyn, T.toL(cam.position.x, cam.position.z)); if (dyn.length) { list = ZL.W.slice(); for (i = 0; i < dyn.length; i++) list.push(zlWorld(T, dyn[i])); } }
     var n = Math.min(list.length, U.uZa.value.length); for (i = 0; i < n; i++) { var z = list[i]; U.uZa.value[i].set(z[0], z[1], z[2], z[6] * k); U.uZb.value[i].set(z[3], z[4], z[5], Math.max(0.05, z[7])); } U.uZn.value = n; ZL.n = n;
-    /* is she in one of the lit places (the fixed ones) */ var inn = 0; for (i = 0; i < ZL.W.length; i++) { var q = ZL.W[i]; if (pos.x > q[0] - 0.3 && pos.x < q[3] + 0.3 && pos.z > q[2] - 0.3 && pos.z < q[5] + 0.3 && pos.y + 0.9 > q[1] && pos.y < q[4]) { inn = 1; break; } }
+    /* is she in one of the lit places (the fixed ones) */ var inn = 0; for (i = 0; i < ZL.W.length; i++) { var q = ZL.W[i]; if (q[6] > 0 && pos.x > q[0] - 0.3 && pos.x < q[3] + 0.3 && pos.z > q[2] - 0.3 && pos.z < q[5] + 0.3 && pos.y + 0.9 > q[1] && pos.y < q[4]) { inn = 1; break; } }
     ZL.inn += (inn * k - ZL.inn) * Math.min(1, dt * 4); }
   var _lightsTickAY = lightsTick; lightsTick = function (dt) { try { zlHook(); zlTick(dt || 0.016); } catch (e) { if (window.ISLE_TEST) throw e; }
     var r = _lightsTickAY.apply(this, arguments); if (ZL.inn > 0.01 && typeof LAMP !== 'undefined' && LAMP && LAMP.lens) LAMP.lens.color.lerp(ZL.c0, Math.min(1, ZL.inn)); return r; };

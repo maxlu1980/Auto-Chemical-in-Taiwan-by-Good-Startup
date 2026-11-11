@@ -68,6 +68,7 @@ tw_tokyo.js
 tw_tokyo_v.js
 tw_tokyo_b.js
 tw_tokyo_d.js
+tw_tokyo_f.js
 tw_tokyo_e.js
 tw_tokyo_c.js
 tw_tpe.js
@@ -155,5 +156,6 @@ okv_data_en.js
 island_ax.js
 island_ay.js
 island_az.js
+island_ba.js
 island_c.js
 page.js
