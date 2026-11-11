@@ -69,7 +69,8 @@ async def main():
             need(not s['open'] and s['menu'] and '/island' not in s['hash'], 'title: the button opens the guide with the list of products out', {k: s[k] for k in ('open', 'menu', 'hash')}); await shot(pg, 'tech_' + DEV)
             await pg.evaluate("() => Menu.open(false)"); await pg.goto("about:blank"); await pg.goto("file://" + D + "/" + FILE + "#/island", wait_until="commit", timeout=240000); await ready(pg, True)
         if 'fly' in PARTS or 'skip' in PARTS:
-            ft = json.loads(await pg.evaluate("() => JSON.stringify(ISLE_x.flyFT())")); r = await pg.evaluate("(t) => ISLE_x.flySeek(t)", ft['tpe'] - 0.25); s = await pg.evaluate(ST)
+            ft = json.loads(await pg.evaluate("() => JSON.stringify(ISLE_x.flyFT())")); # (v88) stepped and read in the same turn: a frame of the page's own between the two could carry the flight past the dive (a quarter of a second away) before it was read
+            rs = await pg.evaluate("(t) => { const r = ISLE_x.flySeek(t); return { r: r, s: (" + ST + ")() }; }", ft['tpe'] - 0.25); r = rs['r']; s = rs['s']
             need(r is not None and s['flying'] and not s['op'] and s['tour']['stage'] == 0, 'the flight from Okachimachi, stepped to the dive (the film not yet)', {'t': r, 'tour': s['tour']})
             w0 = await pg.evaluate(EV, "(function(){ flyTick(0.05); return +document.getElementById('isFlyW').style.opacity; })()"); need(isinstance(w0, (int, float)) and w0 > 0.3, 'the dive goes white before the scene changes', w0)
             t0 = time.time(); s = None

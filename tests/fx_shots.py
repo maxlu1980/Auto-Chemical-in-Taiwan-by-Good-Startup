@@ -1,15 +1,21 @@
 # (v85) Okachimachi with the two effects that read the depth: for each view a picture with them, and the two buffers by themselves (the occlusion, the
 # reflections, the smoothness each surface wrote); the weather set by hand (WX: a WMO code — 63 rain, 1 clear)
 #   python3 fx_shots.py <out dir> <tier mid|high> <view,view> [hour] [modes: on,off,aoonly,ao,ssr,gloss,plain]        WX=63  VP=960x570
-#   PRE='<js>' is run once before the views (e.g. to stand vehicles in a row), EVAL='<js>' once after them and its result printed; 'plain' leaves the settings alone
+#   LUNA='x,z,dx,dz' stands her in the picture (her head lamp on at night);  PRE='<js>' is run once before the views (e.g. to stand vehicles in a row), EVAL='<js>' once after them and its result printed; 'plain' leaves the settings alone
 import asyncio, sys, json, time, os
 import os
 from playwright.async_api import async_playwright
 D = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.abspath(sys.argv[1]); TIER = sys.argv[2]; WANT = sys.argv[3].split(','); HOUR = sys.argv[4] if len(sys.argv) > 4 else '14'; MODES = (sys.argv[5] if len(sys.argv) > 5 else 'on').split(','); FILE = os.environ.get('TK_FILE', 'build/test_min.html'); os.makedirs(OUT, exist_ok=True)
 VPS = os.environ.get('VP', '960x570').split('x'); WX = os.environ.get('WX', '')
+# (v88) LUNA='x,z,dx,dz': she stands there (the street's own frame) facing that way and is seen — at night with her head lamp on — instead of being hidden
+HER = ''
+if os.environ.get('LUNA'):
+    q = [float(v) for v in os.environ['LUNA'].split(',')]; HER = "(function(){ var w2 = T.toW(%s, 0, %s); pos.set(w2.x, T.Y, w2.z); face = Math.atan2(T.f * %s, T.f * %s); target = null; path = null; luna.root.position.copy(pos); luna.root.rotation.set(0, face, 0); luna.root.visible = true; })();" % (q[0], q[1], q[2], q[3])
 VIEWS = { 'eastb': ([-19.5, 1.6, 3.0], [-27.5, 2.6, 12.0]), 'show1': ([47, 4.2, 43], [47, 0.6, 30]), 'show2': ([70, 4.2, 43], [70, 0.6, 30]), 'show3': ([40, 1.3, 36.5], [52, 0.8, 29]), 'taxi': ([22.6, 1.35, 17.2], [18.5, 0.75, 13.4]), 'taxi2': ([15.2, 1.2, 9.6], [18.5, 0.7, 13.4]), 'pole': ([20.5, 1.6, 2], [26, 6, -22]), 'bld2': ([20.5, 1.6, 14], [34, 10, -4]), 'over': ([40, 16, 44], [18, 0, 22]), 'road': ([40, 1.6, 30], [10, 1.4, 29]), 'side': ([24.5, 1.6, -6], [24.5, 1.6, -60]), 'bld': ([22, 1.6, 40], [34, 9, 12]), 'p34n': ([6.5, 8.85, -69], [6.4, 8.75, -20]), 'p12s': ([-6.5, 8.85, -11.5], [-6.5, 8.75, -70]), 'pdoor': ([5.4, 8.7, -44], [3.2, 8.1, -38]), 'gate': ([12.4, 1.55, 10.8], [4, 1.5, 8.5]), 'hall': ([8.6, 1.55, 9.6], [-6.5, 2.4, 0]),
-    'exitN': ([27, 1.5, 17], [13, 3.4, 8]), 'corner': ([23, 1.6, 27.5], [10, 3.0, 16.5]), 'arch': ([21.5, 1.5, 10.8], [13, 2.5, 10.8]), 'west': ([30, 1.6, -20], [13, 5, -30]), 'street': ([27, 1.2, 24], [14, 1.6, 12]), 'low': ([24, 0.7, 20], [12, 1.4, 10]) }
+    'exitN': ([27, 1.5, 17], [13, 3.4, 8]), 'corner': ([23, 1.6, 27.5], [10, 3.0, 16.5]), 'arch': ([21.5, 1.5, 10.8], [13, 2.5, 10.8]), 'west': ([30, 1.6, -20], [13, 5, -30]), 'street': ([27, 1.2, 24], [14, 1.6, 12]), 'low': ([24, 0.7, 20], [12, 1.4, 10]),
+    # (v88) from above, down onto the pavement before the north exit (the walk's own camera, a phone held upright)
+    'exitTop': ([22.5, 6.5, 8.5], [17.5, 0.3, 13.5]), 'exitTop2': ([21.5, 7.5, 16.5], [16.5, 0.2, 11.0]), 'exitTop3': ([24, 5.0, 12], [14, 1.0, 12]), 'exitTop4': ([20.6, 6.2, 9.6], [15.6, 0.4, 13.4]) }
 def log(*a): print(time.strftime('%H:%M:%S'), *a, flush=True)
 EV = "(c) => { try { return ISLE_x.ev(c); } catch (e) { return 'ERR ' + e; } }"
 async def main():
@@ -28,7 +34,7 @@ async def main():
         if os.environ.get('PRE'): log('pre', await pg.evaluate(EV, os.environ['PRE']))
         for v in WANT:
             e, l = VIEWS[v]
-            await pg.evaluate(EV, "(function(){ var T = TK.T, a = T.toW(%s, 0, %s), b = T.toW(%s, 0, %s), w = T.toW(%s, 0, %s); pos.set(w.x, T.Y + %s, w.z); vel.set(0, 0, 0); luna.root.position.copy(pos); luna.root.visible = false; ISLE_x.camHold([a.x, T.Y + %s, a.z], [b.x, T.Y + %s, b.z]); return 1; })()" % (e[0], e[2], l[0], l[2], e[0], e[2] + 3, max(0.0, e[1] - 1.5), e[1], l[1]))
+            await pg.evaluate(EV, "(function(){ var T = TK.T, a = T.toW(%s, 0, %s), b = T.toW(%s, 0, %s), w = T.toW(%s, 0, %s); pos.set(w.x, T.Y + %s, w.z); vel.set(0, 0, 0); luna.root.position.copy(pos); luna.root.visible = false; %s ISLE_x.camHold([a.x, T.Y + %s, a.z], [b.x, T.Y + %s, b.z]); return 1; })()" % (e[0], e[2], l[0], l[2], e[0], e[2] + 3, max(0.0, e[1] - 1.5), HER, e[1], l[1]))
             await pg.wait_for_timeout(2500)
             for m in MODES:
                 code = { 'plain': "1;", 'on': "ISLE_x.q2({ ao: 'on', ssr: 'on' }); POST.final.uniforms.uFxDbg.value = 0;", 'off': "ISLE_x.q2({ ao: 'off', ssr: 'off' }); POST.final.uniforms.uFxDbg.value = 0;", 'aoonly': "ISLE_x.q2({ ao: 'on', ssr: 'off' }); POST.final.uniforms.uFxDbg.value = 0;", 'ao': "ISLE_x.q2({ ao: 'on', ssr: 'on' }); POST.final.uniforms.uFxDbg.value = 1;", 'ssr': "ISLE_x.q2({ ao: 'on', ssr: 'on' }); POST.final.uniforms.uFxDbg.value = 2;", 'gloss': "ISLE_x.q2({ ao: 'on', ssr: 'on' }); POST.final.uniforms.uFxDbg.value = 3;" }[m]

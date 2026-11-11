@@ -4,6 +4,7 @@
 #   - under a roof the ground stays dry: the place's boxes are kept by day in the rain (unlit), not on a dry day
 #   - the vehicles' bodies are surfaces: every kind builds, has no stray point, stays inside its own length, width and height, has its arches
 #   - the buildings stand in relief, the side streets have their poles
+#   - (v88) the passes over the picture declare their samplers highp
 #   python3 fx_chk.py [tier]            (TK_FILE=guide.min.html for the shipped page: fewer checks, no test hooks)
 import asyncio, sys, json, time, os, io
 import os
@@ -29,7 +30,7 @@ async def main():
         hi = TIER in ('mid', 'high')
         f = await pg.evaluate("() => ISLE_x.fx()"); log('fx', json.dumps(f))
         if hi:
-            ok('the chain reads the depth', f['post'] and f['ok']); ok('at Okachimachi both are on', f['place'] and f['ao'] and f['ssr'], json.dumps(f['qa']))
+            ok('the chain reads the depth', f['post'] and f['ok']); ok('(v88) and reads it at full precision (the samplers declared highp: a phone hands the depth back as a 16-bit float otherwise)', f.get('hp') is True, 'float bits kept [low, medium, high]: %s' % f.get('prec')); ok('at Okachimachi both are on', f['place'] and f['ao'] and f['ssr'], json.dumps(f['qa']))
             n0 = f['n']; await pg.wait_for_timeout(2500); n1 = (await pg.evaluate("() => ISLE_x.fx()"))['n']; ok('frames are drawn with them', n1 > n0, '%d -> %d' % (n0, n1))
             wet = await pg.evaluate(EV, "+KIT.U.uWet.value.toFixed(2)"); ok('the street is wet (the test’s rain)', wet > 0.4, wet)
             zn = await pg.evaluate(EV, "KIT.U.uZn.value"); ok('by day in the rain the roofs’ boxes are kept (dry under them)', zn >= 8, zn)
