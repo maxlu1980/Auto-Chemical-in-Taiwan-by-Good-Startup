@@ -82,7 +82,7 @@ var PoEvidence = (function () {
 
   /* ---- the post pass: depth of field, ACES, vignette, grain ---- */
   var POST_VS = 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }';
-  var POST_FS = 'precision highp float; uniform sampler2D tColor; uniform sampler2D tDepth; uniform vec2 res; uniform float near; uniform float far; uniform float focus; uniform float range; uniform float maxR; uniform float vig; uniform float grain; uniform float seed; uniform float expo; varying vec2 vUv;' +
+  /* (v88) the samplers at full precision too: the depth read through a default (lowp) sampler comes back as a 16-bit float on a phone, and the focus then moved in steps */ var POST_FS = 'precision highp float; precision highp sampler2D; uniform sampler2D tColor; uniform sampler2D tDepth; uniform vec2 res; uniform float near; uniform float far; uniform float focus; uniform float range; uniform float maxR; uniform float vig; uniform float grain; uniform float seed; uniform float expo; varying vec2 vUv;' +
     'float lin(float d) { float z = d * 2.0 - 1.0; return 2.0 * near * far / (far + near - z * (far - near)); }' +
     'float coc(vec2 uv) { float z = lin(texture2D(tDepth, uv).x); float c = (z - focus) / range; return clamp(abs(c), 0.0, 1.0); }' +
     'vec3 aces(vec3 x) { return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0); }' +
