@@ -63,6 +63,9 @@ async def main():
             t = bt['tech']; need(bool(t) and t['seen'] and t['w'] >= bt['actW'] - 2 and t['h'] >= 46 and t['w'] > bt['start']['w'] and bt['fits'], 'title: the technical-data button runs the full width under Start, in view, the card fits', bt); await shot(pg, 'title_' + DEV)
         if 'tech' in PARTS:
             await pg.evaluate("() => document.getElementById('isSkip').click()"); await pg.wait_for_timeout(1500); s = await pg.evaluate(ST)   # (a real click waits for two steady frames: too long under software rendering)
+            for _ in range(40):   # the list opens half a second after the game closes: under software rendering a frame in hand can hold the timer back
+                if s['menu']: break
+                await pg.wait_for_timeout(500); s = await pg.evaluate(ST)
             need(not s['open'] and s['menu'] and '/island' not in s['hash'], 'title: the button opens the guide with the list of products out', {k: s[k] for k in ('open', 'menu', 'hash')}); await shot(pg, 'tech_' + DEV)
             await pg.evaluate("() => Menu.open(false)"); await pg.goto("about:blank"); await pg.goto("file://" + D + "/" + FILE + "#/island", wait_until="commit", timeout=240000); await ready(pg, True)
         if 'fly' in PARTS or 'skip' in PARTS:
