@@ -130,17 +130,29 @@
     Z.push([S.CX1 - 0.1, 0, S.PZA - 0.3, VX + 0.5, 3.3, S.PZB + 0.3, 0.9, 2.4]);
     /* (v85) no lamps of its own, but a roof: the ground under the viaduct (the road under the span, the lane's stalls, the bays) stays dry in the rain */ Z.push([-VX + 0.2, -0.5, -400, VX - 0.2, Y_DECK - 0.5, 400, 0, 0.3]);
     T.zlDyn = function (out, cl) { for (var i = 0; i < T.trains.length; i++) { var tr = T.trains[i], a = tr.z + tr.dir * CARL / 2, b = tr.z - tr.dir * (tr.len - CARL / 2), z0 = Math.min(a, b), z1 = Math.max(a, b); if (z1 < cl[1] - 130 || z0 > cl[1] + 130) continue; out.push([tr.x - 1.12, TR_Y + 0.93, z0 + 0.25, tr.x + 1.12, TR_Y + 2.72, z1 - 0.25, 1.0, 0.06]); } }; }
+  /* (v87) the gates' leaves, each on its own hinge, and the light of the reader she holds her card to. A lane's two leaves stand shut across it;
+     gateTap(lane, dir) lights the reader on her right hand (going in, toward −x: the lower cabinet's, at its entry end; going out: the other
+     cabinet's, at its paid end), counts the touch (the sound is made from it: tw_tokyo_e.js) and swings the leaves away in her direction;
+     gateShut(lane) lets them fall back. A closed lane has none of this. */
+  function okaGates(E, O) { var T = E.T, S = T.ST, root = E.root; if (!T.gatesL || !S) return; if (!M.okaLeaf) M.okaLeaf = okaM(new THREE.MeshStandardMaterial({ color: 0x1fa24a, roughness: 0.42, metalness: 0.18, envMapIntensity: 0.9 }));
+    var geo = K.rbox(0.05, 0.3, 0.33, 0.02, 2); O.gates = T.gatesL.map(function (g) { var G = { z: g.z, shut: g.shut, k: 0, want: 0, dir: -1, last: 0, leaves: [] }; if (g.shut) return G;
+      [-1, 1].forEach(function (e) { var piv = new THREE.Group(); piv.position.set(S.GX + 0.08, S.YF + 0.6, g.z + e * 0.345); var m = new THREE.Mesh(geo, M.okaLeaf); m.position.z = -e * 0.165; m.castShadow = true; m.receiveShadow = true; /* not a wall to the walker's reading of the drawn solids (island_ao.js): the leaves give way. As part of the station's one painted mesh they were read as solid, the lanes were shut to her, and the only way through the line was the gap beside the first cabinet */ m.userData.noSolid = true; piv.add(m); root.add(piv); G.leaves.push({ piv: piv, e: e }); }); return G; });
+    var fm = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.17), K.curved(new THREE.MeshBasicMaterial({ color: 0x35e06a, transparent: true, opacity: 0, toneMapped: false, depthWrite: false }))); fm.rotation.x = -Math.PI / 2; fm.visible = false; fm.renderOrder = 3; root.add(fm); O.gFlash = fm; O.gFlashT = 0; O.taps = 0;
+    O.gateTap = function (gi, dir) { var G = O.gates[gi]; if (!G || G.shut) return false; G.want = 1; G.dir = dir < 0 ? -1 : 1; fm.position.set(S.GX + (dir < 0 ? 0.3 : -0.42), S.YF + 1.004, G.z + (dir < 0 ? -0.475 : 0.475)); fm.material.opacity = 0.95; fm.visible = true; O.gFlashT = 0; O.tapEvt = 1; O.taps++; return true; };
+    O.gateShut = function (gi) { var G = O.gates[gi]; if (G) G.want = 0; }; }
   /* called at the end of the station's building, before the batches are committed */
   function okaDetail(E) { var T = E.T, O = T.oka = { doors: [], led: {}, clocks: [], acc: 9, min: -1, Bcol: K.Batch({ uv: true }), Bstr: K.Batch({ uv: true }), Bceil: K.Batch() };
     okaMats();
     OKL.forEach(function (L) { var c = cv(768, 160), B = { L: L, g: c.getContext('2d'), tex: toTex(c), key: '', st: '', count: L.n }; B.tex.wrapS = B.tex.wrapT = THREE.ClampToEdgeWrapping; O.led[L.n] = B; okaLed(B, L.led === 'kt' ? { rows: [['各駅停車', '--:--', L.dests[0]], ['各駅停車', '--:--', L.dests[1]]] } : { stt: '約3分後', p: 0.4 }); });
-    okaCanopy(E, O, 0); okaCanopy(E, O, 1); [0, 1, 2, 3].forEach(function (ti) { okaDoors(E, O, ti); }); okaHall(E, O); okaStreet(E, O);
+    okaCanopy(E, O, 0); okaCanopy(E, O, 1); [0, 1, 2, 3].forEach(function (ti) { okaDoors(E, O, ti); }); okaHall(E, O); okaStreet(E, O); okaGates(E, O);
     okaZones(E);
     if (O.Bcol.count()) E.root.add(batchMesh(O.Bcol, M.okaRiv, true)); if (O.Bstr.count()) E.root.add(batchMesh(O.Bstr, M.okaStr, false)); if (O.Bceil.count()) E.root.add(O.Bceil.mesh(M.okaCeil, { cast: false, recv: false })); O.Bcol = O.Bstr = O.Bceil = null; }
   function okaJst(o) { var d = new Date(Date.now() + 9 * 3600000), hm = o && o.hm ? o.hm : [d.getUTCHours(), d.getUTCMinutes()]; return [hm[0], hm[1], d.getUTCDay()]; }
   function okaFmt(m) { m = ((m % 1440) + 1440) % 1440; return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
   /* each frame: the doors follow the trains; twice a second the indicators and (each minute) the clocks are brought up to date */
   function okaTick(T, dt, o) { var O = T.oka, i; if (!O) return;
+    /* (v87) the gates' leaves swing to where they are wanted; the reader's light holds a moment and goes out */ if (O.gates) { for (i = 0; i < O.gates.length; i++) { var G = O.gates[i]; if (G.shut) continue; G.k += (G.want - G.k) * Math.min(1, dt * 12); if (Math.abs(G.k - G.last) > 0.0008) { G.last = G.k; G.leaves[0].piv.rotation.y = -G.leaves[0].e * G.dir * G.k * 1.42; G.leaves[1].piv.rotation.y = -G.leaves[1].e * G.dir * G.k * 1.42; } }
+      var gf = O.gFlash; if (gf && gf.visible) { O.gFlashT += dt; var ga = O.gFlashT < 0.8 ? 1 : Math.max(0, 1 - (O.gFlashT - 0.8) / 0.35); gf.material.opacity = 0.95 * ga; if (ga <= 0) gf.visible = false; } }
     for (i = 0; i < O.doors.length; i++) { var D = O.doors[i], tr = D.tr || (D.tr = T.trains.filter(function (t) { return t.x === TRK[D.ti]; })[0]), want = tr && tr.st === 'dwell' && tr.wait > 2.4 && tr.wait < 22.8 ? 1 : 0; if (want !== D.want) { if (D.want != null) D.evt = want ? 'open' : 'shut'; D.want = want; }
       if (D.f !== want) { D.f = want > D.f ? Math.min(1, D.f + dt * 0.95) : Math.max(0, D.f - dt * 0.95); var e = D.f * D.f * (3 - 2 * D.f) * 0.735; D.A.forEach(function (m) { m.position.z = -e; }); D.B.forEach(function (m) { m.position.z = e; }); } }
     O.acc += dt; if (O.acc < 0.5) return; O.acc = 0; var hm = okaJst(o), now = hm[0] * 60 + hm[1]; if (O.min !== now) { O.min = now; O.clocks.forEach(function (C) { okaClockDraw(C, hm); }); }
