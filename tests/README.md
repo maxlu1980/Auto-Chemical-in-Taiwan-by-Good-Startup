@@ -26,6 +26,7 @@ playwright install chromium
 | `fx_chk.py` | 御徒町的畫面與模型（v85）：後製流程讀得到深度；環境光遮蔽與螢幕空間反射在御徒町開啟、可個別開關、畫質面板有對應的兩列；雨天時有反射與沒有反射的畫面確實不同；白天下雨時屋簷區域保留（其下乾燥）而不發光；七種車輛的車身沒有壞點、不超出自身的長寬高；高架橋下有乾燥區；到臺北後兩種效果與地面變化都關閉 | `python3 tests/fx_chk.py high`（另有 `mid`、`low`） |
 | `fx_shots.py` | 御徒町各視角的成品圖，以及遮蔽、反射、光滑度三張除錯圖；可指定等級、時刻、天氣（`WX` 為 WMO 代碼：63 雨、1 晴） | `WX=63 python3 tests/fx_shots.py tests/out/fx high exitN,p34n,taxi,bld 20.5 on,ao,ssr,gloss` |
 | `fx_perf.py` | 同一畫面在兩種效果全關／只開遮蔽／只開反射／全開時各畫三次的平均時間，以及三角形數與繪製次數（軟體繪圖下只有比例有意義） | `python3 tests/fx_perf.py high 960x540` |
+| `nav_scan.py` | 御徒町的帶路（v86）：約一萬個站位（月台、大廳、樓梯、北口前、巷道、高架另一側、馬路兩側）與貼著每個障礙物的站位都找得到往月台（或往北口）的路；十一個起點實際走完全程並到達，過馬路時在路緣等行人綠燈、沒有違規 | `python3 tests/nav_scan.py 0.5`（`WALK_ONLY=1` 只走全程；`REG=east,road` 只掃指定區域；`DBG=1` 列出失敗站位周圍的狀態） |
 | `oka_chk.py` / `tyo_shots.py` | 御徒町站：月台門只在列車停妥開門時開啟、發車前關閉；出發案內看板的內容（山手線「約 n 分後／まもなく／停車中」，京浜東北線的種別、時刻、行先）；時鐘；街道到月台的路徑仍可尋得。`tyo_shots.py` 以對照照片的固定視點截圖 | `python3 tests/oka_chk.py tests/out/oka high` ／ `TKTIER=high python3 tests/tyo_shots.py tests/out/tyo low p34n,p12s,gate,arch,corner` |
 | `snd_chk.py` | 御徒町站的音效（以分析器監聽街道音效輸出，檢查各音效的音高是否出現）：月台門與列車車門的提示音、樓梯口鳥鳴、改札口導盲鈴與讀卡提示音、主角通過改札的提示音。只確認有發聲，不判斷聽感 | `python3 tests/snd_chk.py tests/out/snd` |
 | `ann_rt.py` | 御徒町站廣播的實際節奏（不加速）：站在月台上若干秒，列出每一句廣播何時播出、排隊等了多久、哪些因為過時而略過；用來確認同一班列車的預告、接近、到站、關門廣播依序而不擁擠 | `python3 tests/ann_rt.py 200` |
