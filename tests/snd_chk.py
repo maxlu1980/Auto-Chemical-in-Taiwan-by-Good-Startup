@@ -55,9 +55,9 @@ async def main():
         log('hall', json.dumps(s['pk']))
         need(up(784) and up(659), 'in the hall: the guidance chime by the gates', (s['pk']['784'], s['pk']['659']))
         need(up(2350, 10), 'in the hall: a reader\'s beep', s['pk']['2350'])
-        # she walks through a gate: her own beep
-        before = await pg.evaluate(EV, "(function(){ var T = TK.T, S = T.ST, a = T.toW(S.GX + 0.9, 0, S.ZB + 1.03); pos.set(a.x, T.Y + 0.14, a.z); return 1; })()"); await pg.wait_for_timeout(700); await pg.evaluate("() => { window.__pk = {}; window.__n = 0; }")
-        await pg.evaluate(EV, "(function(){ var T = TK.T, S = T.ST, a = T.toW(S.GX - 0.9, 0, S.ZB + 1.03); pos.set(a.x, T.Y + 0.14, a.z); return 1; })()"); await pg.wait_for_timeout(900); s = json.loads(await pg.evaluate(EV, STAT))
+        # she comes up to a gate: her card's beep at the reader (v87: the beep is the touch itself, a step short of the leaves — no longer the crossing of the line)
+        before = await pg.evaluate(EV, "(function(){ var T = TK.T, S = T.ST, a = T.toW(S.GX + 3.2, 0, S.ZB + 1.03); pos.set(a.x, T.Y + 0.14, a.z); return 1; })()"); await pg.wait_for_timeout(2600); await pg.evaluate("() => { window.__pk = {}; window.__n = 0; }")
+        await pg.evaluate(EV, "(function(){ var T = TK.T, S = T.ST, a = T.toW(S.GX + 0.9, 0, S.ZB + 1.03); pos.set(a.x, T.Y + 0.14, a.z); return 1; })()"); await pg.wait_for_timeout(900); s = json.loads(await pg.evaluate(EV, STAT))
         need(s['pk']['2350'][1] - s['pk']['2350'][0] >= 14, 'through a gate: her own card\'s beep', s['pk']['2350'])
         need(not errs, 'no errors', errs[:4]); await b.close()
     log('BAD', bad)
