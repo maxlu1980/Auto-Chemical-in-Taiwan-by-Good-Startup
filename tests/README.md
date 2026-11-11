@@ -22,6 +22,7 @@ playwright install chromium
 | `ann_chk.py` | 車站廣播（以替身語音記錄會說出的內容）：高鐵四站與御徒町的進站、上車、發車、宣導廣播，語言與語音的選擇、月台與目的地、畫面字幕的語言與位置、靜音、裝置無語音時的退路 | `python3 tests/ann_chk.py tests/out/ann desk zh tpe,all4,tyo,mute,novoice` |
 | `ad_chk.py` | 接著劑指南（三種工法、六支產品）的功能檢查，以及四本指南與產品選單不再出現已移除的產品與用語、內文產品名稱不加粗 | `python3 tests/ad_chk.py desk zh,en,ja` |
 | `cam_chk.py` | 鏡頭與操作：滑鼠鍵盤時畫面上的按鈕（旋轉、拉遠拉近、回到背後、切換視角、W A S D、Shift、城市中的動作鍵）與其按鍵標示、互不重疊、都在畫面內；`,` `.` `-` `=` `C`、滑鼠拖曳與各按鈕的作用；點地面行走時鏡頭繞到背後、側向移動時不轉動；觸控時左半邊走路、右半邊轉視角、可同時進行、同側兩指縮放 | `python3 tests/cam_chk.py tests/out/cam desk zh isle,city,tkw` |
+| `rot_chk.py` | 鏡頭列按鈕的圖示（v84）：畫質面板開啟前、開啟中、關閉後，六顆按鈕都仍是圖示而沒有被寫入文字；面板自己的「目前：…」標示照常顯示。在御徒町步行與臺北各檢查一次 | `python3 tests/rot_chk.py mobile zh,en,ja` |
 | `oka_chk.py` / `tyo_shots.py` | 御徒町站：月台門只在列車停妥開門時開啟、發車前關閉；出發案內看板的內容（山手線「約 n 分後／まもなく／停車中」，京浜東北線的種別、時刻、行先）；時鐘；街道到月台的路徑仍可尋得。`tyo_shots.py` 以對照照片的固定視點截圖 | `python3 tests/oka_chk.py tests/out/oka high` ／ `TKTIER=high python3 tests/tyo_shots.py tests/out/tyo low p34n,p12s,gate,arch,corner` |
 | `snd_chk.py` | 御徒町站的音效（以分析器監聽街道音效輸出，檢查各音效的音高是否出現）：月台門與列車車門的提示音、樓梯口鳥鳴、改札口導盲鈴與讀卡提示音、主角通過改札的提示音。只確認有發聲，不判斷聽感 | `python3 tests/snd_chk.py tests/out/snd` |
 | `ann_rt.py` | 御徒町站廣播的實際節奏（不加速）：站在月台上若干秒，列出每一句廣播何時播出、排隊等了多久、哪些因為過時而略過；用來確認同一班列車的預告、接近、到站、關門廣播依序而不擁擠 | `python3 tests/ann_rt.py 200` |
