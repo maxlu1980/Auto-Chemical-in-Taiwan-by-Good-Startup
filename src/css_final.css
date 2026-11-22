@@ -159,3 +159,24 @@
 @media (max-height:680px) and (min-width:700px){.isle__tin{max-width:600px;padding:16px 24px 12px}.isle__h1{font-size:clamp(32px,4.6vw,46px);margin-bottom:8px}.isle__h1.is-long{font-size:clamp(28px,3.8vw,38px)}.isle__sub{font-size:14px;line-height:21px;margin-bottom:12px}.isle__logo{margin-bottom:8px;padding:5px 9px}.isle__logo img{height:24px}.isle .isle__btn--tech{min-height:52px;padding:6px 14px 7px}.isle__tact{gap:10px}}
 /* (v83) a phone held sideways: the message from the office has no room beside the card and lay over its buttons — it stays away there */
 @media (max-height:480px) and (max-width:1000px){.isle:not(.is-narrow) .isle__msg{display:none}}
+
+/* (v89) the guided simulator: the WORK button on every screen (it is also the survey's Next), the key points of the step, the review */
+.hsim:not([hidden]) .hsim__work{display:flex}
+.hsim__work.is-next{background:rgba(17,17,17,.82)}
+.hsim__work.is-next b{font-size:18px}
+.hsim__key{position:absolute;left:12px;top:calc(max(10px,env(safe-area-inset-top,0px)) + 92px);width:min(380px,calc(100% - 150px));max-height:calc(100% - 300px);overflow:auto;background:rgba(17,17,17,.8);border-left:4px solid #ffc08a;padding:10px 12px 8px;color:#fff;z-index:5;pointer-events:auto;cursor:pointer;backdrop-filter:blur(4px)}
+.hsim__keyh{margin:0 0 6px;font:700 13px/18px var(--font-sans);color:#ffc08a}
+.hsim__key ul{margin:0;padding:0;list-style:none}
+.hsim__key li{font:400 13px/19px var(--font-sans);padding:5px 0 5px 0;border-top:1px solid rgba(255,255,255,.12)}
+.hsim__key li b{display:inline-block;margin-right:6px;padding:0 6px;font:700 11px/18px var(--font-sans);background:#ffc08a;color:#111}
+.hsim__key li.is-warn b{background:#ff5a4a;color:#fff}
+.hsim__key li.is-warn{color:#ffd4cc}
+.hsim__keyf{margin:6px 0 0;font:400 12px/16px var(--font-sans);color:#ffd9b3}
+.hsim__key.is-min ul,.hsim__key.is-min .hsim__keyf{display:none}
+.hsim__key.is-min .hsim__keyh{margin:0}
+.hsim__key.is-min .hsim__keyh::after{content:' ▾'}
+.hsim.is-narrow .hsim__key{width:calc(100% - 86px);max-height:42%}
+.hsim__mark.is-cur span{background:rgba(249,123,0,.92);color:#111;font-weight:700;max-width:320px;white-space:normal}
+.hsim__cross.is-free i{background:#fff}
+.hsim__recap{margin:4px 0 12px;padding-left:18px}
+.hsim__recap li{font:400 14px/21px var(--font-sans);margin:2px 0}

@@ -181,7 +181,7 @@ var UX3D = (function () {
   var CRACKS_F = [[0.62, 0.2, 0.74, 0.62], [0.3, 0.62, 0.42, 0.97], [0.86, 0.72, 0.97, 0.9]]; // in canvas fractions: u along x, v = 0 at the wall
   var PUDDLE_F = [0.6, 0.55, 0.12, 0.09];
   var frpApp = {
-    W: { w: 1.4, h: 1.1, t: 0.25 }, S: { x: 1.05, y: 0.25, zb: -0.25, zf: 1.0 }, frp: 0.004, up: 0.12, skirt: 0.1, room: { rt: 0.25, lt: 0 }, door: { x0: -0.5, x1: 0.36 }, drain: { x: 0.72, z: 0.8, r: 0.08 }, XC: 0, shift: 0.14, ground: -0.3, floor: 0, sub: 'frp',
+    W: { w: 1.4, h: 1.1, t: 0.25 }, S: { x: 1.05, y: 0.25, zb: -0.25, zf: 1.0 }, frp: 0.004, up: 0.25, upSill: 0.12, skirt: 0.24, room: { rt: 0.25, lt: 0 }, door: { x0: -0.5, x1: 0.36 }, drain: { x: 0.72, z: 0.8, r: 0.08 }, XC: 0, shift: 0.14, ground: -0.3, floor: 0, sub: 'frp',
     cam: { full: { az: -33, el: 38, dist: 3.4, t: [0.05, 0.2, 0.42] }, cut: { az: -52, el: 26, dist: 3.1, t: [0.36, 0.22, 0.42] } },
     build: function (ctx) { buildFloor(ctx, 'frp'); },
     state: function (st, ctx) { stateFloor(st, ctx); },
@@ -192,14 +192,14 @@ var UX3D = (function () {
   /* ================= the mortar corridor / balcony ================= */
   var CRACKS_M = [[0.2, 0.15, 0.36, 0.55], [0.7, 0.4, 0.62, 0.95]];
   var mortarApp = {
-    W: { w: 1.4, h: 1.1, t: 0.25 }, S: { x: 1.05, y: 0.25, zb: -0.25, zf: 1.0 }, frp: 0, screed: 0.04, up: 0, skirt: 0.15, room: { rt: 0.25, lt: 0 }, window: { x0: -0.35, x1: 0.45, y0: 0.55, y1: 1.05 }, drain: null, XC: 0, shift: 0.14, ground: -0.3, floor: 0, sub: 'mortar',
+    W: { w: 1.4, h: 1.1, t: 0.25 }, S: { x: 1.05, y: 0.25, zb: -0.25, zf: 1.0 }, frp: 0, screed: 0.04, up: 0, skirt: 0.25, room: { rt: 0.25, lt: 0 }, window: { x0: -0.35, x1: 0.45, y0: 0.55, y1: 1.05 }, drain: null, XC: 0, shift: 0.14, ground: -0.3, floor: 0, sub: 'mortar',
     cam: { full: { az: -33, el: 38, dist: 3.4, t: [0.05, 0.2, 0.42] }, cut: { az: -52, el: 26, dist: 3.1, t: [0.36, 0.22, 0.42] } },
     build: function (ctx) { buildFloor(ctx, 'mortar'); }, state: function (st, ctx) { stateFloor(st, ctx); }, anchors: function (id, a, o, ctx) { anchorsFloor(id, a, o, ctx, 'mortar'); }, rig: function (R) { rigFloor(R, 'mortar'); }, micro: function (M) { return microFloor(M, 'mortar'); }
   };
   /* ================= the flat roof over an old urethane membrane ================= */
   var CRACKS_R = [[0.55, 0.3, 0.7, 0.75]], BLISTERS_R = [[0.3, 0.45, 0.05], [0.42, 0.25, 0.035]];
   var roofApp = {
-    W: { w: 1.4, h: 0.55, t: 0.2 }, S: { x: 1.05, y: 0.25, zb: -0.2, zf: 1.0 }, frp: 0.003, up: 0.2, skirt: 0.19, room: { rt: 0.2, lt: 0 }, drain: { x: 0.68, z: 0.78, r: 0.09 }, coping: true, XC: 0, shift: 0.14, ground: -0.3, floor: 0, sub: 'roof',
+    W: { w: 1.4, h: 0.55, t: 0.2 }, S: { x: 1.05, y: 0.25, zb: -0.2, zf: 1.0 }, frp: 0.003, up: 0.27, skirt: 0.26, room: { rt: 0.2, lt: 0 }, drain: { x: 0.68, z: 0.78, r: 0.09 }, coping: true, XC: 0, shift: 0.14, ground: -0.3, floor: 0, sub: 'roof',
     cam: { full: { az: -33, el: 38, dist: 3.2, t: [0.05, 0.12, 0.42] }, cut: { az: -52, el: 27, dist: 2.9, t: [0.36, 0.12, 0.42] } },
     build: function (ctx) { buildFloor(ctx, 'roof'); }, state: function (st, ctx) { stateFloor(st, ctx); }, anchors: function (id, a, o, ctx) { anchorsFloor(id, a, o, ctx, 'roof'); }, rig: function (R) { rigFloor(R, 'roof'); }, micro: function (M) { return microFloor(M, 'roof'); }
   };
@@ -223,7 +223,8 @@ var UX3D = (function () {
     else if (kind === 'mortar') { var WI = P.window; ctx.setWall(block(-hw, WI.x0, yW0, W.h, zb, 0, ['render', 'formed', 'formed', 'formed', 'render', 'formed'], wm)); block(WI.x1, hw, yW0, W.h, zb, 0, ['formed', 'render', 'formed', 'formed', 'render', 'formed'], wm); block(WI.x0, WI.x1, yW0, WI.y0, zb, 0, wallKeys, wm); block(WI.x0, WI.x1, WI.y1, W.h, zb, 0, wallKeys, wm); block(-S.x, -hw, yW0, W.h, zb, 0, wallKeys, wm, 'formed'); block(hw + P.room.rt, S.x, yW0, W.h, zb, 0, wallKeys, wm, 'formed'); }
     else { ctx.setWall(block(-S.x, S.x, yW0, W.h, zb, 0, ['formed', 'formed', 'formed', 'formed', 'formed', 'formed'])); var cop = block(cut ? XC : -S.x, S.x, W.h, W.h + 0.04, zb - 0.03, 0.03, ['e', 'e', 'e', 'e', 'e', 'e'], { e: M.alu }, 'e'); if (cop) cop.castShadow = true; }
     /* the existing membrane turned up the wall and its termination bar (frp, roof); the puddle in the low spot */
-    if (P.up) { var upM = kind === 'frp' ? M.frpEdge : ctx.mat({ color: 0xa6a7a3, roughness: 0.82, envMapIntensity: 0.3 }, ctx.concMats); parts.upstand = block(x0c, kind === 'frp' ? hw : S.x, 0, P.up, 0, top, ['u', 'u', 'u', 'u', 'u', 'u'], { u: upM }, 'u'); parts.bar = block(x0c, kind === 'frp' ? hw : S.x, P.up, P.up + 0.02, 0, 0.008, ['e', 'e', 'e', 'e', 'e', 'e'], { e: M.alu }, 'e'); }
+    if (P.up) { var upM = kind === 'frp' ? M.frpEdge : ctx.mat({ color: 0xa6a7a3, roughness: 0.82, envMapIntensity: 0.3 }, ctx.concMats); var upSegs = kind === 'frp' && P.upSill ? [[x0c, P.door.x0, P.up], [Math.max(x0c, P.door.x0), P.door.x1, P.upSill], [Math.max(x0c, P.door.x1), hw, P.up]] : [[x0c, kind === 'frp' ? hw : S.x, P.up]]; /* (v89) at the walls 250 mm up, under the door sill 120 mm */
+      upSegs.forEach(function (q) { if (q[1] - q[0] < 0.005) return; var u = block(q[0], q[1], 0, q[2], 0, top, ['u', 'u', 'u', 'u', 'u', 'u'], { u: upM }, 'u'), b = block(q[0], q[1], q[2], q[2] + 0.02, 0, 0.008, ['e', 'e', 'e', 'e', 'e', 'e'], { e: M.alu }, 'e'); if (!parts.upstand) { parts.upstand = u; parts.bar = b; } }); }
     var doorSpan = kind === 'frp' ? P.door : null, onlyW = function (x, a, kind2) { if (kind2 === 'wall' && doorSpan && x > doorSpan.x0 + 0.01 && x < doorSpan.x1 - 0.01) return false; return true; };
     var pu = parts.puddleUV; parts.puddle = mesh(new THREE.CircleGeometry(1, 40), M.puddle, { noCast: true }); parts.puddle.rotation.x = -Math.PI / 2; parts.puddle.position.set(-S.x + pu[0] * 2 * S.x, 0.0012, pu[1] * D); parts.puddle.scale.set(pu[2] * 2 * S.x, pu[3] * D, 1); if (cut && parts.puddle.position.x - parts.puddle.scale.x < XC) parts.puddle.scale.x = Math.max(0.02, parts.puddle.position.x - XC);
     /* the drip edge at the free edge */
@@ -279,7 +280,7 @@ var UX3D = (function () {
           if (!cut || x1w > XC) { bx(x1w - x0w, 0.04, 0.09, M.alu, [cw, WI.y0 + 0.02, -0.05]); bx(x1w - x0w, 0.04, 0.06, M.alu, [cw, WI.y1 - 0.02, -0.06]); bx(0.04, WI.y1 - WI.y0, 0.06, M.alu, [x0w + 0.02, (WI.y0 + WI.y1) / 2, -0.06]); bx(0.04, WI.y1 - WI.y0, 0.06, M.alu, [x1w - 0.02, (WI.y0 + WI.y1) / 2, -0.06]); bx(0.03, WI.y1 - WI.y0, 0.05, M.alu, [cw, (WI.y0 + WI.y1) / 2, -0.06]); var gw = new THREE.Mesh(keep(new THREE.PlaneGeometry(x1w - x0w - 0.08, WI.y1 - WI.y0 - 0.08)), glassM2); gw.position.set(cw, (WI.y0 + WI.y1) / 2, -0.06); g.add(gw); var bk2 = new THREE.Mesh(keep(new THREE.PlaneGeometry(x1w - x0w + 0.1, WI.y1 - WI.y0 + 0.1)), darkM2); bk2.position.set(cw, (WI.y0 + WI.y1) / 2, -0.22); g.add(bk2); }
         }
         if (kind !== 'roof') { // the railing along the free edge: posts, handrail, bottom rail, vertical bars
-          var zR = D - 0.06, yTop = 1.07, xs = [-0.95, -0.35, 0.25, 0.85].filter(function (x) { return !cut || x > XC; }), rail = new THREE.Group(); g.add(rail); parts.railing = rail;
+          var zR = D - 0.06, yTop = 1.12, xs = [-0.95, -0.35, 0.25, 0.85].filter(function (x) { return !cut || x > XC; }), rail = new THREE.Group(); g.add(rail); parts.railing = rail;
           function cy(r, len, m, pos, rot) { var me = new THREE.Mesh(keep(new THREE.CylinderGeometry(r, r, len, 24)), m); me.position.set(pos[0], pos[1], pos[2]); if (rot) me.rotation.set(rot[0], rot[1], rot[2]); me.castShadow = true; rail.add(me); return me; }
           xs.forEach(function (x) { cy(0.02, yTop, M2.steel, [x, yTop / 2 + 0.004, zR]); var bp = new THREE.Mesh(keep(new THREE.BoxGeometry(0.1, 0.008, 0.1)), M2.steel); bp.position.set(x, 0.008, zR); rail.add(bp); });
           var xa = cut ? XC : -S.x, xb = S.x; cy(0.021, xb - xa, M2.steel, [(xa + xb) / 2, yTop, zR], [0, 0, Math.PI / 2]); var br = new THREE.Mesh(keep(new THREE.BoxGeometry(xb - xa, 0.03, 0.03)), M2.steel); br.position.set((xa + xb) / 2, 0.13, zR); br.castShadow = true; rail.add(br);

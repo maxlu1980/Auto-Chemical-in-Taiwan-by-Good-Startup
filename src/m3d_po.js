@@ -89,14 +89,14 @@ var PO3D = (function () {
     block: { Y0: 0.12, YT: 0.12 + 6 * 0.2, T: 0.12, cop: 0.05, rebar: true, crackR: 0.009, soak: 1, tint: [0.86, 0.85, 0.82], sub3d: 'block' },
     conc: { Y0: 0.1, YT: 1.4, T: 0.15, cop: 0, rebar: true, crackR: 0.008, soak: 0.6, tint: [0.9, 0.9, 0.88], sub3d: 'block' },
     tile: { Y0: 0.1, YT: 0.1 + 19 * 0.068 + 0.004, T: 0.18, cop: 0.05, rebar: true, crackR: 0.007, soak: 0.3, tint: [1.04, 0.92, 0.8], sub3d: 'mortar' },
-    stone: { Y0: 0.1, YT: 0.1 + 4 * 0.308, T: 0.15, cop: 0, rebar: false, crackR: 0.009, soak: 1.4, tint: [0.95, 0.96, 0.86], sub3d: 'block' },
-    brick: { Y0: 0.12, YT: 0.12 + 15 * 0.07, T: 0.21, cop: 0.05, rebar: false, crackR: 0.009, soak: 1, tint: [1.1, 0.74, 0.62], sub3d: 'block' },
+    stone: { Y0: 0.1, YT: 0.1 + 3 * 0.308, T: 0.15, cop: 0, rebar: false, crackR: 0.009, soak: 1.4, tint: [0.95, 0.96, 0.86], sub3d: 'block' },
+    brick: { Y0: 0.12, YT: 0.12 + 14 * 0.07, T: 0.21, cop: 0.05, rebar: false, crackR: 0.009, soak: 1, tint: [1.1, 0.74, 0.62], sub3d: 'block' },
     wood: { Y0: 0.1, YT: 1.3, T: 0.015, cop: 0.03, rebar: false, crackR: 0.005, soak: 0.8, tint: [1.15, 0.95, 0.7], sub3d: 'mortar', wood: true }
   };
   function make(id, kind) {
     var cfg = KIND[kind], Y0 = cfg.Y0, YT = cfg.YT, T = cfg.T, COP = cfg.cop, hF = YT - Y0, wF = W, lay = layout(kind, cfg);
     var app = {
-      W: { w: W, h: YT + COP, t: T }, S: { x: 1.45, y: 0.12, zb: -0.55, zf: 0.95 }, XC: 0, shift: 0.14, ground: -0.12, floor: 0, sub: cfg.sub3d, noMicro: false, id: id, kind: kind, Y0: Y0, YT: YT, cop: COP, rebar: cfg.rebar,
+      W: { w: W, h: YT + COP, t: T }, S: { x: 1.45, y: 0.12, zb: -0.55, zf: 0.95 }, XC: 0, shift: 0.14, ground: -0.45, deep: true, floor: 0, sub: cfg.sub3d, noMicro: false, id: id, kind: kind, Y0: Y0, YT: YT, cop: COP, rebar: cfg.rebar,
       cam: { full: { az: -28, el: 16, dist: 3.9, t: [0.05, (Y0 + YT) / 2 - 0.1, 0.15] }, cut: { az: -46, el: 15, dist: 3.4, t: [0.42, (Y0 + YT) / 2 - 0.1, 0.15] } },
       build: function (ctx) {
         var S = ctx.P.S, hw = ctx.hw, cut = ctx.cut, XC = ctx.XC, parts = ctx.parts, block = ctx.block, mesh = ctx.mesh, keep = ctx.keep, Coat = ctx.Coat, KIT = ctx.KIT, noise = ctx.noise, RWp = ctx.RWp, x0c = cut ? XC : -hw, M = {}; parts.M = M; parts.kind = kind; parts.Y0 = Y0; parts.YT = YT; parts.ctx = ctx; /* the kit stays reachable: the simulator continues the wall with it (extend) */
@@ -113,11 +113,21 @@ var PO3D = (function () {
         M.pave = ctx.mat({ map: keep(canvasTex(TEX.slab(), { wrap: RWp, repeat: [0.8, 0.8] })), color: 0xd4d2cb, roughness: 0.93, envMapIntensity: 0.25 }, ctx.concMats);
         var RB = TEX.rebar(); M.rebar = ctx.mat({ map: keep(canvasTex(RB.map, { wrap: RWp, repeat: [1, 6] })), bumpMap: keep(canvasTex(RB.bump, { wrap: RWp, repeat: [1, 6], srgb: false })), bumpScale: 0.0012, color: 0x9a8a80, roughness: 0.7, metalness: ctx.mt(0.25), envMapIntensity: 0.4 });
         /* the ground: the pavement in front, the garden soil behind */
-        block(-S.x, S.x, -S.y, 0, 0, S.zf, ['formed', 'formed', 'pv', 'formed', 'formed', 'formed'], { pv: M.pave });
-        block(-S.x, S.x, -S.y, -0.02, S.zb, 0, ['soil', 'soil', 'soil', 'soil', 'soil', 'soil']);
+        /* (v89) the footing as the rules for garden walls ask (建築基準法施行令 第62条の8 for a reinforced block wall over 1.2 m: a footing 35 cm deep or more, set 30 cm or more into the ground;
+           第61条 for a masonry wall of brick or stone: 20 cm or more into the ground): the strip footing goes down to 30 cm (20 cm under the masonry walls) on a 5 cm levelling bed,
+           and the ground around it is built in layers that meet it — the pavement and its base in front, the garden soil behind, the earth under both — so the cut shows the section */
+        var yB = (kind === 'stone' || kind === 'brick') ? -0.22 : -0.30, fzb = kind === 'tile' ? -T - 0.073 : kind === 'wood' ? -0.19 : -T - 0.05, fzf = kind === 'wood' ? 0.04 : 0.05; parts.yB = yB;
+        block(-S.x, S.x, -S.y, 0, fzf, S.zf, ['formed', 'formed', 'pv', 'formed', 'formed', 'formed'], { pv: M.pave });
+        block(-S.x, S.x, -0.45, -S.y, fzf, S.zf, ['soil', 'soil', 'soil', 'soil', 'soil', 'soil']);
+        block(-S.x, S.x, -0.45, -0.02, S.zb, fzb, ['soil', 'soil', 'soil', 'soil', 'soil', 'soil']);
+        if (kind !== 'wood') { block(-S.x, S.x, -0.45, yB - 0.05, fzb, fzf, ['soil', 'soil', 'soil', 'soil', 'soil', 'soil']); block(-hw - 0.06, hw + 0.06, yB - 0.05, yB, fzb, fzf, ['formed', 'formed', 'formed', 'formed', 'formed', 'formed']);
+          [[-S.x, -hw - 0.06], [hw + 0.06, S.x]].forEach(function (q) { if (q[1] - q[0] > 0.005) block(q[0], q[1], yB - 0.05, -0.02, fzb, fzf, ['soil', 'soil', 'soil', 'soil', 'soil', 'soil']); }); }
+        else block(-S.x, S.x, -0.45, -0.02, fzb, fzf, ['soil', 'soil', 'soil', 'soil', 'soil', 'soil']);
         var rebars = [], k, c2, j;
         function bar(r, a, b, axis, at1, at2) { var L = b - a; if (L <= 0.01) return; var me = new THREE.Mesh(keep(new THREE.CylinderGeometry(r, r, L, 16)), M.rebar); me.castShadow = false; if (axis === 'x') { me.rotation.z = Math.PI / 2; me.position.set((a + b) / 2, at1, at2); } else me.position.set(at1, (a + b) / 2, at2); ctx.g.add(me); rebars.push(me); }
-        function footing(zb, zf) { parts.footing = block(-hw - 0.06, hw + 0.06, -0.02, Y0, zb, zf, ['formed', 'formed', 'formed', 'formed', 'formed', 'formed']); ctx.setWall(parts.footing); var xB = cut ? XC - 0.0006 : -hw; bar(0.0065, xB, hw + 0.03, 'x', 0.03, zb + 0.04); bar(0.0065, xB, hw + 0.03, 'x', 0.03, zf - 0.04); bar(0.0065, xB, hw + 0.03, 'x', Y0 - 0.03, zb + 0.04); bar(0.0065, xB, hw + 0.03, 'x', Y0 - 0.03, zf - 0.04); }
+        function footing(zb, zf) { parts.footing = block(-hw - 0.06, hw + 0.06, yB, Y0, zb, zf, ['formed', 'formed', 'formed', 'formed', 'formed', 'formed']); ctx.setWall(parts.footing); var xB = cut ? XC - 0.0006 : -hw; /* D13 top and bottom, 60 mm cover at the bed, 40 mm at the top */ bar(0.0065, xB, hw + 0.03, 'x', yB + 0.06, zb + 0.045); bar(0.0065, xB, hw + 0.03, 'x', yB + 0.06, zf - 0.045); bar(0.0065, xB, hw + 0.03, 'x', Y0 - 0.04, zb + 0.045); bar(0.0065, xB, hw + 0.03, 'x', Y0 - 0.04, zf - 0.045); }
+        /* (v89) a vertical bar is hooked round the footing's bottom bar (its anchorage under 40 d) and runs up to the top: the hook as a 90° leg along z */
+        function vbar(r, x, z, top) { bar(r, yB + 0.06, top, 'y', x, z); var me = new THREE.Mesh(keep(new THREE.CylinderGeometry(r, r, 0.1, 12)), M.rebar); me.rotation.x = Math.PI / 2; me.position.set(x, yB + 0.06, z + 0.05 * (z < -T / 2 ? 1 : -1)); me.castShadow = false; ctx.g.add(me); rebars.push(me); }
         function coping(zb, zf, h) { var cop = block(-hw - 0.02, hw + 0.02, YT, YT + h, zb, zf, ['formed', 'formed', 'formed', 'formed', 'formed', 'formed']); if (cop) cop.castShadow = true; return cop; }
         if (kind === 'block') {
           M.block = ctx.mat({ map: keep(canvasTex(blockFace(), { wrap: RWp })), roughness: 0.96, envMapIntensity: 0.15 }, ctx.concMats); M.blocks = [M.block, ctx.mat({ map: M.block.map, color: 0xf2f0ea, roughness: 0.96, envMapIntensity: 0.15 }, ctx.concMats), ctx.mat({ map: M.block.map, color: 0xe6e3dc, roughness: 0.96, envMapIntensity: 0.15 }, ctx.concMats), ctx.mat({ map: M.block.map, color: 0xf8f6f0, roughness: 0.96, envMapIntensity: 0.15 }, ctx.concMats)];
@@ -126,14 +136,14 @@ var PO3D = (function () {
           block(cut ? XC + 0.003 : -hw, hw, Y0, YT, -T + 0.008, -0.008, ['j', 'j', 'j', 'j', 'j', 'j'], { j: M.joint }, 'j'); // the joints recessed behind the blocks
           lay.units.forEach(function (u, i) { block(u[0], u[1], u[2], u[3], -T, 0, ['b', 'b', 'b', 'b', 'b', 'b'], { b: M.blocks[i % 4] }); });
           coping(-T - 0.025, 0.025, COP); block(0.62, 0.74, Y0, YT - 0.4, -T - 0.42, -T, ['b', 'b', 'b', 'b', 'b', 'b'], { b: M.block }); // the buttress behind
-          for (var x = -hw + 0.2; x < hw - 0.05; x += 0.4) { if (cut && x < XC) continue; bar(0.005, 0.02, YT - 0.03, 'y', x, -T / 2); } if (cut) bar(0.005, 0.02, YT - 0.03, 'y', XC + 0.0044, -T / 2);
-          bar(0.005, cut ? XC - 0.0006 : -hw, hw, 'x', YT - 0.095, -T / 2); bar(0.005, cut ? XC - 0.0006 : -hw, hw, 'x', Y0 + 0.095, -T / 2); // D10 in every second core, bond-beam bars top and bottom
+          for (var x = -hw + 0.2; x < hw - 0.05; x += 0.4) { if (cut && x < XC) continue; vbar(0.005, x, -T / 2, YT - 0.03); } if (cut) vbar(0.005, XC + 0.0044, -T / 2, YT - 0.03);
+          [Y0 + 0.095, Y0 + 3 * 0.2 + 0.095, YT - 0.095].forEach(function (yh) { bar(0.005, cut ? XC - 0.0006 : -hw, hw, 'x', yh, -T / 2); }); // D10 in every second core; the horizontal D10 in the bond-beam courses, 0.6 m and 0.4 m apart (≤ 0.8 m)
         } else if (kind === 'conc') {
           M.face = faceMat(concFace(wF, hF, lay), { roughness: 0.9, envMapIntensity: 0.3 }); M.cone = ctx.mat({ color: 0x55564f, roughness: 0.95 }, ctx.concMats);
           footing(-T - 0.05, 0.05);
           block(-hw, hw, Y0, YT, -T, 0, ['formed', 'formed', 'formed', 'formed', 'cf', 'formed'], { cf: M.face }); // one pour, the panel joints in its face
           lay.cones.forEach(function (p) { var x = p[0] - hw, y = YT - p[1]; if (cut && x < XC + 0.02) return; var me = mesh(new THREE.CylinderGeometry(0.0145, 0.0145, 0.006, 20), M.cone, { noCast: true }); me.rotation.x = Math.PI / 2; me.position.set(x, y, -0.0025); }); // the separator holes, recessed
-          for (var xv = -hw + 0.1; xv < hw - 0.05; xv += 0.2) { if (cut && xv < XC) continue; bar(0.0065, 0.02, YT - 0.04, 'y', xv, -T / 2); } if (cut) bar(0.0065, 0.02, YT - 0.04, 'y', XC + 0.0044, -T / 2);
+          for (var xv = -hw + 0.1; xv < hw - 0.05; xv += 0.2) { if (cut && xv < XC) continue; vbar(0.0065, xv, -T / 2, YT - 0.04); } if (cut) vbar(0.0065, XC + 0.0044, -T / 2, YT - 0.04);
           for (var yh = Y0 + 0.1; yh < YT - 0.05; yh += 0.2) bar(0.005, cut ? XC - 0.0006 : -hw, hw - 0.04, 'x', yh, -T / 2 + 0.012); // D13 @200 vertical, D10 @200 horizontal
           if (cut) { var carb = mesh(new THREE.PlaneGeometry(0.02, hF), ctx.mat({ color: 0xcdb27a, transparent: true, opacity: 0.5, roughness: 1, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2 }), { noCast: true, noReceive: true }); carb.rotation.y = Math.PI / 2; carb.position.set(XC + 0.0008, (Y0 + YT) / 2, -0.01); parts.carb = carb; } // the carbonated skin at the saw face, 20 mm deep (schematic)
         } else if (kind === 'tile') {
@@ -143,7 +153,7 @@ var PO3D = (function () {
           block(-hw, hw, Y0, YT, -0.023, -0.008, ['bd', 'bd', 'bd', 'bd', 'bd', 'bd'], { bd: M.bed }, 'bd'); // the 15 mm mortar bed
           block(-hw, hw, Y0, YT, -0.008, 0, ['tb', 'tb', 'tb', 'tb', 'tf', 'tb'], { tf: M.face, tb: M.body }, 'tb'); // the 8 mm tiles with their joints
           coping(-T - 0.048, 0.025, COP);
-          for (var xt = -hw + 0.1; xt < hw - 0.05; xt += 0.2) { if (cut && xt < XC) continue; bar(0.0065, 0.02, YT - 0.04, 'y', xt, -T / 2 - 0.023); } if (cut) bar(0.0065, 0.02, YT - 0.04, 'y', XC + 0.0044, -T / 2 - 0.023);
+          for (var xt = -hw + 0.1; xt < hw - 0.05; xt += 0.2) { if (cut && xt < XC) continue; vbar(0.0065, xt, -T / 2 - 0.023, YT - 0.04); } if (cut) vbar(0.0065, XC + 0.0044, -T / 2 - 0.023, YT - 0.04);
           for (var yt2 = Y0 + 0.1; yt2 < YT - 0.05; yt2 += 0.2) bar(0.005, cut ? XC - 0.0006 : -hw, hw - 0.04, 'x', yt2, -T / 2 - 0.011);
         } else if (kind === 'stone') {
           M.face = faceMat(stoneFace(wF, hF, lay.units), { roughness: 0.95, envMapIntensity: 0.2 }); M.side = ctx.mat({ map: keep(canvasTex(stoneSide(), { wrap: RWp })), roughness: 0.95, envMapIntensity: 0.2 }, ctx.concMats); M.joint = ctx.mat({ map: keep(canvasTex(CRTX.mortar(0.3, 0.3, 821, { tone: '#b5b2a6', grain: 1.1, dens: 0.5, k: 0.6 }), { wrap: RWp })), roughness: 0.98, envMapIntensity: 0.18 }, ctx.concMats);
@@ -301,8 +311,8 @@ var PO3D = (function () {
     else if (kind === 'conc') { L.panels = [[0, 0.9], [0.9, 1.8], [1.8, 2.4]]; L.vj = [0.9, 1.8]; L.hj = [YT - (Y0 + 0.75)]; L.cones = []; [-0.9, -0.3, 0.3, 0.9].forEach(function (x) { [Y0 + 0.32, Y0 + 0.92].forEach(function (y) { L.cones.push([x + HW, YT - y]); }); }); }
     else if (kind === 'tile') { L.tiles = []; var chips = [7, 41]; for (c = 0; c < 20; c++) { var fy = 0.004 + c * 0.068, offx = c % 2 ? 0.1175 : 0; for (j = -1; j < 12; j++) { var fx = 0.004 + offx + j * 0.235, fw = 0.227; if (fx < 0) { fw += fx; fx = 0; } if (fx + fw > W) fw = W - fx; if (fw < 0.02 || fy + 0.06 > hF) continue; L.tiles.push([fx, fy, fw, 0.06, Math.floor(r() * 5), chips.indexOf(L.tiles.length) >= 0]); } }
       L.cutTex = once('tileCut', function () { var S = 256, c2 = mkCanvas(S, S * 2), q = c2.getContext('2d'), r2 = lcg(947), y; q.fillStyle = '#b48a6c'; q.fillRect(0, 0, S, S * 2); grain(q, S, S * 2, r2, 0.4, 60, 200); q.fillStyle = '#8d8981'; for (y = YT - 0.068; y > Y0; y -= 0.068) { var py = S * 2 - (y + 0.5) * S; q.fillRect(0, py - 0.004 * S, S, 0.008 * S + 1); } return c2; }); } // the tile body at the saw face with the joints running through (the −x face maps v = y + 0.5 over a 2 m canvas)
-    else if (kind === 'stone') { L.units = []; L.world = []; for (c = 0; c < 4; c++) { y0 = Y0 + c * 0.308; var so = c % 2 ? -0.454 : 0; for (j = 0; j < 4; j++) { x0 = -HW + so + j * 0.908; x1 = x0 + 0.9; x0 = Math.max(x0, -HW); x1 = Math.min(x1, HW); if (x1 - x0 < 0.04) continue; L.world.push([x0, x1, y0, y0 + 0.3]); L.units.push([x0 + HW, YT - (y0 + 0.3), x1 - x0, 0.3, (c * 3 + j) % 4]); } } }
-    else if (kind === 'brick') { L.world = []; L.tex = []; for (c = 0; c < 15; c++) { y0 = Y0 + c * 0.07; var hdr = c % 2 === 1, pw = hdr ? 0.1 : 0.21, pitch = pw + 0.01, bo = hdr ? -0.055 : 0; for (j = -1; j < 24; j++) { x0 = -HW + bo + j * pitch; x1 = x0 + pw; x0 = Math.max(x0, -HW); x1 = Math.min(x1, HW); if (x1 - x0 < 0.02) continue; L.world.push([x0, x1, y0, y0 + 0.06]); L.tex.push([x0 + HW, YT - (y0 + 0.06), x1 - x0, 0.06, Math.floor(r() * 6), r() < 0.05]); } } }
+    else if (kind === 'stone') { L.units = []; L.world = []; for (c = 0; c < Math.round((YT - Y0) / 0.308); c++) { y0 = Y0 + c * 0.308; var so = c % 2 ? -0.454 : 0; for (j = 0; j < 4; j++) { x0 = -HW + so + j * 0.908; x1 = x0 + 0.9; x0 = Math.max(x0, -HW); x1 = Math.min(x1, HW); if (x1 - x0 < 0.04) continue; L.world.push([x0, x1, y0, y0 + 0.3]); L.units.push([x0 + HW, YT - (y0 + 0.3), x1 - x0, 0.3, (c * 3 + j) % 4]); } } }
+    else if (kind === 'brick') { L.world = []; L.tex = []; for (c = 0; c < Math.round((YT - Y0) / 0.07); c++) { y0 = Y0 + c * 0.07; var hdr = c % 2 === 1, pw = hdr ? 0.1 : 0.21, pitch = pw + 0.01, bo = hdr ? -0.055 : 0; for (j = -1; j < 24; j++) { x0 = -HW + bo + j * pitch; x1 = x0 + pw; x0 = Math.max(x0, -HW); x1 = Math.min(x1, HW); if (x1 - x0 < 0.02) continue; L.world.push([x0, x1, y0, y0 + 0.06]); L.tex.push([x0 + HW, YT - (y0 + 0.06), x1 - x0, 0.06, Math.floor(r() * 6), r() < 0.05]); } } }
     else { L.world = []; L.boards = []; L.nails = []; for (j = 0; j < 22; j++) { x0 = -HW + j * 0.109; x1 = Math.min(HW, x0 + 0.105); if (x1 - x0 < 0.03) continue; L.world.push([x0, x1, Y0, YT]); L.boards.push([x0 + HW, 0, x1 - x0, hF, j % 5]); [Y0 + 0.22, (Y0 + YT) / 2, YT - 0.2].forEach(function (ry) { L.nails.push([x0 + HW + 0.05, YT - ry]); }); } }
     return L;
   }

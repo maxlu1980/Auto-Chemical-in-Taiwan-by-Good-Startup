@@ -30,6 +30,16 @@ var HSIM = (function () {
       res: '結果', resScore: 'スコア', resTime: '作業時間', resDays: '現場日数', rank: '評価', ranks: ['見習い', '施工者', '現場技能者'], notes: '振り返り', noNotes: '減点なし — 標準作業。', cons: '今回の材料', quizMiss: '判断の誤り {n}', toolMiss: '工具の選択ミス {n} 回', offMiss: 'リングを外れた {s} 秒', assistN: '手本 {n} 回', no3d: 'この端末では 3D 画面を作成できず、シミュレーターを開けません。', pct: '%',
       phaseDone: '完了：{n}', tip: 'ヒント', tapFull: 'タップで説明全文', helpT: '操作方法', loading: '現場を作成中…' }
   };
+  /* (v89) the guided run: the simulator takes the user to each work and frames it, the tool is ready, the survey is a tour; what is easy to miss is set out at every step and gathered at the end */
+  var T89 = {
+    zh: { ctrlD: ['每一步自動帶你到工作位置、取好景，工具也自動備妥', '按住左鍵或空白鍵：施作（放開即暫停）', '拖曳畫面：環視（放手 2 秒後回到工作畫面）　W A S D：走動（可不用）', '滾輪：拉近拉遠　⌖：回到工作畫面', 'H：說明　M：音效　Esc：離開'], ctrlT: ['每一步自動帶你到工作位置、取好景，工具也自動備妥', '按住「施作」：施作（放開即暫停）', '單指拖曳：環視（放手後回到工作畫面）', '雙指：拉近拉遠　⌖：回到工作畫面'],
+      surveyP: '鏡頭逐一帶你看 {n} 處現況；看完按「下一處」。', tourNext: '下一處', tourOf: '第 {a} / {n} 處', keyT: '重點與易遺漏', warnT: '注意', missT: '易遺漏', toolSwap: '換工具：{t}', toolReady: '工具：{t}（已備妥）', recap: '本次重點回顧', startHold: '按住施作開始', freeHint: '自由視角——按 ⌖ 回到工作畫面', xray: '結構透視', structT: '結構' },
+    en: { ctrlD: ['Each step takes you to the work and frames it; the tool is ready', 'Hold the left button or the space bar: work (let go to pause)', 'Drag: look around (the view returns to the work 2 s after you let go) · W A S D: walk (optional)', 'Wheel: zoom · ⌖: back to the work', 'H: help · M: sound · Esc: exit'], ctrlT: ['Each step takes you to the work and frames it; the tool is ready', 'Hold WORK: work (let go to pause)', 'One finger drag: look around (the view returns when you let go)', 'Pinch: zoom · ⌖: back to the work'],
+      surveyP: 'The view takes you to each of the {n} findings; press Next when you have seen it.', tourNext: 'Next', tourOf: '{a} of {n}', keyT: 'Key points and what is easy to miss', warnT: 'Caution', missT: 'Easy to miss', toolSwap: 'Tool: {t}', toolReady: 'Tool: {t} (ready)', recap: 'Key points of this run', startHold: 'Hold WORK to begin', freeHint: 'Free view — ⌖ returns to the work', xray: 'Structure (x-ray)', structT: 'Structure' },
+    ja: { ctrlD: ['各工程で作業位置へ自動で移動・構図を合わせ、工具も自動で準備', '左ボタンかスペースを長押し：作業（離すと一時停止）', 'ドラッグ：見回す（離して 2 秒で作業画面へ戻る）　W A S D：歩く（任意）', 'ホイール：拡大縮小　⌖：作業画面へ', 'H：説明　M：音　Esc：退出'], ctrlT: ['各工程で作業位置へ自動で移動・構図を合わせ、工具も自動で準備', '「作業」を長押し：作業（離すと一時停止）', '一本指ドラッグ：見回す（離すと作業画面へ戻る）', '二本指：拡大縮小　⌖：作業画面へ'],
+      surveyP: '視点が {n} か所の現況を順に案内します。見たら「次へ」。', tourNext: '次へ', tourOf: '{a} / {n} か所', keyT: '要点と見落としやすい点', warnT: '注意', missT: '見落とし注意', toolSwap: '工具：{t}', toolReady: '工具：{t}（準備済み）', recap: '今回の要点の振り返り', startHold: '作業を長押しで開始', freeHint: '自由視点 — ⌖ で作業画面へ', xray: '構造透視', structT: '構造' }
+  };
+  Object.keys(T89).forEach(function (lg) { Object.keys(T89[lg]).forEach(function (k) { T[lg][k] = T89[lg][k]; }); });
   function L() { return T[LANG] || T.en; }
   /* (v75) who made the system: on the briefing and on the result (the words are the loader's, kept in one place) */ function devLine() { var d = window.AC_DEV || {}; return '<p class="hsim__dev">' + esc(d[LANG] || d.zh || '系統由 好時新創 開發') + '</p>'; }
   function f(s, o) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return o[k] != null ? o[k] : m; }); }
@@ -67,8 +77,8 @@ var HSIM = (function () {
       '<div class="hsim__arrow" id="hsArrow" hidden aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M20 4l14 26-14-7-14 7z"/></svg></div>' +
       '<div class="hsim__marks" id="hsMarks" aria-hidden="true"></div>' +
       '<div class="hsim__top"><div class="hsim__box" id="hsBox"><div class="hsim__phase" id="hsPhase"></div><div class="hsim__prompt" id="hsPrompt"></div><div class="hsim__count" id="hsCount"></div></div><div class="hsim__stat"><div class="hsim__score"><b id="hsScore">0</b><span id="hsScoreL"></span></div><div class="hsim__clock" id="hsClock"></div></div></div>' +
-      '<div class="hsim__side"><button type="button" class="hsim__ico" id="hsExit" title=""><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button type="button" class="hsim__ico" id="hsGoto" title=""><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button><button type="button" class="hsim__ico" id="hsZin" title=""><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5M8 11h6M11 8v6"/></svg></button><button type="button" class="hsim__ico" id="hsZout" title=""><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5M8 11h6"/></svg></button><button type="button" class="hsim__ico" id="hsSnd" title="" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></button><button type="button" class="hsim__ico" id="hsLock" title="" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9"/><path d="M9 11V7a3 3 0 016 0v4"/></svg></button><button type="button" class="hsim__ico" id="hsHelp" title=""><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5M12 17h0"/></svg></button></div>' +
-      '<div class="hsim__feed" id="hsFeed" aria-live="polite"></div>' +
+      '<div class="hsim__side"><button type="button" class="hsim__ico" id="hsExit" title=""><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><button type="button" class="hsim__ico" id="hsGoto" title=""><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button><button type="button" class="hsim__ico" id="hsXray" title="" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M4 10h16M4 16h16M9 4v16M15 4v16"/></svg></button><button type="button" class="hsim__ico" id="hsZin" title=""><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5M8 11h6M11 8v6"/></svg></button><button type="button" class="hsim__ico" id="hsZout" title=""><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16 16l5 5M8 11h6"/></svg></button><button type="button" class="hsim__ico" id="hsSnd" title="" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 010 6M18 6a8 8 0 010 12"/></svg></button><button type="button" class="hsim__ico" id="hsLock" title="" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="6" y="11" width="12" height="9"/><path d="M9 11V7a3 3 0 016 0v4"/></svg></button><button type="button" class="hsim__ico" id="hsHelp" title=""><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5M12 17h0"/></svg></button></div>' +
+      '<div class="hsim__key" id="hsKey" hidden></div>' + '<div class="hsim__feed" id="hsFeed" aria-live="polite"></div>' +
       '<div class="hsim__toolname" id="hsToolName" aria-hidden="true"></div>' +
       '<div class="hsim__tools" id="hsTools" role="toolbar"></div>' +
       '<div class="hsim__stick" id="hsStick" aria-hidden="true"><i id="hsStickKnob"></i></div>' +
@@ -82,20 +92,21 @@ var HSIM = (function () {
     cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     cv.addEventListener('click', function () { if (locked && document.pointerLockElement !== cv) { try { cv.requestPointerLock(); } catch (e) {} } });
     document.addEventListener('pointerlockchange', function () { var on = document.pointerLockElement === cv; $('hsLock').setAttribute('aria-pressed', on ? 'true' : 'false'); root.classList.toggle('is-locked', on); });
-    document.addEventListener('mousemove', function (e) { if (document.pointerLockElement === cv && S) { S.look.yaw -= e.movementX * 0.0022; S.look.pitch = clampP(S.look.pitch - e.movementY * 0.0022); S.auto = 0; } });
-    $('hsExit').addEventListener('click', close); $('hsGoto').addEventListener('click', function () { goWork(true); }); $('hsZin').addEventListener('click', function () { zoomBy(0.86); }); $('hsZout').addEventListener('click', function () { zoomBy(1.16); });
+    document.addEventListener('mousemove', function (e) { if (document.pointerLockElement === cv && S) { S.look.yaw -= e.movementX * 0.0022; S.look.pitch = clampP(S.look.pitch - e.movementY * 0.0022); S.auto = 0; S.userT = 2.2; } });
+    $('hsExit').addEventListener('click', close); $('hsGoto').addEventListener('click', function () { goWork(true); }); $('hsZin').addEventListener('click', function () { zoomBy(0.86); }); $('hsXray').addEventListener('click', function () { if (!S || !view) return; S.xray = !S.xray; xray(S.xray); }); $('hsZout').addEventListener('click', function () { zoomBy(1.16); });
     $('hsSnd').addEventListener('click', function () { var m = SimAudio.toggle(); $('hsSnd').setAttribute('aria-pressed', m ? 'false' : 'true'); if (!m) ambient(); });
     $('hsLock').addEventListener('click', function () { locked = !locked; if (locked) { try { cv.requestPointerLock(); } catch (e) {} } else if (document.pointerLockElement) document.exitPointerLock(); });
     $('hsHelp').addEventListener('click', function () { help(!helpOpen); });
-    var wk = $('hsWork'); wk.addEventListener('pointerdown', function (e) { e.preventDefault(); S && (S.btn = true); try { wk.setPointerCapture(e.pointerId); } catch (er) {} }); ['pointerup', 'pointercancel'].forEach(function (n) { wk.addEventListener(n, function () { if (S) S.btn = false; }); });
+    var wk = $('hsWork'); wk.addEventListener('pointerdown', function (e) { e.preventDefault(); if (S) { S.btn = true; S.tap = true; } try { wk.setPointerCapture(e.pointerId); } catch (er) {} }); ['pointerup', 'pointercancel'].forEach(function (n) { wk.addEventListener(n, function () { if (S) S.btn = false; }); });
     $('hsBox').addEventListener('click', function () { $('hsBox').classList.toggle('is-open'); });
+    $('hsKey').addEventListener('click', function () { $('hsKey').classList.toggle('is-min'); });
     var st = $('hsStick'); st.addEventListener('pointerdown', stickDown); st.addEventListener('pointermove', stickMove); ['pointerup', 'pointercancel'].forEach(function (n) { st.addEventListener(n, stickUp); });
     document.addEventListener('keydown', keyDown); document.addEventListener('keyup', function (e) { keys[e.code] = false; if (e.code === 'Space' && S) S.key = false; });
     document.addEventListener('visibilitychange', function () { if (document.hidden && S) SimAudio.stopAll(); else if (S && !root.hidden) ambient(); });
     SimAudio.onChange(function (m) { $('hsSnd').setAttribute('aria-pressed', m ? 'false' : 'true'); });
     window.addEventListener('resize', function () { if (S) layout(); });
   }
-  function labels() { var l = L(); $('hsExit').title = l.exit; $('hsGoto').title = l.goto; $('hsZin').title = l.zin; $('hsZout').title = l.zout; $('hsSnd').title = l.sound; $('hsLock').title = l.lock; $('hsHelp').title = l.help; $('hsScoreL').textContent = l.score; $('hsWork').querySelector('b').textContent = l.work; $('hsWork').querySelector('span').textContent = l.hold; $('hsSnd').setAttribute('aria-pressed', SimAudio.muted() ? 'false' : 'true'); }
+  function labels() { var l = L(); $('hsXray').title = l.xray; $('hsExit').title = l.exit; $('hsGoto').title = l.goto; $('hsZin').title = l.zin; $('hsZout').title = l.zout; $('hsSnd').title = l.sound; $('hsLock').title = l.lock; $('hsHelp').title = l.help; $('hsScoreL').textContent = l.score; $('hsWork').querySelector('b').textContent = l.work; $('hsWork').querySelector('span').textContent = l.hold; $('hsSnd').setAttribute('aria-pressed', SimAudio.muted() ? 'false' : 'true'); }
   function layout() { root.classList.toggle('is-touch', isTouch()); root.classList.toggle('is-narrow', rect().width < 700); }
 
   /* ----- the view: the guide's sample, first person ----- */
@@ -152,7 +163,7 @@ var HSIM = (function () {
     ph.push({ kind: 'final' });
     return ph;
   }
-  function fresh() { return { phase: -1, tool: -1, score: 0, t0: performance.now(), clock: cfg.clock0 || 8, tw: 0, look: { yaw: 0, pitch: 0, fov: cfg.fov || 62 }, pos: new THREE.Vector3(0, 1.55, 2.5), vel: new THREE.Vector3(), walking: false, hold: false, btn: false, key: false, ptr: null, engaged: false, auto: 0, move: null, lamp: null, seq: null, ring: null, found: {}, feed: 0, notes: { quiz: 0, tool: 0, off: 0, assist: 0 }, off: 0, toolErr: 0, done: {}, fin: false, lapse: null, card: null, lastStep: 0, prevKind: null, mode: 'free', hudTool: null }; }
+  function fresh() { return { xray: false, home: undefined, userT: 0, free: false, tap: false, tour: null, recap: [], lastStepObj: null, phase: -1, tool: -1, score: 0, t0: performance.now(), clock: cfg.clock0 || 8, tw: 0, look: { yaw: 0, pitch: 0, fov: cfg.fov || 62 }, pos: new THREE.Vector3(0, 1.55, 2.5), vel: new THREE.Vector3(), walking: false, hold: false, btn: false, key: false, ptr: null, engaged: false, auto: 0, move: null, lamp: null, seq: null, ring: null, found: {}, feed: 0, notes: { quiz: 0, tool: 0, off: 0, assist: 0 }, off: 0, toolErr: 0, done: {}, fin: false, lapse: null, card: null, lastStep: 0, prevKind: null, mode: 'free', hudTool: null }; }
 
   /* ----- open / close ----- */
   function open(cat, M, btn) {
@@ -175,7 +186,9 @@ var HSIM = (function () {
   function toolKinds() { var seen = {}, out = []; cfg.stages.forEach(function (id) { (S.seq[id] || []).forEach(function (x) { if (x.kind !== 'look' && !seen[x.kind]) { seen[x.kind] = 1; out.push(x.kind); } }); }); return out; }
   function tools() { var ks = toolKinds(); S.kinds = ks; $('hsTools').innerHTML = ks.map(function (k, i) { return '<button type="button" class="hsim__tool" data-i="' + i + '" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + (ICON[k] || ICON.look) + '"/></svg><span>' + esc(tname(k)) + '</span><i>' + (i + 1) + '</i></button>'; }).join('');
     [].forEach.call($('hsTools').children, function (b) { b.addEventListener('pointerdown', function (e) { e.preventDefault(); e.stopPropagation(); }); b.addEventListener('click', function () { pick(+b.getAttribute('data-i')); }); }); }
-  function pick(i) { if (!S || i < 0 || i >= S.kinds.length) return; if (S.tool === i) return; S.tool = i; SimAudio.fx('click'); vib(8); var need = needKind(); if (need && need !== 'look' && S.kinds[i] !== need) { S.toolErr++; S.notes.tool++; feed(f(L().wrongTool, { t: tname(need) }), 'bad'); } hud(); }
+  function pick(i) { if (!S || i < 0 || i >= S.kinds.length) return; if (S.tool === i) return; S.tool = i; SimAudio.fx('click'); vib(8); var need = needKind(); if (need && need !== 'look' && S.kinds[i] !== need) feed(f(L().wrongTool, { t: tname(need) }), ''); hud(); }
+  /* (v89) the tool the work needs, taken up by the simulator: at the start of a step and whenever the rig hands over to another tool (one line says which) */
+  function autoTool(quiet) { var n = needKind(); if (!n || n === 'look') return; var i = S.kinds.indexOf(n); if (i < 0 || S.tool === i) return; var had = S.tool >= 0; S.tool = i; if (!quiet && had) { feed(f(L().toolSwap, { t: tname(n) }), ''); SimAudio.fx('click'); } hud(); }
   function needKind() { var p = cur(); if (!p || p.kind !== 'drive') return null; var at = toolAt(p.stage, S.tw); return at ? at.kind : null; }
   function toolOk() { var n = needKind(); return !n || n === 'look' || (S.tool >= 0 && S.kinds[S.tool] === n); }
 
@@ -185,8 +198,9 @@ var HSIM = (function () {
   function stepText(s) { var c = s.c || {}; return { n: plain(c.title || ''), p: plain(c.short || ''), pts: (c.points || []).map(plain), warn: c.warning ? plain(c.warning) : '' }; }
   function nextPhase() {
     S.phase++; var p = cur(); if (!p) return; S.engaged = false; S.hold = false; S.card = null; card(null); $('hsRing').hidden = true; $('hsMarks').innerHTML = '';
-    if (p.kind === 'drive') { view.setStage(stageIdx(p.stage), true); S.tw = p.from; view.freeze(S.tw); S.lastRing = null; goWork(false); hud(); boxOpen(true); SimAudio.fx('page'); }
-    else if (p.kind === 'survey') { view.setStage(0, true); view.freeze(1); S.found = {}; S.gaze = { k: null, t: 0 }; var A = view.anchorsWorld(); S.targets = A.filter(function (a) { return cfg.labels[a.k]; }).slice(0, 6); goWork(false, true); hud(); boxOpen(true); }
+    S.free = false; S.userT = 0; S.tap = false; S.tour = null; S.tourLbl = null; $('hsKey').hidden = true; if (p.kind !== 'survey') xray(!!S.xray); workLbl(p.kind === 'survey' ? L().tourNext : null);
+    if (p.kind === 'drive') { view.setStage(stageIdx(p.stage), true); S.tw = p.from; view.freeze(S.tw); S.lastRing = null; goWork(false); autoTool(true); if (p.step !== S.lastStepObj) { S.lastStepObj = p.step; S.keyT = 0; S.keyFold = false; keyPanel(p); } hud(); boxOpen(true); SimAudio.fx('page'); }
+    else if (p.kind === 'survey') { view.setStage(0, true); view.freeze(1); S.found = {}; S.gaze = { k: null, t: 0 }; var A = view.anchorsWorld(); S.targets = A.filter(function (a) { return cfg.labels[a.k]; }).slice(0, 6); if (cfg.struct && S.targets.length) { var sc0 = new THREE.Vector3(); S.targets.forEach(function (a) { sc0.add(a.p); }); sc0.multiplyScalar(1 / S.targets.length); S.targets.push({ k: '__struct', p: sc0 }); } S.tour = { i: 0, t: 0 }; goWork(false, true); hud(); boxOpen(true); }
     else if (p.kind === 'wait') { view.setStage(stageIdx(p.stage), true); view.freeze(1); waitCard(p); }
     else if (p.kind === 'quiz') quizCard(p);
     else if (p.kind === 'dose') doseCard(p);
@@ -194,6 +208,14 @@ var HSIM = (function () {
     else if (p.kind === 'final') results();
     hud();
   }
+  function xray(on) { try { view.setXray(!!on); } catch (e) {} $('hsXray').setAttribute('aria-pressed', on ? 'true' : 'false'); }
+  /* the key points sit just under the step's box, whatever its height (two lines on a phone, more when it is opened) */
+  function keyPlace() { var K = $('hsKey'), B = $('hsBox'); if (!K || K.hidden || !B) return; var r0 = root.getBoundingClientRect(), rb = B.getBoundingClientRect(), t = Math.round(rb.bottom - r0.top + 8); if (K.__t !== t) { K.__t = t; K.style.top = t + 'px'; } }
+  function workLbl(t) { var b = $('hsWork'); b.classList.toggle('is-next', !!t); b.querySelector('b').textContent = t || L().work; b.querySelector('span').textContent = t ? '' : L().hold; }
+  /* (v89) what must not be missed at this step, from the guide's own procedure: its caution first, then the points that carry a figure (a time, a temperature, a thickness, a rate) — the checks a site most often skips — then the rest, four at most; gathered for the review at the end */
+  function keyItems(step) { var tx = stepText(step), out = [], num = /[0-9０-９]|℃|°C|％|%/; if (tx.warn) out.push({ k: 'warn', s: tx.warn }); tx.pts.forEach(function (x) { if (num.test(x)) out.push({ k: 'miss', s: x }); }); tx.pts.forEach(function (x) { if (!num.test(x)) out.push({ k: '', s: x }); }); return out.slice(0, 4); }
+  function keyPanel(p) { var K = $('hsKey'), it = keyItems(p.step), l = L(); if (!it.length) { K.hidden = true; return; } S.recap = S.recap || []; it.forEach(function (x) { if (x.k && S.recap.length < 14 && S.recap.indexOf(x.s) < 0) S.recap.push(x.s); });
+    K.innerHTML = '<p class="hsim__keyh">' + esc(l.keyT) + ' · ' + esc(stepText(p.step).n) + '</p><ul>' + it.map(function (x) { return '<li' + (x.k ? ' class="is-' + x.k + '"' : '') + '>' + (x.k ? '<b>' + esc(x.k === 'warn' ? l.warnT : l.missT) + '</b>' : '') + esc(x.s) + '</li>'; }).join('') + '</ul><p class="hsim__keyf">' + esc(l.startHold) + '</p>'; K.classList.remove('is-min'); K.hidden = false; keyPlace(); }
   function donePhase(p) { SimAudio.fx('ok'); feed(f(L().phaseDone, { n: p.kind === 'drive' ? stepText(p.step).n : (L()[p.kind] || '') }), 'ok'); S.done[S.phase] = 1; setTimeout(function () { if (S) nextPhase(); }, 650); }
   /* ----- the work ring: where the tool is, projected ----- */
   function ringWorld() { var p = cur(); if (!p) return null; if (p.kind === 'drive') { var A = view.anchorsWorld(); if (!A.length) return null; var pick0 = A[0]; S.ringKey = pick0.k; return pick0.p; } return null; }
@@ -216,23 +238,54 @@ var HSIM = (function () {
   function pathOf(p) { if (p._path) return p._path; var L = (S.seq[p.stage] || []).filter(function (x) { return x.t >= p.from - 0.015 && x.t <= p.to + 0.015 && x.kind !== 'look'; }); if (!L.length) L = (S.seq[p.stage] || []).filter(function (x) { return x.t >= p.from - 0.015 && x.t <= p.to + 0.015; }); if (!L.length) return null;
     var C = new THREE.Vector3(), mn = new THREE.Vector3(1e9, 1e9, 1e9), mx = new THREE.Vector3(-1e9, -1e9, -1e9); L.forEach(function (x) { C.add(x.p); mn.min(x.p); mx.max(x.p); }); C.multiplyScalar(1 / L.length);
     var fy = floorAt(C.x, C.z), floorLike = mx.y - fy < 0.7 && mx.y - mn.y < 0.65; p._path = { C: C, mn: mn, mx: mx, pts: L, floor: floorLike }; return p._path; }
-  function standForPath(p) { var P = pathOf(p); if (!P) return null; var W = cfg.walk, eye = cfg.eye || 1.55, face = cfg.face ? new THREE.Vector3(cfg.face[0], 0, cfg.face[1]).normalize() : new THREE.Vector3(0, 0, 1);
+  function faceV() { return cfg.face ? new THREE.Vector3(cfg.face[0], 0, cfg.face[1]).normalize() : new THREE.Vector3(0, 0, 1); }
+  function fovNow() { var r = rect(), asp = r.height ? r.width / r.height : 1.6, fov = Math.max(34, Math.min(100, S.look.fov + (asp < 0.8 ? 18 : asp < 1.15 ? 9 : 0))), tv = Math.tan(fov * Math.PI / 360); return { tv: tv, th: Math.min(tv * asp, Math.tan(48 * Math.PI / 180)) }; }
+  /* (v89) how far from a wall the whole of the work fits in four fifths of the picture (its run along the wall, its height) */
+  function fitDist(P) { var F = fovNow(), fc = faceV(), ex = Math.abs((P.mx.x - P.mn.x) * fc.z) + Math.abs((P.mx.z - P.mn.z) * fc.x), ey = P.mx.y - P.mn.y; return Math.max((ex / 2 + 0.12) / (F.th * 0.8), (ey / 2 + 0.12) / (F.tv * 0.8)); }
+  /* (v89) the posture: work low at a wall or on the floor with a hand tool is done kneeling (the eye about 1 m up); a long-handled tool or work at chest height and above, standing */
+  function eyeFor(p, P) { var base = cfg.eye || 1.55, fy = floorAt(P.C.x, P.C.z), k = (S.seq[p.stage] || []).filter(function (x) { return x.t >= p.from - 0.015 && x.t <= p.to + 0.015 && x.kind !== 'look'; }).map(function (x) { return x.kind; }), standing = k.some(function (x) { return /^(roller|broom|hose|sand|vacuum|weight|meter|mixer)$/.test(x); }), ext = Math.max(P.mx.x - P.mn.x, P.mx.z - P.mn.z); /* a work spread over the floor is overseen standing; kneeling is for the work within arm's reach */ if (standing || P.mx.y - fy > 0.95 || ext > 1.2) return base; return Math.min(base, 1.02); }
+  /* (v89) one place to stand for the wall works of a run: the spot from which all of them are seen together. Each step then leans in from it, no more than
+     the step needs (at most 0.8 m), so the user is not walked round the site between the steps: the same view, the work going on in it */
+  function homeFor() { if (S.home !== undefined) return S.home; var mn = new THREE.Vector3(1e9, 1e9, 1e9), mx = new THREE.Vector3(-1e9, -1e9, -1e9), C = new THREE.Vector3(), n = 0;
+    S.phases.forEach(function (q) { if (q.kind !== 'drive') return; var P = pathOf(q); if (!P || P.floor) return; mn.min(P.mn); mx.max(P.mx); C.add(P.C); n++; });
+    if (!n || !cfg.walk) { S.home = null; return null; } C.multiplyScalar(1 / n); var U = { C: C, mn: mn, mx: mx, pts: [], floor: false }, want = Math.max(cfg.standoff || 1.2, Math.min(2.6, fitDist(U)));
+    S.home = { U: U, pos: gridStand(U, want, cfg.eye || 1.55) }; return S.home; }
+  function gridStand(P, want, eye) { var W = cfg.walk, face = faceV(), best = null, bs = 1e9, i, j, N = 10;
+    for (i = 0; i <= N; i++) for (j = 0; j <= N; j++) { var x = W.x0 + (W.x1 - W.x0) * i / N, z = W.z0 + (W.z1 - W.z0) * j / N; if (cfg.keep && x > cfg.keep.x0 && x < cfg.keep.x1 && z > cfg.keep.z0 && z < cfg.keep.z1) continue;
+      var dx = P.C.x - x, dz = P.C.z - z, dh = Math.hypot(dx, dz), sc = Math.abs(dh - want), fd = -(dx * face.x + dz * face.z) / Math.max(1e-3, dh); if (fd < 0.2) sc += 1.2 * (0.2 - fd); sc += Math.abs(dx * face.z - dz * face.x) * 0.25; /* square to the face */
+      if (sc < bs) { bs = sc; best = [x, z]; } }
+    var pos = new THREE.Vector3(best[0], 0, best[1]); pos.y = floorAt(pos.x, pos.z) + eye; return pos; }
+  /* (v89) where to stand for the survey: the spot of the place one can stand in from which all the findings lie in one view, looked at as level as possible —
+     on a narrow balcony that is its end, looking along it, not straight down at the floor from its edge */
+  function surveyStand(c) { var W = cfg.walk, T = (view.anchorsWorld() || []).filter(function (a) { return cfg.labels[a.k]; }); if (!W || !T.length) return null; var eye = cfg.eye || 1.55, best = null, bs = 1e9, i, j, N = 10, F = fovNow();
+    for (i = 0; i <= N; i++) for (j = 0; j <= N; j++) { var x = W.x0 + (W.x1 - W.x0) * i / N, z = W.z0 + (W.z1 - W.z0) * j / N; if (inKeep(x, z)) continue; var y = floorAt(x, z) + eye, dx = c.x - x, dy = c.y - y, dz = c.z - z, dh = Math.hypot(dx, dz); if (dh < 0.3) continue;
+      var pit = Math.atan2(dy, dh), yaw = Math.atan2(-dx, -dz), sp = 0; T.forEach(function (a) { var ax = a.p.x - x, ay = a.p.y - y, az = a.p.z - z, ah = Math.hypot(ax, az), dyaw = Math.atan2(-ax, -az) - yaw; while (dyaw > Math.PI) dyaw -= 2 * Math.PI; while (dyaw < -Math.PI) dyaw += 2 * Math.PI; sp = Math.max(sp, Math.abs(dyaw) / Math.atan(F.th) / 0.9, Math.abs(Math.atan2(ay, ah) - pit) / Math.atan(F.tv) / 0.72); }); /* the bars over and under the picture take a part of its height */
+      var fc = faceV(), facing = -(dx * fc.x + dz * fc.z) / dh, wallish = cfg.cat === 'sl' || cfg.cat === 'po'; /* a wall is surveyed from in front of it, not along it */
+      var sc = Math.max(0, sp - 0.85) * 3 + Math.abs(pit) * 0.8 + Math.abs(dh - 1.8) * 0.15 + (wallish ? (1 - Math.max(0, facing)) * 2.2 : 0); if (sc < bs) { bs = sc; best = [x, z, y]; } }
+    return best ? new THREE.Vector3(best[0], best[2], best[1]) : null; }
+  function inKeep(x, z) { var k = cfg.keep; return !!(k && x > k.x0 && x < k.x1 && z > k.z0 && z < k.z1); }
+  function standForPath(p) { var P = pathOf(p); if (!P) return null; var W = cfg.walk, eye = eyeFor(p, P), face = faceV();
     if (!W) return standFor(P.C, P.floor ? 1.1 : 0);
-    var want = P.floor ? Math.max(0.75, Math.min(1.6, (eye - P.C.y) * 0.8)) : (cfg.standoff || 1.2), best = null, bs = 1e9, i, j, N = 10;
+    var H = !P.floor ? homeFor() : null; if (H) { var want0 = Math.max(Math.min(cfg.standoff || 1.2, 1.0), Math.min(2.6, fitDist(P))), hp = H.pos, vx = P.C.x - hp.x, vz = P.C.z - hp.z, dh0 = Math.hypot(vx, vz), lean = Math.max(0, Math.min(0.8, dh0 - want0)), q = new THREE.Vector3(hp.x + vx / Math.max(1e-3, dh0) * lean, 0, hp.z + vz / Math.max(1e-3, dh0) * lean);
+      q.x = Math.max(W.x0, Math.min(W.x1, q.x)); q.z = Math.max(W.z0, Math.min(W.z1, q.z)); if (inKeep(q.x, q.z)) q.copy(hp); q.y = floorAt(q.x, q.z) + eye; var dq = Math.hypot(P.C.x - q.x, P.C.z - q.z);
+      p._shot = { pos: q.clone(), C: P.C.clone(), track: fitDist(P) > dq * 1.25, tan: new THREE.Vector3(face.z, 0, -face.x) }; return q; }
+    var Fv = fovNow(), extF = Math.max(P.mx.x - P.mn.x, P.mx.z - P.mn.z), want = P.floor ? Math.max(0.6, Math.min(2.2, Math.max((eye - P.C.y) * 0.75, (extF / 2 + 0.15) / (Fv.th * 0.85)))) : Math.max(cfg.standoff || 1.2, Math.min(2.6, fitDist(P))), best = null, bs = 1e9, i, j, N = 10;
     for (i = 0; i <= N; i++) for (j = 0; j <= N; j++) { var x = W.x0 + (W.x1 - W.x0) * i / N, z = W.z0 + (W.z1 - W.z0) * j / N; if (cfg.keep && x > cfg.keep.x0 && x < cfg.keep.x1 && z > cfg.keep.z0 && z < cfg.keep.z1) continue;
       var dx = P.C.x - x, dz = P.C.z - z, dh = Math.hypot(dx, dz), sc = Math.abs(dh - want), fd = -(dx * face.x + dz * face.z) / Math.max(1e-3, dh);
       if (fd < 0.2) sc += P.floor ? 0.12 * (0.2 - fd) : 1.2 * (0.2 - fd); /* in front of the work's face (for a floor, any side will do) */
       /* not standing on the work itself, and the work not spread round the eye wider than a turn of the head */ var ex = 0.12; if (x > P.mn.x - ex && x < P.mx.x + ex && z > P.mn.z - ex && z < P.mx.z + ex) sc += 0.45;
       var a0 = 1e9, a1 = -1e9, base = Math.atan2(dx, dz); [[P.mn.x, P.mn.z], [P.mn.x, P.mx.z], [P.mx.x, P.mn.z], [P.mx.x, P.mx.z]].forEach(function (q) { var a = Math.atan2(q[0] - x, q[1] - z) - base; while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; a0 = Math.min(a0, a); a1 = Math.max(a1, a); }); var spread = a1 - a0; if (spread > 1.6) sc += (spread - 1.6) * 0.5;
       if (sc < bs) { bs = sc; best = [x, z]; } }
-    var pos = new THREE.Vector3(best[0], 0, best[1]); pos.y = floorAt(pos.x, pos.z) + eye; return pos; }
-  function frameAt(p, w) { var P = pathOf(p); if (!P || !w) return w; return (RV9 || (RV9 = new THREE.Vector3())).copy(P.C).lerp(w, P.floor ? 0.6 : 0.85); }
+    var pos = new THREE.Vector3(best[0], 0, best[1]); pos.y = floorAt(pos.x, pos.z) + eye;
+    /* (v89) where the whole work does not fit from the spot (a long joint, a narrow place), the user goes along with the tool: the eye moves along the face, it does not swing round */
+    var dh = Math.hypot(P.C.x - pos.x, P.C.z - pos.z); p._shot = { pos: pos.clone(), C: P.C.clone(), track: !P.floor && fitDist(P) > dh * 1.08, tan: new THREE.Vector3(face.z, 0, -face.x) }; return pos; }
+  function frameAt(p, w) { var P = pathOf(p); if (!P || !w) return w; var sh = p._shot; return (RV9 || (RV9 = new THREE.Vector3())).copy(P.C).lerp(w, sh && sh.track ? 0.7 : P.floor ? 0.45 : 0.4); }
   var RV9 = null;
   function goWork(user, survey) {
     var w = null, p0 = cur(); if (p0 && p0.kind === 'survey') survey = true; if (survey) { var A = view.anchorsWorld(); if (A.length) { w = new THREE.Vector3(); A.forEach(function (a) { w.add(a.p); }); w.multiplyScalar(1 / A.length); } }
     else w = ringWorld(); if (!w) return;
-    var to = null, aim = w; if (!survey && p0 && p0.kind === 'drive') { to = standForPath(p0); aim = frameAt(p0, w); } if (!to) to = standFor(w, survey ? Math.max(cfg.standoff || 1.3, 1.1) : 0);
-    S.move = { a: S.pos.clone(), b: to, t: 0, w: aim.clone(), dur: user ? 0.7 : 0.9 }; S.auto = 1.2; if (user) SimAudio.fx('click');
+    var to = null, aim = w; if (!survey && p0 && p0.kind === 'drive') { to = standForPath(p0); aim = frameAt(p0, w); } if (!to && survey) to = surveyStand(w); if (!to) to = standFor(w, survey ? Math.max(cfg.standoff || 1.3, 1.1) : 0);
+    S.move = { a: S.pos.clone(), b: to, t: 0, w: aim.clone(), dur: user ? 0.7 : 0.9 }; S.auto = 1.2; S.free = false; S.userT = 0; if (user) SimAudio.fx('click');
   }
 
   /* ----- input ----- */
@@ -240,10 +293,10 @@ var HSIM = (function () {
   function pMove(e) { var p = PTR[e.pointerId]; if (!p || !S) return; var r = rect(), x = e.clientX - r.left, y = e.clientY - r.top, dx = x - p.x, dy = y - p.y; p.x = x; p.y = y; p.moved += Math.hypot(dx, dy);
     if (pinch) { var ks = Object.keys(PTR); if (ks.length === 2) { var d = Math.hypot(PTR[ks[0]].x - PTR[ks[1]].x, PTR[ks[0]].y - PTR[ks[1]].y); S.look.fov = Math.max(34, Math.min(95, pinch.fov * pinch.d / Math.max(10, d))); } return; }
     if (p.hold) { if (S.ring && Math.hypot(x - S.ring.x, y - S.ring.y) > tol() * 2.4) { p.hold = false; } else return; }
-    if (document.pointerLockElement) return; var k = (isTouch() ? 0.0048 : 0.0036) * (S.look.fov / 62), sg = p.type === 'touch' ? 1 : -1; /* a finger drags the world, a mouse steers the eye */ S.look.yaw += dx * k * sg; S.look.pitch = clampP(S.look.pitch + dy * k * sg); S.auto = 0; }
+    if (document.pointerLockElement) return; var k = (isTouch() ? 0.0048 : 0.0036) * (S.look.fov / 62), sg = p.type === 'touch' ? 1 : -1; /* a finger drags the world, a mouse steers the eye */ S.look.yaw += dx * k * sg; S.look.pitch = clampP(S.look.pitch + dy * k * sg); S.auto = 0; S.userT = 2.2; }
   function pUp(e) { var p = PTR[e.pointerId]; if (!p) return; delete PTR[e.pointerId]; if (S && S.ptr === p) S.ptr = null; if (Object.keys(PTR).length < 2) pinch = null; }
   function keyDown(e) { if (!S || root.hidden) return; if (helpOpen && e.code === 'Escape') { help(false); return; } if (S.card) { if (e.code === 'Escape') close(); return; } keys[e.code] = true;
-    if (e.code === 'Space') { S.key = true; e.preventDefault(); } else if (e.code === 'Escape') close(); else if (e.code === 'KeyM') { SimAudio.toggle(); } else if (e.code === 'KeyH') help(!helpOpen); else if (e.code === 'KeyL') $('hsLock').click(); else if (/^Digit[1-9]$/.test(e.code)) pick(+e.code.slice(5) - 1); else if (e.code === 'KeyG' || e.code === 'KeyF') goWork(true); }
+    if (e.code === 'Space') { if (!S.key) S.tap = true; S.key = true; e.preventDefault(); } else if (e.code === 'Enter') { S.tap = true; } else if (e.code === 'Escape') close(); else if (e.code === 'KeyM') { SimAudio.toggle(); } else if (e.code === 'KeyH') help(!helpOpen); else if (e.code === 'KeyL') $('hsLock').click(); else if (/^Digit[1-9]$/.test(e.code)) pick(+e.code.slice(5) - 1); else if (e.code === 'KeyG' || e.code === 'KeyF') goWork(true); }
   var stick = null;
   function stickDown(e) { e.preventDefault(); e.stopPropagation(); var r = $('hsStick').getBoundingClientRect(); stick = { id: e.pointerId, cx: r.left + r.width / 2, cy: r.top + r.height / 2, R: r.width / 2, x: 0, y: 0 }; try { $('hsStick').setPointerCapture(e.pointerId); } catch (er) {} stickMove(e); }
   function stickMove(e) { if (!stick || e.pointerId !== stick.id) return; var dx = e.clientX - stick.cx, dy = e.clientY - stick.cy, d = Math.hypot(dx, dy), m = Math.min(1, d / (stick.R * 0.7)); if (d > 0) { dx /= d; dy /= d; } stick.x = dx * m; stick.y = dy * m; $('hsStickKnob').style.transform = 'translate(' + (stick.x * stick.R * 0.5) + 'px,' + (stick.y * stick.R * 0.5) + 'px)'; }
@@ -257,16 +310,16 @@ var HSIM = (function () {
     /* the camera: a walk to the stand point, or the user's own walking */
     if (S.move) { S.move.t = Math.min(1, S.move.t + dt / S.move.dur); var e = S.move.t * S.move.t * (3 - 2 * S.move.t); S.pos.lerpVectors(S.move.a, S.move.b, e); steer(S.move.w, dt, 6); if (S.move.t >= 1) S.move = null; }
     else if (!S.card) walk(dt, now);
-    if (S.auto > 0) S.auto -= dt;
+    if (S.auto > 0) S.auto -= dt; if (S.userT > 0) S.userT -= dt;
     view.wake();
     if (S.card) { $('hsRing').hidden = true; $('hsArrow').hidden = true; SimAudio.tool(null); return; }
     if (p.kind === 'drive') drive(dt, now); else if (p.kind === 'survey') survey(dt);
     S.clock += dt / 60; /* the site clock runs 60× while working */
-    if ((now - (S.hudAt || 0)) > 150) { S.hudAt = now; hud(); }
+    if ((now - (S.hudAt || 0)) > 150) { S.hudAt = now; hud(); keyPlace(); }
   }
   function walk(dt, now) {
     var fx = 0, fz = 0; if (keys.KeyW || keys.ArrowUp) fz -= 1; if (keys.KeyS || keys.ArrowDown) fz += 1; if (keys.KeyA || keys.ArrowLeft) fx -= 1; if (keys.KeyD || keys.ArrowRight) fx += 1; if (stick) { fx += stick.x; fz += stick.y; }
-    var m = Math.hypot(fx, fz); S.walking = m > 0.05; if (!S.walking) return; if (m > 1) { fx /= m; fz /= m; }
+    var m = Math.hypot(fx, fz); S.walking = m > 0.05; if (!S.walking) return; S.free = true; if (m > 1) { fx /= m; fz /= m; }
     var sp = 1.15 * dt, sy = Math.sin(S.look.yaw), cy = Math.cos(S.look.yaw), dx = (fx * cy + fz * sy) * sp, dz = (-fx * sy + fz * cy) * sp; /* forward is −z at yaw 0: right = (cos, 0, −sin), forward = (−sin, 0, −cos) */
     var nx = S.pos.x + dx, nz = S.pos.z + dz, W = cfg.walk; if (W) { nx = Math.max(W.x0, Math.min(W.x1, nx)); nz = Math.max(W.z0, Math.min(W.z1, nz)); }
     var keep = cfg.keep; if (keep && nx > keep.x0 && nx < keep.x1 && nz > keep.z0 && nz < keep.z1) { if (Math.abs(dz) >= Math.abs(dx)) nz = S.pos.z; else nx = S.pos.x; if (nx > keep.x0 && nx < keep.x1 && nz > keep.z0 && nz < keep.z1) { nx = S.pos.x; nz = S.pos.z; } }
@@ -276,25 +329,41 @@ var HSIM = (function () {
   function drive(dt, now) {
     var p = cur(), w = ringWorld(); if (!w) return; var px = project(w, RP); S.ring = { x: px.x, y: px.y, on: px.on, behind: px.behind, w: w };
     var holding = S.btn || S.key || (S.ptr && S.ptr.hold) || (S.ptr && !isTouch() && Object.keys(PTR).length === 1 && S.ptr.moved < 12 && now - S.ptr.t0 > 160);
-    /* (v65) the work goes on while the right tool is held and the tool is in sight — no aiming at a moving ring: the view frames the work and follows
-       the tool by itself (a finger dragging the view takes over until it lets go); a tool that leaves the screen pauses the work while the view catches up */
-    var need = needKind(), ok = toolOk(), rr = rect(), mgX = rr.width * 0.04, mgY = rr.height * 0.06, seen = px.on && !px.behind && px.x > mgX && px.x < rr.width - mgX && px.y > mgY && px.y < rr.height - mgY, fw = frameAt(p, w), dragging = !!(S.ptr && !S.ptr.hold && S.ptr.moved > 12);
-    if (holding && !ok) { if (!S.warnAt || now - S.warnAt > 2500) { S.warnAt = now; feed(f(L().wrongTool, { t: tname(need) }), 'bad'); SimAudio.fx('bad'); } S.engaged = false; }
-    else if (holding && seen) { S.engaged = true; S.tw = Math.min(p.to, S.tw + dt * (p.to - p.from) / p.secs); view.freeze(S.tw); S.score += (aimOk(px) ? 14 : 10) * dt; /* a steady eye on the tool earns a little more */ var edge = Math.max(Math.abs(px.x - rr.width / 2) / (rr.width / 2), Math.abs(px.y - rr.height / 2) / (rr.height / 2)); /* the nearer the edge, the quicker the view follows */ if (!dragging && !(S.ptr && S.ptr.hold)) steer(edge > 0.6 ? w : fw, dt, 2.0 + Math.max(0, edge - 0.5) * 8); }
-    else { if (holding) { S.off += dt; if (!S.offAt || now - S.offAt > 3000) { S.offAt = now; feed(L().offRing, ''); } if (!dragging) steer(fw, dt, 3.4); } S.engaged = false; }
-    if (S.auto > 0 && !holding) steer(fw, dt, 1.6);
+    /* (v89) the guided work: the tool the rig needs is taken up by itself; held, the work goes on; the view stays on the work — still for a work that fits
+       the picture, going along the face with the tool for a long one — unless the user is looking round himself (a drag: for a moment; walking: until ⌖) */
+    var need = needKind(); if (need && need !== 'look' && S.kinds[S.tool] !== need) autoTool(false);
+    if (holding) { /* the key points stay up while the work begins, then fold to their title (a tap opens them again) */ S.keyT = (S.keyT || 0) + dt; if (S.keyT > (root.classList.contains('is-narrow') ? 0.3 : 2.5) && !S.keyFold) { S.keyFold = true; $('hsKey').classList.add('is-min'); } S.engaged = true; S.tw = Math.min(p.to, S.tw + dt * (p.to - p.from) / p.secs); view.freeze(S.tw); S.score += 12 * dt; }
+    else S.engaged = false;
+    if (!S.move && !S.free && !(S.userT > 0)) guideCam(p, w, dt);
+    $('hsCross').classList.toggle('is-free', !!S.free);
     SimAudio.tool(S.engaged ? (TOOLS[need] || TOOLS.look).snd : null);
     ring(px, (S.tw - p.from) / (p.to - p.from), S.engaged, S.ringKey);
     $('hsWork').classList.toggle('is-on', S.engaged);
     if (S.tw >= p.to - 1e-6) { S.engaged = false; SimAudio.tool(null); S.tw = p.to; view.freeze(S.tw); if (!S.done[S.phase]) donePhase(p); }
   }
+  var GV1 = null, GV2 = null;
+  function guideCam(p, w, dt) { var sh = p._shot, fw = frameAt(p, w); if (!GV1) { GV1 = new THREE.Vector3(); GV2 = new THREE.Vector3(); }
+    if (sh && sh.track) { /* along the face with the tool, at the walking pace of the work (never faster than 0.9 m/s), inside the place one can stand in */
+      /* only once the tool is past the middle of the picture (a dead zone of 45 % of the half width at the work), so a zigzag of the tool does not swing the user to and fro */
+      var rel = GV1.copy(w).sub(S.pos).dot(sh.tan), nrm = Math.abs(GV1.copy(w).sub(S.pos).dot(GV2.set(sh.tan.z, 0, -sh.tan.x))), dead = 0.45 * Math.max(0.3, nrm) * fovNow().th, shift = Math.abs(rel) > dead ? rel - (rel > 0 ? dead : -dead) : 0, tgt = GV2.copy(S.pos).addScaledVector(sh.tan, shift), W = cfg.walk; if (W) { tgt.x = Math.max(W.x0, Math.min(W.x1, tgt.x)); tgt.z = Math.max(W.z0, Math.min(W.z1, tgt.z)); }
+      var keep = cfg.keep; if (!(keep && tgt.x > keep.x0 && tgt.x < keep.x1 && tgt.z > keep.z0 && tgt.z < keep.z1)) { var dx = tgt.x - S.pos.x, dz = tgt.z - S.pos.z, d = Math.hypot(dx, dz), stp = Math.min(d, Math.max(d * Math.min(1, dt * 2.2), 0), 0.6 * dt); if (d > 1e-4) { S.pos.x += dx / d * stp; S.pos.z += dz / d * stp; } }
+      if (d > 0.02) { if (!S.stepAt || performance.now() - S.stepAt > 520) { S.stepAt = performance.now(); SimAudio.fx('step'); } } }
+    /* on a floor the user steps back from the tool as it comes to his feet (a roller works toward the one who holds it), as far as the place lets him */
+    var PF = pathOf(p); if (PF && PF.floor && !S.move) { var bx = S.pos.x - w.x, bz = S.pos.z - w.z, bd = Math.hypot(bx, bz), wantB = 0.7; if (bd < wantB && bd > 1e-3) { var k3 = Math.min(1, dt * 2.5) * (wantB - bd), nx = S.pos.x + bx / bd * k3, nz = S.pos.z + bz / bd * k3, Wb = cfg.walk; if (Wb) { nx = Math.max(Wb.x0, Math.min(Wb.x1, nx)); nz = Math.max(Wb.z0, Math.min(Wb.z1, nz)); } if (!inKeep(nx, nz)) { S.pos.x = nx; S.pos.z = nz; } } }
+    /* the frame holds still while the tool is well inside it; nearing the edge, the view leans toward the tool (sooner and quicker the nearer it gets), so it never leaves the picture */
+    var px = project(w, { x: 0, y: 0 }), rr = rect(), edge = px.behind ? 2 : Math.max(Math.abs(px.x - rr.width / 2) / (rr.width / 2), Math.abs(px.y - rr.height / 2) / (rr.height / 2));
+    if (edge > 0.62) steer(w, dt, 2.2 + (edge - 0.62) * 14); else steer(fw, dt, sh && sh.track ? 2.6 : 1.8); }
   function survey(dt) {
-    var c = crossAt(), hit = null, i, items = S.targets || [];
-    $('hsMarks').innerHTML = items.map(function (a, k) { var px = project(a.p, { x: 0, y: 0 }); if (!px.on) return ''; var d = Math.hypot(px.x - c.x, px.y - c.y), near = d < tol() * 0.9; if (near && !hit && !S.found[a.k]) hit = a; return '<div class="hsim__mark' + (S.found[a.k] ? ' is-found' : near ? ' is-near' : '') + '" style="left:' + px.x + 'px;top:' + px.y + 'px"><i>' + (k + 1) + '</i><span>' + esc(plain(cfg.labels[a.k] || a.k)) + '</span></div>'; }).join('');
-    if (hit && !S.found[hit.k]) { if (S.gaze.k === hit.k) { S.gaze.t += dt; if (S.gaze.t > 0.7) { S.found[hit.k] = 1; S.score += 40; SimAudio.fx('tick'); vib(10); } } else { S.gaze.k = hit.k; S.gaze.t = 0; } } else { S.gaze.k = null; S.gaze.t = 0; }
-    var n = items.length, a = Object.keys(S.found).length; $('hsCount').textContent = f(L().found, { a: a, n: n });
-    var rest = items.filter(function (x) { return !S.found[x.k]; }); if (rest.length) { var px2 = project(rest[0].p, RP); arrow(px2); } else $('hsArrow').hidden = true;
-    if (n && a >= n && !S.done[S.phase]) { $('hsMarks').innerHTML = ''; donePhase(cur()); }
+    var items = S.targets || [], n = items.length, tr = S.tour || (S.tour = { i: 0, t: 0 }); if (!n) { if (!S.done[S.phase]) donePhase(cur()); return; }
+    var a = items[Math.min(tr.i, n - 1)]; tr.t += dt; if (!S.move && !(S.userT > 0)) steer(a.p, dt, 3);
+    if (tr.t > 0.7 && !S.found[a.k]) { S.found[a.k] = 1; S.score += 40; SimAudio.fx('tick'); vib(10); }
+    $('hsMarks').innerHTML = items.map(function (b, k) { var px = project(b.p, { x: 0, y: 0 }); if (!px.on || b.k === '__struct') return ''; return '<div class="hsim__mark' + (k === tr.i ? ' is-near is-cur' : S.found[b.k] ? ' is-found' : '') + '" style="left:' + px.x + 'px;top:' + px.y + 'px"><i>' + (k + 1) + '</i><span>' + esc(plain(cfg.labels[b.k] || b.k)) + '</span></div>'; }).join('');
+    var px2 = project(a.p, RP); if (px2.on && !px2.behind) $('hsArrow').hidden = true; else arrow(px2);
+    $('hsCount').textContent = f(L().tourOf, { a: Math.min(tr.i + 1, n), n: n }) + ' · ' + f(L().found, { a: Object.keys(S.found).length, n: n });
+    var st = a.k === '__struct', lb = st ? L().structT : plain(cfg.labels[a.k] || a.k); if (S.tourLbl !== lb) { S.tourLbl = lb; $('hsPrompt').textContent = lb; xray(st || S.xray);
+      if (st) { var K = $('hsKey'), ST = cfg.struct[LANG] || cfg.struct.en || []; K.innerHTML = '<p class="hsim__keyh">' + esc(L().structT) + '</p><ul>' + ST.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>'; K.classList.remove('is-min'); K.hidden = false; keyPlace(); } else $('hsKey').hidden = true; }
+    if (S.tap && tr.t > 0.45) { S.tap = false; if (!S.found[a.k]) { S.found[a.k] = 1; S.score += 40; } tr.i++; tr.t = 0; SimAudio.fx('click'); if (tr.i >= n && !S.done[S.phase]) { $('hsMarks').innerHTML = ''; donePhase(cur()); } }
+    S.tap = false;
   }
   function ring(px, prog, on, key) {
     var R = $('hsRing'); if (px.behind || !px.on) { R.hidden = true; arrow(px); return; } $('hsArrow').hidden = true; R.hidden = false; var s = tol() * 2; R.style.width = s + 'px'; R.style.height = s + 'px'; R.style.left = px.x + 'px'; R.style.top = px.y + 'px'; R.classList.toggle('is-on', !!on); $('hsRingArc').style.strokeDashoffset = String(100 - Math.round(100 * Math.max(0, Math.min(1, prog))));
@@ -306,8 +375,8 @@ var HSIM = (function () {
   function hud() {
     var p = cur(), l = L(); if (!p) return; var n = S.phases.length - 1, i = Math.min(S.phase + 1, n);
     var title = '', prompt = '', count = '';
-    if (p.kind === 'drive') { var tx2 = stepText(p.step); title = tx2.n; prompt = tx2.p; var need = needKind(), ok = toolOk(); count = f(l.prog, { p: Math.round(100 * (S.tw - p.from) / (p.to - p.from)) }) + ' · ' + (need && need !== 'look' ? (ok ? f(l.toolNow, { t: tname(need) }) + ' ✓ · ' + (S.engaged ? l.aimOn : l.aimOff) : f(l.toolNeed, { t: tname(need) }) + ' →') : l.aimOff); }
-    else if (p.kind === 'survey') { title = l.survey; prompt = f(l.surveyP, { n: (S.targets || []).length }); }
+    if (p.kind === 'drive') { var tx2 = stepText(p.step); title = tx2.n; prompt = tx2.p; var need = needKind(), ok = toolOk(); count = f(l.prog, { p: Math.round(100 * (S.tw - p.from) / (p.to - p.from)) }) + ' · ' + (need && need !== 'look' ? f(l.toolReady, { t: tname(need) }) + ' · ' : '') + (S.engaged ? l.aimOn : l.aimOff) + (S.free ? ' · ' + l.freeHint : ''); }
+    else if (p.kind === 'survey') { title = l.survey; prompt = S.tourLbl || f(l.surveyP, { n: (S.targets || []).length }); }
     else if (p.kind === 'wait') { title = l.wait; } else if (p.kind === 'quiz') title = l.quiz; else if (p.kind === 'dose') title = l.dose; else if (p.kind === 'prep') title = l.prep;
     $('hsPhase').textContent = l.phase + ' ' + i + ' ' + l.of + ' ' + n + (title ? ' — ' + title : ''); $('hsPrompt').textContent = prompt; if (p.kind !== 'survey') $('hsCount').textContent = count;
     $('hsScore').textContent = String(Math.round(S.score)); $('hsClock').textContent = clockText();
@@ -355,13 +424,14 @@ var HSIM = (function () {
     card(h); var held = false, acc = 0, lastN = 0, done = false, b = $('hsHold'); b.addEventListener('pointerdown', function (e) { e.preventDefault(); held = true; lastN = performance.now(); SimAudio.tool(pr.snd || 'mixer'); try { b.setPointerCapture(e.pointerId); } catch (er) {} }); ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { b.addEventListener(n, function () { held = false; SimAudio.tool(null); }); });
     var iv = setInterval(function () { if (!S || !$('hsHoldBar')) { clearInterval(iv); return; } if (held && !done) { var n = performance.now(); acc += (n - lastN) / 1000; lastN = n; } $('hsHoldBar').firstChild.style.width = Math.round(Math.min(1, acc / secs) * 100) + '%'; if (acc >= secs && !done) { done = true; clearInterval(iv); SimAudio.tool(null); S.score += 60; SimAudio.fx(pr.kind === 'cartridge' ? 'cartridge' : 'ok'); setTimeout(function () { if (S) { card(null); nextPhase(); } }, 500); } }, 60);
   }
-  function results() {
+  function results() { $('hsKey').hidden = true; workLbl(null);
     var l = L(), secs = (performance.now() - S.t0) / 1000, mins = Math.floor(secs / 60), days = Math.floor(S.clock / 24) + 1, sc = Math.round(S.score), max = S.phases.filter(function (p) { return p.kind === 'drive'; }).reduce(function (a, p) { return a + 12 * p.secs; }, 0) + 120 * (cfg.quiz || []).length + 100 * (cfg.dose || []).length + 60 * (cfg.prep || []).length + 40 * (S.targets ? S.targets.length : 0);
     var r = sc / Math.max(1, max), rank = r > 0.85 ? 2 : r > 0.55 ? 1 : 0, notes = [];
-    if (S.notes.quiz) notes.push(f(l.quizMiss, { n: S.notes.quiz })); if (S.notes.tool) notes.push(f(l.toolMiss, { n: S.notes.tool })); if (S.off > 3) notes.push(f(l.offMiss, { s: Math.round(S.off) })); if (S.notes.assist) notes.push(f(l.assistN, { n: S.notes.assist }));
+    if (S.notes.quiz) notes.push(f(l.quizMiss, { n: S.notes.quiz }));  if (S.notes.assist) notes.push(f(l.assistN, { n: S.notes.assist }));
     var cons = (cfg.mats || []).map(function (m) { return '<tr><th>' + esc(m.name) + '</th><td>' + esc(m.rate) + '</td></tr>'; }).join('');
     var h = '<p class="hsim__kick">' + esc(l.rank) + ' — ' + esc(l.ranks[rank]) + '</p><h2>' + esc(l.res) + '</h2><div class="hsim__kpis"><div><b>' + sc + '</b><span>' + esc(l.resScore) + '</span></div><div><b>' + mins + ':' + ('0' + Math.floor(secs % 60)).slice(-2) + '</b><span>' + esc(l.resTime) + '</span></div><div><b>' + days + '</b><span>' + esc(l.resDays) + '</span></div></div>' +
       '<p class="hsim__h4">' + esc(l.notes) + '</p>' + (notes.length ? '<ul class="hsim__notes">' + notes.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '<p>' + esc(l.noNotes) + '</p>') +
+      (S.recap && S.recap.length ? '<p class="hsim__h4">' + esc(l.recap) + '</p><ul class="hsim__recap">' + S.recap.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
       (cons ? '<p class="hsim__h4">' + esc(l.cons) + '</p><table class="hsim__cons">' + cons + '</table>' : '') +
       '<div class="hsim__cardact"><button class="sb-btn sb-btn--primary sb-btn--lg" type="button" id="hsAgain">' + esc(l.again) + '</button><button class="sb-btn sb-btn--secondary" type="button" id="hsBack">' + esc(l.back) + '</button></div>' + devLine();
     card(h); SimAudio.fx('done'); SimAudio.tool(null); $('hsAgain').addEventListener('click', function () { var M = cfg.module; close(); open(cfg.cat, M); }); $('hsBack').addEventListener('click', close);

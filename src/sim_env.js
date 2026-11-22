@@ -236,7 +236,7 @@ var SimEnv = (function () {
       E.face = Wa.z1; E.top = Wa.y1;
       /* the pavement in front of the wall: wide, thin, in front of the face, its top at the member's ground or a little above it (the PROTECT ONE walls show
          their footing, so their ground lies 12 cm under the pavement) — the place stands on the pavement's top, never on the member's ground */
-      E.slab = boxes(member, function (bb, w, h, d) { return w > 1.5 && d > 0.3 && h < 0.3 && bb.min.z > -0.1 && bb.max.y > g - 0.05 && bb.max.y <= g + 0.2; });
+      var gTop = g + (member.P && member.P.deep ? 0.6 : 0.2); /* (v89) a sample standing in its earth (the footing in the ground) keeps its pavement up to 60 cm over its base */ E.slab = boxes(member, function (bb, w, h, d) { return w > 1.5 && d > 0.3 && h < 0.3 && bb.min.z > -0.1 && bb.max.y > g - 0.05 && bb.max.y <= gTop; });
       if (E.slab) { E.slab = { x0: E.slab.x0, x1: E.slab.x1, z0: E.slab.z0, z1: E.slab.z1, y1: E.slab.y1 }; if (E.slab.y1 > g + 0.005) { g = E.slab.y1; E.ground = g; } }
       E.hole = { x0: W.x0 + 0.004, x1: W.x1 - 0.004, y0: -0.2, y1: W.y1 - g - 0.004 };
       if (member.P && member.P.extend && member.parts && member.parts.ctx) E.extend = function (grp) { return member.P.extend(member.parts.ctx, grp, P.kind === 'facade' ? 4 : 6); }; /* the sample's own wall or cladding, continued: bays each way (and rows above, for a facade) */
